@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PeleAI Speed — Plateforme création d'entreprise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body style="margin:0; overflow:hidden; background:#f0eee9;">
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="vitrine.jsx"></script>
+<script type="text/babel" src="parcours.jsx"></script>
+<script type="text/babel" src="backoffice.jsx"></script>
+<script type="text/babel" src="mobile.jsx"></script>
+<script type="text/babel" src="extras.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "fontDisplay": "Geist",
+  "fontBody": "Geist",
+  "fontSerif": "Instrument Serif",
+  "heroVariant": "B",
+  "primaryColor": "#2563EB",
+  "primaryDark": "#1E3A8A",
+  "primaryDeep": "#0B1E54",
+  "inkColor": "#0A0E1A",
+  "paperColor": "#FFFFFF",
+  "canvasColor": "#F0EEE9",
+  "accentMint": "#10B981",
+  "accentAmber": "#F59E0B",
+  "accentRose": "#F43F5E",
+  "radiusScale": 1,
+  "gradientIntensity": 1,
+  "showGrain": true,
+  "ctaLabel": "Démarrer mon entreprise",
+  "ctaStyle": "primary",
+  "buttonShape": "pill",
+  "heroBadge": "Fait pour la Côte d'Ivoire 🇨🇮",
+  "brandName": "PeleAI Speed",
+  "headline": "Créez votre entreprise en"
+}/*EDITMODE-END*/;
+
+// Helpers couleur — convertir hex en rgb pour les ombres / overlays
+function hexToRgb(hex) {
+  const m = hex.replace('#', '').match(/.{2}/g);
+  if (!m) return '37,99,235';
+  return m.map(h => parseInt(h, 16)).join(',');
+}
+function lighten(hex, amt) {
+  const [r, g, b] = hexToRgb(hex).split(',').map(Number);
+  const mix = (c) => Math.round(c + (255 - c) * amt);
+  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(() => {
+    const r = document.documentElement.style;
+    // Type
+    r.setProperty('--font-display', `"${t.fontDisplay}", system-ui, sans-serif`);
+    r.setProperty('--font-body', `"${t.fontBody}", system-ui, sans-serif`);
+    r.setProperty('--font-serif', `"${t.fontSerif}", "Times New Roman", serif`);
+    // Couleurs primaires
+    r.setProperty('--blue-600', t.primaryColor);
+    r.setProperty('--blue-700', t.primaryDark);
+    r.setProperty('--blue-800', t.primaryDark);
+    r.setProperty('--blue-900', t.primaryDeep);
+    r.setProperty('--blue-500', lighten(t.primaryColor, 0.15));
+    r.setProperty('--blue-400', lighten(t.primaryColor, 0.3));
+    r.setProperty('--blue-300', lighten(t.primaryColor, 0.5));
+    r.setProperty('--blue-100', lighten(t.primaryColor, 0.85));
+    r.setProperty('--blue-50', lighten(t.primaryColor, 0.93));
+    // Encre & papier
+    r.setProperty('--ink-900', t.inkColor);
+    r.setProperty('--paper', t.paperColor);
+    // Accents
+    r.setProperty('--accent-mint', t.accentMint);
+    r.setProperty('--accent-amber', t.accentAmber);
+    r.setProperty('--accent-rose', t.accentRose);
+    // Radii (scale)
+    const s = t.radiusScale;
+    r.setProperty('--r-xs', `${6 * s}px`);
+    r.setProperty('--r-sm', `${10 * s}px`);
+    r.setProperty('--r-md', `${14 * s}px`);
+    r.setProperty('--r-lg', `${20 * s}px`);
+    r.setProperty('--r-xl', `${28 * s}px`);
+    r.setProperty('--r-pill', t.buttonShape === 'square' ? `${8 * s}px` : '999px');
+    // Gradient hero
+    const gi = t.gradientIntensity;
+    const c1 = lighten(t.primaryColor, Math.max(0, 0.05 - 0.05 * gi));
+    r.setProperty('--grad-hero',
+      `radial-gradient(125% 125% at 0% 0%, ${c1} 0%, ${t.primaryDark} ${45 * gi}%, ${t.primaryDeep} 100%)`);
+    // Ombre bleue dynamique
+    const rgb = hexToRgb(t.primaryColor);
+    r.setProperty('--shadow-blue', `0 12px 32px rgba(${rgb},.28), 0 4px 12px rgba(${rgb},.18)`);
+    // Canvas color (fond grand)
+    document.body.style.background = t.canvasColor;
+  }, [t]);
+
+  // Expose le contenu modifiable aux composants enfants via context-like global
+  React.useEffect(() => {
+    window.__pas_copy = {
+      ctaLabel: t.ctaLabel,
+      heroBadge: t.heroBadge,
+      brandName: t.brandName,
+      headline: t.headline,
+      buttonShape: t.buttonShape,
+      ctaStyle: t.ctaStyle,
+    };
+    window.dispatchEvent(new CustomEvent('pas-copy-update'));
+  }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle]);
+
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection id="vitrine" title="01 · Site vitrine" subtitle="Page d'accueil — 2 directions hero">
+          <DCArtboard id="hero-a" label="A · Bold gradient + simulateur" width={1440} height={2400}>
+            <Vitrine variant={t.heroVariant === 'B' ? 'B' : 'A'} />
+          </DCArtboard>
+          <DCArtboard id="hero-b" label="B · Éditorial minimal serif" width={1440} height={2400}>
+            <Vitrine variant={t.heroVariant === 'A' ? 'B' : 'A'} />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="vitrine-pages" title="01b · Pages vitrine" subtitle="Tarifs · FAQ">
+          <DCArtboard id="tarifs" label="Tarifs" width={1440} height={920}>
+            <PageTarifs />
+          </DCArtboard>
+          <DCArtboard id="faq" label="FAQ" width={1440} height={1100}>
+            <PageFAQ />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="parcours-desktop" title="02 · Parcours client — Desktop" subtitle="Du quiz au suivi de dossier">
+          <DCArtboard id="quiz" label="Quiz 90s" width={1280} height={800}>
+            <Quiz />
+          </DCArtboard>
+          <DCArtboard id="p1" label="Choix de la forme" width={1280} height={900}>
+            <Parcours step={0} />
+          </DCArtboard>
+          <DCArtboard id="p2" label="Simulation prix" width={1280} height={900}>
+            <Parcours step={1} />
+          </DCArtboard>
+          <DCArtboard id="p3" label="Formulaire identité" width={1280} height={1100}>
+            <Parcours step={2} />
+          </DCArtboard>
+          <DCArtboard id="upload" label="Upload documents" width={1280} height={900}>
+            <Upload />
+          </DCArtboard>
+          <DCArtboard id="p5" label="Paiement Mobile Money" width={1280} height={900}>
+            <Parcours step={4} />
+          </DCArtboard>
+          <DCArtboard id="p6" label="Suivi du dossier" width={1280} height={900}>
+            <Parcours step={5} />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="parcours-mobile" title="03 · Parcours client — Mobile" subtitle="Le marché UEMOA est mobile-first">
+          <DCArtboard id="m1" label="Accueil" width={402} height={874}>
+            <MobileWrap Screen={MobileHero} />
+          </DCArtboard>
+          <DCArtboard id="m2" label="Choix de la forme" width={402} height={874}>
+            <MobileWrap Screen={MobileChoix} />
+          </DCArtboard>
+          <DCArtboard id="m3" label="Paiement" width={402} height={874}>
+            <MobileWrap Screen={MobilePaiement} />
+          </DCArtboard>
+          <DCArtboard id="m4" label="Suivi" width={402} height={874}>
+            <MobileWrap Screen={MobileSuivi} />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="partner" title="04 · Backoffice partenaire" subtitle="Cabinets / consultants">
+          <DCArtboard id="bp1" label="Dashboard — dossiers" width={1440} height={900}>
+            <PartnerDashboard />
+          </DCArtboard>
+          <DCArtboard id="bp2" label="Détail dossier client" width={1440} height={900}>
+            <PartnerDossier />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="admin" title="05 · Administration" subtitle="Vue plateforme — KPI globaux">
+          <DCArtboard id="ad1" label="Vue d'ensemble" width={1440} height={900}>
+            <AdminDashboard />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Marque & copy" />
+        <TweakText label="Nom de marque" value={t.brandName} onChange={(v) => setTweak('brandName', v)} />
+        <TweakText label="Titre hero" value={t.headline} onChange={(v) => setTweak('headline', v)} />
+        <TweakText label="Badge hero" value={t.heroBadge} onChange={(v) => setTweak('heroBadge', v)} />
+        <TweakText label="Texte CTA" value={t.ctaLabel} onChange={(v) => setTweak('ctaLabel', v)} />
+
+        <TweakSection label="Typographie" />
+        <TweakSelect label="Display" value={t.fontDisplay}
+          options={['Geist', 'Inter', 'Poppins']}
+          onChange={(v) => setTweak('fontDisplay', v)} />
+        <TweakSelect label="Body" value={t.fontBody}
+          options={['Geist', 'Inter', 'Poppins']}
+          onChange={(v) => setTweak('fontBody', v)} />
+        <TweakSelect label="Serif accent" value={t.fontSerif}
+          options={['Instrument Serif', 'Geist', 'Inter']}
+          onChange={(v) => setTweak('fontSerif', v)} />
+
+        <TweakSection label="Couleurs primaires" />
+        <TweakColor label="Bleu principal" value={t.primaryColor} onChange={(v) => setTweak('primaryColor', v)} />
+        <TweakColor label="Bleu foncé" value={t.primaryDark} onChange={(v) => setTweak('primaryDark', v)} />
+        <TweakColor label="Bleu profond" value={t.primaryDeep} onChange={(v) => setTweak('primaryDeep', v)} />
+        <TweakColor label="Encre (texte)" value={t.inkColor} onChange={(v) => setTweak('inkColor', v)} />
+        <TweakColor label="Papier (fond)" value={t.paperColor} onChange={(v) => setTweak('paperColor', v)} />
+        <TweakColor label="Canvas" value={t.canvasColor} onChange={(v) => setTweak('canvasColor', v)} />
+
+        <TweakSection label="Accents data viz" />
+        <TweakColor label="Vert (succès)" value={t.accentMint} onChange={(v) => setTweak('accentMint', v)} />
+        <TweakColor label="Ambre (alerte)" value={t.accentAmber} onChange={(v) => setTweak('accentAmber', v)} />
+        <TweakColor label="Rose (erreur)" value={t.accentRose} onChange={(v) => setTweak('accentRose', v)} />
+
+        <TweakSection label="Forme & échelle" />
+        <TweakSlider label="Rayon coins" min={0.5} max={2} step={0.1} value={t.radiusScale}
+          onChange={(v) => setTweak('radiusScale', v)} />
+        <TweakSlider label="Intensité gradient" min={0.4} max={1.4} step={0.05} value={t.gradientIntensity}
+          onChange={(v) => setTweak('gradientIntensity', v)} />
+        <TweakRadio label="Boutons" value={t.buttonShape}
+          options={[{value: 'pill', label: 'Pilule'}, {value: 'square', label: 'Carrés'}]}
+          onChange={(v) => setTweak('buttonShape', v)} />
+
+        <TweakSection label="Hero vitrine" />
+        <TweakRadio label="Variation" value={t.heroVariant}
+          options={[{value: 'A', label: 'Bold'}, {value: 'B', label: 'Éditorial'}]}
+          onChange={(v) => setTweak('heroVariant', v)} />
+        <TweakToggle label="Texture grain" value={t.showGrain} onChange={(v) => setTweak('showGrain', v)} />
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
