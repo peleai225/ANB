@@ -31,7 +31,7 @@ const VitrineNav = ({ light = false }) => {
     { l: 'FAQ', p: '/faq' },
   ];
   return (
-  <div style={{
+  <div data-vitrine-nav style={{
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     padding: '20px 56px',
     color: light ? 'white' : 'var(--ink-900)',

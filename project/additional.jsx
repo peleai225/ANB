@@ -230,7 +230,7 @@ const PartnerOnboarding = () => {
   return (
     <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'var(--paper)' }}>
+      <div data-parcours-header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'var(--paper)' }}>
         <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <span style={{ fontSize: 12, color: 'var(--ink-500)' }}>Onboarding partenaire · Étape {active + 1}/4</span>

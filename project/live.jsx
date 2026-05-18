@@ -128,7 +128,123 @@ function NotFound({ path }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Sitemap overlay — accessible via Cmd+K / Ctrl+K
+// Mobile drawer — slides in from the right, holds primary nav
+// (shown only on mobile via CSS media query)
+// ─────────────────────────────────────────────────────────────
+function MobileNav({ open, onClose, route, t, setTweak }) {
+  const nav = useNav();
+  const go = (p) => { nav(p); onClose(); };
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [open, onClose]);
+
+  return (
+    <>
+      <div className={'live-mobile-nav-backdrop' + (open ? ' open' : '')} onClick={onClose} />
+      <aside className={'live-mobile-nav-drawer' + (open ? ' open' : '')} aria-hidden={!open}>
+        <header>
+          <Logo size={26} />
+          <button onClick={onClose} aria-label="Fermer le menu"><Icon name="close" size={18} /></button>
+        </header>
+        <nav>
+          <button className={'live-mobile-nav-link primary'} onClick={() => go('/quiz')}>
+            <span>Créer mon entreprise</span>
+            <Icon name="arrow" size={14} />
+          </button>
+
+          <div className="live-mobile-nav-section">Navigation</div>
+          {[
+            ['Accueil', '/', 'home'],
+            ['Tarifs', '/tarifs', 'money'],
+            ['FAQ', '/faq', 'doc'],
+            ['Contact', '/contact', 'mail'],
+          ].map(([l, p, icon]) => (
+            <button key={p} className={'live-mobile-nav-link' + (route === p ? ' active' : '')} onClick={() => go(p)}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+                <Icon name={icon} size={16} />
+                {l}
+              </span>
+              <Icon name="chev" size={14} />
+            </button>
+          ))}
+
+          <div className="live-mobile-nav-section">Mon compte</div>
+          {[
+            ['Espace partenaire', '/partenaire/dashboard', 'user'],
+            ['Suivi de mon dossier', '/creer/suivi', 'clock'],
+            ['Devenir partenaire', '/partenaire', 'layers'],
+          ].map(([l, p, icon]) => (
+            <button key={p} className={'live-mobile-nav-link' + (route === p ? ' active' : '')} onClick={() => go(p)}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+                <Icon name={icon} size={16} />
+                {l}
+              </span>
+              <Icon name="chev" size={14} />
+            </button>
+          ))}
+
+          <div className="live-mobile-nav-section">Démos design</div>
+          {[
+            ['Aperçu mobile', '/mobile', 'phone'],
+            ['Email RCCM', '/showcase/email', 'mail'],
+            ['Facture A4', '/showcase/facture', 'doc'],
+            ['Admin plateforme', '/admin', 'settings'],
+          ].map(([l, p, icon]) => (
+            <button key={p} className={'live-mobile-nav-link' + (route === p ? ' active' : '')} onClick={() => go(p)}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+                <Icon name={icon} size={16} />
+                {l}
+              </span>
+              <Icon name="chev" size={14} />
+            </button>
+          ))}
+        </nav>
+        <div className="live-mobile-nav-footer">
+          <span>Thème</span>
+          <button onClick={() => setTweak('darkMode', !t.darkMode)} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '6px 12px', borderRadius: 999,
+            background: t.darkMode ? 'var(--ink-100)' : 'var(--ink-900)',
+            color: t.darkMode ? 'var(--ink-900)' : 'white',
+            border: 'none', cursor: 'pointer',
+            fontSize: 13, fontFamily: 'inherit',
+          }}>
+            <Icon name="moon" size={13} /> {t.darkMode ? 'Mode clair' : 'Mode sombre'}
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Mobile header — sticky top bar (mobile only via CSS)
+// ─────────────────────────────────────────────────────────────
+function MobileHeader({ onOpenNav }) {
+  const nav = useNav();
+  return (
+    <header className="live-mobile-header">
+      <div onClick={() => nav('/')} style={{ cursor: 'pointer' }}>
+        <Logo size={26} />
+      </div>
+      <button onClick={onOpenNav} aria-label="Ouvrir le menu">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M3 6h16M3 11h16M3 16h16" />
+        </svg>
+      </button>
+    </header>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Sitemap overlay — accessible via Cmd+K / Ctrl+K (desktop)
 // ─────────────────────────────────────────────────────────────
 function Sitemap({ open, onClose }) {
   const nav = useNav();
@@ -178,7 +294,7 @@ function Sitemap({ open, onClose }) {
 // ─────────────────────────────────────────────────────────────
 function LiveToolbar({ onOpenMap, t, setTweak }) {
   return (
-    <div style={{
+    <div className="live-toolbar" style={{
       position: 'fixed', top: 12, right: 12, zIndex: 2147483640,
       display: 'flex', gap: 6, padding: 6,
       background: 'rgba(255,255,255,.78)',
@@ -285,6 +401,7 @@ function LiveApp() {
   const [t, setTweak] = useTweaks(LIVE_TWEAK_DEFAULTS);
   const route = useRoute();
   const [mapOpen, setMapOpen] = React.useState(false);
+  const [navOpen, setNavOpen] = React.useState(false);
 
   // Mark body as live-mode → enables the responsive CSS overrides
   React.useEffect(() => {
@@ -366,9 +483,11 @@ function LiveApp() {
 
   return (
     <NavCtx.Provider value={goTo}>
+      <MobileHeader onOpenNav={() => setNavOpen(true)} />
       <Router route={route} heroVariant={t.heroVariant} />
       <LiveToolbar onOpenMap={() => setMapOpen(true)} t={t} setTweak={setTweak} />
       <Sitemap open={mapOpen} onClose={() => setMapOpen(false)} />
+      <MobileNav open={navOpen} onClose={() => setNavOpen(false)} route={route} t={t} setTweak={setTweak} />
 
       <TweaksPanel title="Tweaks · Rebrand">
         <TweakSection label="Marque & copy" />

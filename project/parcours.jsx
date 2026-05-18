@@ -21,7 +21,7 @@ const ParcoursStepBar = ({ active = 0 }) => {
 const AppHeader = () => {
   const nav = useNav();
   return (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
+  <div data-parcours-header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
     <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <button className="btn btn-sm btn-ghost"><Icon name="whatsapp" size={14} /> Aide</button>

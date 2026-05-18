@@ -142,7 +142,7 @@ const Quiz = () => {
   const nav = useNav();
   return (
   <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800 }}>
-    <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div data-parcours-header style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <span style={{ fontSize: 12, color: 'var(--ink-500)' }}>Question 3 sur 5</span>
@@ -200,7 +200,7 @@ const Upload = () => {
   ];
   return (
     <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800 }}>
-      <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div data-parcours-header style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
         <div className="ava">AD</div>
       </div>
