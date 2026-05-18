@@ -178,9 +178,11 @@ function MobileNav({ open, onClose, route, t, setTweak }) {
 
           <div className="live-mobile-nav-section">Mon compte</div>
           {[
-            ['Espace partenaire', '/partenaire/dashboard', 'user'],
+            ['Connexion', '/connexion', 'user'],
+            ['Créer un compte', '/inscription', 'plus'],
             ['Suivi de mon dossier', '/creer/suivi', 'clock'],
-            ['Devenir partenaire', '/partenaire', 'layers'],
+            ['Espace partenaire', '/partenaire/dashboard', 'layers'],
+            ['Devenir partenaire', '/partenaire', 'sparkle'],
           ].map(([l, p, icon]) => (
             <button key={p} className={'live-mobile-nav-link' + (route === p ? ' active' : '')} onClick={() => go(p)}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
@@ -244,115 +246,8 @@ function MobileHeader({ onOpenNav }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// WhatsApp FAB — floating action button, always visible
-// ─────────────────────────────────────────────────────────────
-function WhatsAppFAB() {
-  const [hovered, setHovered] = React.useState(false);
-  return (
-    <a
-      href="https://wa.me/2250787448857"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="live-whatsapp-fab"
-      title="Discuter sur WhatsApp — réponse en 5 min"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ position: 'relative' }}
-    >
-      <Icon name="whatsapp" size={26} color="white" />
-      {hovered && (
-        <span style={{
-          position: 'absolute', right: 66, bottom: 10,
-          whiteSpace: 'nowrap', pointerEvents: 'none',
-          background: 'var(--ink-900, #0A0E1A)', color: 'white',
-          padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: '0 4px 16px rgba(0,0,0,.25)',
-          fontFamily: 'var(--font-body)',
-        }}>Réponse en moins de 5 min</span>
-      )}
-    </a>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Sitemap overlay — accessible via Cmd+K / Ctrl+K (desktop)
-// ─────────────────────────────────────────────────────────────
-function Sitemap({ open, onClose }) {
-  const nav = useNav();
-  if (!open) return null;
-  const go = (p) => { nav(p); onClose(); };
-  const groups = [
-    { t: 'Vitrine', items: [['Accueil', '/'], ['Tarifs', '/tarifs'], ['À propos', '/apropos'], ['FAQ', '/faq'], ['Contact', '/contact']] },
-    { t: 'Parcours client', items: [['Quiz 90s', '/quiz'], ['Choix forme', '/creer'], ['Simulation', '/creer/simulation'], ['Identité société', '/creer/identite'], ['Documents', '/creer/documents'], ['Paiement', '/creer/paiement'], ['Suivi dossier', '/creer/suivi']] },
-    { t: 'Mobile', items: [['Aperçu 4 écrans', '/mobile']] },
-    { t: 'Espace partenaire', items: [['Onboarding cabinet', '/partenaire'], ['Dashboard', '/partenaire/dashboard'], ['Détail dossier', '/partenaire/dossier']] },
-    { t: 'Admin & docs', items: [['Vue admin', '/admin'], ['Email RCCM', '/showcase/email'], ['Facture A4', '/showcase/facture']] },
-  ];
-  return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 2147483645, background: 'rgba(10,14,26,.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8vh', fontFamily: 'var(--font-body)' }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 720, maxWidth: '90vw', maxHeight: '80vh', overflow: 'auto', background: 'var(--paper, #FFFFFF)', borderRadius: 16, padding: 32, boxShadow: '0 30px 80px rgba(0,0,0,.4)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--ink-200)' }}>
-          <div>
-            <div className="display-num" style={{ fontSize: 24, color: 'var(--ink-900)' }}>Plan du site</div>
-            <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 4 }}>{groups.reduce((s, g) => s + g.items.length, 0)} pages · raccourci <kbd style={{ background: 'var(--ink-100)', padding: '1px 6px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 11 }}>⌘K</kbd></div>
-          </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--ink-500)', fontSize: 22, lineHeight: 1 }}>×</button>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 28 }}>
-          {groups.map((g) => (
-            <div key={g.t}>
-              <div style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>{g.t}</div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {g.items.map(([l, p]) => (
-                  <div key={p} onClick={() => go(p)} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 6, cursor: 'pointer', alignItems: 'center', fontSize: 14, color: 'var(--ink-800)' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--ink-100)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                    <span>{l}</span>
-                    <span style={{ fontSize: 11, color: 'var(--ink-400)', fontFamily: 'var(--font-mono)' }}>{p}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Live shell — top-right floating toolbar (sitemap + theme + canvas link)
-// ─────────────────────────────────────────────────────────────
-function LiveToolbar({ onOpenMap, t, setTweak }) {
-  return (
-    <div className="live-toolbar" style={{
-      position: 'fixed', top: 12, right: 12, zIndex: 2147483640,
-      display: 'flex', gap: 6, padding: 6,
-      background: 'rgba(255,255,255,.78)',
-      backdropFilter: 'blur(20px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-      borderRadius: 12, border: '0.5px solid rgba(255,255,255,.6)',
-      boxShadow: '0 8px 30px rgba(0,0,0,.15)',
-      fontFamily: 'var(--font-body)',
-    }}>
-      <button onClick={onOpenMap} title="Plan du site (⌘K)" style={btnStyle}>
-        <Icon name="grid" size={14} /> <span style={{ fontSize: 12, marginLeft: 6 }}>Plan du site</span>
-      </button>
-      <button onClick={() => setTweak('darkMode', !t.darkMode)} title="Mode sombre" style={btnStyle}>
-        <Icon name="moon" size={14} />
-      </button>
-    </div>
-  );
-}
-const btnStyle = {
-  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-  height: 30, padding: '0 10px',
-  background: 'rgba(255,255,255,.5)',
-  border: '0.5px solid rgba(0,0,0,.08)', borderRadius: 8,
-  color: 'var(--ink-900, #0A0E1A)', cursor: 'pointer',
-  fontFamily: 'inherit',
-};
+// (Sitemap overlay & LiveToolbar removed — primary nav handles routing,
+// dark-mode toggle now lives in the mobile drawer footer only.)
 
 // ─────────────────────────────────────────────────────────────
 // Router — maps URL hash to component, all wrapped in PageViewport
@@ -366,6 +261,8 @@ function Router({ route, heroVariant = 'B' }) {
     case '/faq':           return <PageViewport bg="white"><PageFAQ /></PageViewport>;
     case '/contact':       return <PageViewport bg="white"><PageContact /></PageViewport>;
     case '/apropos':       return <PageViewport bg="white"><PageAPropos /></PageViewport>;
+    case '/connexion':     return <PageViewport bg="var(--ink-50)"><PageSignIn /></PageViewport>;
+    case '/inscription':   return <PageViewport bg="var(--ink-50)"><PageSignUp /></PageViewport>;
     case '/quiz':          return <PageViewport bg="var(--ink-50)"><Quiz /></PageViewport>;
     case '/creer':         return <PageViewport bg="var(--ink-50)"><Parcours step={0} /></PageViewport>;
     case '/creer/simulation': return <PageViewport bg="var(--ink-50)"><Parcours step={1} /></PageViewport>;
@@ -433,7 +330,6 @@ function _lighten(hex, amt) {
 function LiveApp() {
   const [t, setTweak] = useTweaks(LIVE_TWEAK_DEFAULTS);
   const route = useRoute();
-  const [mapOpen, setMapOpen] = React.useState(false);
   const [navOpen, setNavOpen] = React.useState(false);
 
   // Mark body as live-mode → enables the responsive CSS overrides
@@ -500,28 +396,11 @@ function LiveApp() {
     window.dispatchEvent(new CustomEvent('pas-copy-update'));
   }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle, t.cabinetName, t.cabinetCity, t.cabinetEmail, t.cabinetPhone, t.heroVariant]);
 
-  // Keyboard shortcuts
-  React.useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setMapOpen((o) => !o);
-      } else if (e.key === 'Escape') {
-        setMapOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
   return (
     <NavCtx.Provider value={goTo}>
       <MobileHeader onOpenNav={() => setNavOpen(true)} />
       <Router route={route} heroVariant={t.heroVariant} />
-      <LiveToolbar onOpenMap={() => setMapOpen(true)} t={t} setTweak={setTweak} />
-      <Sitemap open={mapOpen} onClose={() => setMapOpen(false)} />
       <MobileNav open={navOpen} onClose={() => setNavOpen(false)} route={route} t={t} setTweak={setTweak} />
-      <WhatsAppFAB />
 
       <TweaksPanel title="Tweaks · Rebrand">
         <TweakSection label="Marque & copy" />
@@ -563,4 +442,4 @@ function LiveApp() {
   );
 }
 
-Object.assign(window, { LiveApp, useRoute, goTo, PageViewport, MobilePreview, Sitemap });
+Object.assign(window, { LiveApp, useRoute, goTo, PageViewport, MobilePreview });

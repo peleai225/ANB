@@ -222,6 +222,212 @@ const PageContact = () => {
 };
 
 // ─────────────────────────────────────────────────────────────
+// AUTH — Login (PageSignIn) + Sign-up (PageSignUp)
+// Split layout: brand panel (left) + form (right).
+// Two-step responsive: stack on mobile via data-auth-grid CSS rules.
+// ─────────────────────────────────────────────────────────────
+const AuthShell = ({ children, eyebrow, title, subtitle, footer }) => {
+  const nav = useNav();
+  return (
+    <div className="pas" style={{ width: 1440, minHeight: 900, background: 'var(--paper)' }}>
+      <div data-auth-grid style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 900 }}>
+        {/* Brand panel — left */}
+        <div data-auth-brand style={{
+          background: 'var(--grad-hero)',
+          color: 'white',
+          padding: '56px 56px 48px',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)', pointerEvents: 'none' }} />
+          {/* Top — logo + back link */}
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light /></span>
+            <button onClick={() => nav('/')} className="btn btn-sm" style={{ background: 'rgba(255,255,255,.08)', color: 'white', border: '1px solid rgba(255,255,255,.18)' }}>
+              <Icon name="arrow" size={12} style={{ transform: 'rotate(180deg)' }} /> Retour au site
+            </button>
+          </div>
+
+          {/* Middle — quote */}
+          <div style={{ position: 'relative', maxWidth: 420 }}>
+            <div style={{ width: 44, height: 3, background: 'var(--brand-red)', marginBottom: 24 }} />
+            <p className="serif" style={{ font: '500 32px/1.35 var(--font-serif)', fontStyle: 'italic', color: 'white', margin: '0 0 24px', letterSpacing: '-0.01em' }}>
+              « ANB Corporate a immatriculé ma SARL en 3 jours. L'accompagnement comptable mensuel est devenu indispensable. »
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: '600 13px/1 var(--font-display)' }}>EH</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>Eric Houphouët</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>CEO, E.H.M Group</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom — trust signals */}
+          <div style={{ position: 'relative', display: 'flex', gap: 24, flexWrap: 'wrap', fontSize: 12, color: 'rgba(255,255,255,.65)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Icon name="lock" size={12} /> Chiffrement TLS 1.3
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Icon name="shield" size={12} /> RGPD · Loi 2013-450
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Icon name="check" size={12} /> 99,98% uptime
+            </span>
+          </div>
+        </div>
+
+        {/* Form panel — right */}
+        <div data-auth-form style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '56px' }}>
+          <div style={{ width: '100%', maxWidth: 440 }}>
+            <div className="brand-eyebrow" style={{ marginBottom: 18 }}>{eyebrow}</div>
+            <h1 style={{ font: '500 44px/1 var(--font-display)', letterSpacing: '-0.035em', margin: '0 0 12px' }}>{title}</h1>
+            <p style={{ fontSize: 15, color: 'var(--ink-500)', margin: '0 0 32px', lineHeight: 1.5 }}>{subtitle}</p>
+            {children}
+            {footer}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SocialButton = ({ icon, label, onClick }) => (
+  <button onClick={onClick} className="btn" style={{
+    background: 'white', color: 'var(--ink-800)', border: '1px solid var(--ink-200)',
+    flex: 1, justifyContent: 'center', gap: 10,
+  }}>
+    {icon} {label}
+  </button>
+);
+
+const PageSignIn = () => {
+  const nav = useNav();
+  return (
+    <AuthShell
+      eyebrow="Connexion · Espace client"
+      title="Bon retour."
+      subtitle="Connectez-vous pour suivre vos dossiers, consulter vos documents et échanger avec votre comptable dédié."
+      footer={
+        <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid var(--ink-200)', textAlign: 'center', fontSize: 14, color: 'var(--ink-500)' }}>
+          Pas encore de compte ?{' '}
+          <span onClick={() => nav('/inscription')} style={{ color: 'var(--blue-600)', fontWeight: 500, cursor: 'pointer' }}>Créer un compte</span>
+        </div>
+      }
+    >
+      {/* Social */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+        <SocialButton label="Google" icon={
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.2 4 9.5 8.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.5l-6.5-5.5c-2 1.4-4.5 2.3-7.5 2.3-5.3 0-9.7-3.3-11.3-8l-6.6 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4 5.6l6.5 5.5C42.3 35.2 44 30 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+        } />
+        <SocialButton label="Apple" icon={
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-3.16 2.58-4.68 2.7-4.76-1.47-2.15-3.76-2.45-4.57-2.48-1.94-.2-3.78 1.14-4.77 1.14-.98 0-2.5-1.11-4.11-1.08-2.11.03-4.06 1.23-5.15 3.12-2.2 3.82-.56 9.46 1.58 12.55 1.04 1.51 2.28 3.21 3.9 3.15 1.57-.06 2.16-1.02 4.06-1.02 1.9 0 2.43 1.02 4.08.98 1.69-.03 2.76-1.54 3.79-3.06 1.2-1.75 1.69-3.45 1.72-3.54-.04-.02-3.29-1.26-3.32-5zm-3.13-9.18c.87-1.05 1.46-2.5 1.3-3.95-1.25.05-2.78.83-3.68 1.88-.81.93-1.51 2.42-1.32 3.84 1.39.11 2.82-.71 3.7-1.77z"/></svg>
+        } />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0 24px', color: 'var(--ink-400)' }}>
+        <span style={{ flex: 1, height: 1, background: 'var(--ink-200)' }} />
+        <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>ou par email</span>
+        <span style={{ flex: 1, height: 1, background: 'var(--ink-200)' }} />
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div>
+          <label className="label">Email</label>
+          <input className="input" type="email" placeholder="vous@entreprise.ci" />
+        </div>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <label className="label">Mot de passe</label>
+            <span style={{ fontSize: 12, color: 'var(--blue-600)', cursor: 'pointer' }}>Oublié ?</span>
+          </div>
+          <input className="input" type="password" placeholder="••••••••" />
+        </div>
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--ink-600)', cursor: 'pointer' }}>
+          <input type="checkbox" defaultChecked style={{ accentColor: 'var(--blue-600)' }} />
+          Garder ma session ouverte 30 jours
+        </label>
+
+        <button onClick={() => nav('/partenaire/dashboard')} className="btn btn-primary btn-lg" style={{ marginTop: 8, width: '100%', justifyContent: 'center' }}>
+          Se connecter <Icon name="arrow" size={16} />
+        </button>
+      </div>
+
+      <div style={{ marginTop: 24, fontSize: 12, color: 'var(--ink-400)', textAlign: 'center' }}>
+        Connexion sécurisée · 2FA disponible dans les réglages
+      </div>
+    </AuthShell>
+  );
+};
+
+const PageSignUp = () => {
+  const nav = useNav();
+  return (
+    <AuthShell
+      eyebrow="Inscription · 30 secondes"
+      title="Créez votre compte ANB."
+      subtitle="Suivez votre dossier en temps réel, signez vos documents en ligne et bénéficiez du support de nos experts."
+      footer={
+        <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--ink-200)', textAlign: 'center', fontSize: 14, color: 'var(--ink-500)' }}>
+          Déjà un compte ?{' '}
+          <span onClick={() => nav('/connexion')} style={{ color: 'var(--blue-600)', fontWeight: 500, cursor: 'pointer' }}>Se connecter</span>
+        </div>
+      }
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div>
+            <label className="label">Prénom</label>
+            <input className="input" placeholder="Aïssata" />
+          </div>
+          <div>
+            <label className="label">Nom</label>
+            <input className="input" placeholder="Diallo" />
+          </div>
+        </div>
+        <div>
+          <label className="label">Email professionnel</label>
+          <input className="input" type="email" placeholder="vous@entreprise.ci" />
+        </div>
+        <div>
+          <label className="label">Numéro WhatsApp</label>
+          <input className="input" type="tel" placeholder="+225 07 00 00 00 00" />
+        </div>
+        <div>
+          <label className="label">Mot de passe</label>
+          <input className="input" type="password" placeholder="Minimum 8 caractères" />
+          <div style={{ fontSize: 11, color: 'var(--ink-400)', marginTop: 6 }}>
+            Au moins 1 majuscule, 1 chiffre, 1 caractère spécial.
+          </div>
+        </div>
+        <label style={{ display: 'inline-flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--ink-600)', cursor: 'pointer', lineHeight: 1.45, marginTop: 4 }}>
+          <input type="checkbox" defaultChecked style={{ accentColor: 'var(--blue-600)', marginTop: 2 }} />
+          <span>
+            J'accepte les <span style={{ color: 'var(--blue-600)' }}>Conditions Générales</span> et la <span style={{ color: 'var(--blue-600)' }}>Politique de Confidentialité</span>.
+          </span>
+        </label>
+
+        <button onClick={() => nav('/quiz')} className="btn btn-primary btn-lg" style={{ marginTop: 8, width: '100%', justifyContent: 'center' }}>
+          Créer mon compte <Icon name="arrow" size={16} />
+        </button>
+
+        {/* Or sign up with social */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '12px 0 4px', color: 'var(--ink-400)' }}>
+          <span style={{ flex: 1, height: 1, background: 'var(--ink-200)' }} />
+          <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>ou</span>
+          <span style={{ flex: 1, height: 1, background: 'var(--ink-200)' }} />
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <SocialButton label="Continuer avec Google" icon={
+            <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.2 4 9.5 8.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.5l-6.5-5.5c-2 1.4-4.5 2.3-7.5 2.3-5.3 0-9.7-3.3-11.3-8l-6.6 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4 5.6l6.5 5.5C42.3 35.2 44 30 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+          } />
+        </div>
+      </div>
+    </AuthShell>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────
 // PARTNER ONBOARDING — flow pour un cabinet qui rejoint la plateforme
 // ─────────────────────────────────────────────────────────────
 
@@ -623,4 +829,4 @@ const InvoicePDF = () => {
   );
 };
 
-Object.assign(window, { PageContact, PartnerOnboarding, EmailMockup, InvoicePDF });
+Object.assign(window, { PageContact, PartnerOnboarding, EmailMockup, InvoicePDF, PageSignIn, PageSignUp, AuthShell });
