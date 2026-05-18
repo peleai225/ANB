@@ -556,6 +556,86 @@ body.live-mode .pas [data-bo-table] > div { min-width: 640px; }
   body.live-mode .pas [style*="position: sticky"] { position: static !important; }
 }
 
+/* ═════════════════════════════════════════════════════════════
+   BACKOFFICE responsive — applies in live mode only.
+   The canvas keeps its fixed 1440x900 framing for design review.
+   ═════════════════════════════════════════════════════════════ */
+body.live-mode .pas [data-bo-shell] {
+  width: 100% !important;
+  max-width: 100vw !important;
+  height: auto !important;
+  min-height: 100vh !important;
+}
+body.live-mode .pas [data-bo-content] {
+  overflow: visible !important;
+}
+
+/* Detail / service grids stack on tablet */
+@media (max-width: 1100px) {
+  body.live-mode .pas [data-bo-detail-grid] {
+    grid-template-columns: 1fr !important;
+  }
+  body.live-mode .pas [data-bo-stats-grid] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Tablet: sidebar narrows */
+@media (max-width: 1024px) and (min-width: 901px) {
+  body.live-mode .pas [data-sidenav] { width: 64px !important; padding: 16px 8px !important; }
+  body.live-mode .pas [data-sidenav-label] { display: none !important; }
+  body.live-mode .pas [data-sidenav-cabinet] { justify-content: center; }
+}
+
+/* Mobile: sidebar becomes a slide-in drawer */
+@media (max-width: 900px) {
+  body.live-mode .pas [data-bo-sidebar] {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 0 0 40px rgba(0,0,0,.3);
+  }
+  body.live-mode .pas [data-bo-sidebar][data-open="true"] {
+    transform: translateX(0);
+  }
+  body.live-mode .pas [data-bo-sidebar] [data-sidenav-close] {
+    display: inline-flex !important;
+  }
+  body.live-mode .pas [data-bo-backdrop] {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(15,26,46,.55);
+    backdrop-filter: blur(2px);
+  }
+  body.live-mode .pas [data-bo-burger] {
+    display: inline-flex !important;
+  }
+  body.live-mode .pas [data-bo-topbar] {
+    padding: 14px 16px !important;
+  }
+  body.live-mode .pas [data-bo-search] {
+    display: none !important;
+  }
+  body.live-mode .pas [data-bo-content] {
+    padding: 16px !important;
+  }
+  body.live-mode .pas [data-bo-stats-grid] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  body.live-mode .pas [data-bo-topbar-sub] {
+    display: none !important;
+  }
+}
+
+/* Small phone: stat cards stack to 1 col */
+@media (max-width: 480px) {
+  body.live-mode .pas [data-bo-stats-grid] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ── Partners grid responsive ── */
 @media (max-width: 1024px) {
   body.live-mode .pas [data-partners] { padding: 64px 24px !important; }
@@ -3347,110 +3427,173 @@ const useCabinet = () => {
   };
 };
 
-const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
+// Grouped nav structure — each section has a label + items.
+// Active item is derived from the current URL prefix so the highlight
+// follows the user automatically across pages.
+const PARTNER_GROUPS = [
+  { l: 'Activité', items: [
+    { k: 'home',     l: 'Tableau de bord', i: 'home',   route: '/partenaire/dashboard', match: ['/partenaire/dashboard'] },
+    { k: 'dossiers', l: 'Dossiers',        i: 'folder', route: '/partenaire/dashboard', b: '24', match: ['/partenaire/dossier'] },
+    { k: 'clients',  l: 'Clients',         i: 'users',  route: '/partenaire/clients',  b: '187', match: ['/partenaire/clients'] },
+    { k: 'docs',     l: 'Documents',       i: 'doc',    route: '/partenaire/documents', match: ['/partenaire/documents'] },
+  ]},
+  { l: 'Services', items: [
+    { k: 'compta',   l: 'Comptabilité',          i: 'chart',   route: '/partenaire/services/comptabilite', match: ['/partenaire/services/comptabilite'] },
+    { k: 'jur',      l: 'Juridique',             i: 'shield',  route: '/partenaire/services/juridique',    b: '6', match: ['/partenaire/services/juridique'] },
+    { k: 'fin',      l: 'Financement',           i: 'money',   route: '/partenaire/services/financement',  match: ['/partenaire/services/financement'] },
+    { k: 'repres',   l: 'Représentation',        i: 'layers',  route: '/partenaire/services/representation', match: ['/partenaire/services/representation'] },
+    { k: 'form',     l: 'Formation',             i: 'sparkle', route: '/partenaire/services/formation',    match: ['/partenaire/services/formation'] },
+    { k: 'agr',      l: 'Agréments',             i: 'check',   route: '/partenaire/services/agrements',    match: ['/partenaire/services/agrements'] },
+  ]},
+  { l: 'Finance', items: [
+    { k: 'pay',     l: 'Paiements',     i: 'wallet', route: '/partenaire/paiements',    match: ['/partenaire/paiements'] },
+    { k: 'stats',   l: 'Statistiques',  i: 'chart',  route: '/partenaire/statistiques', match: ['/partenaire/statistiques'] },
+  ]},
+  { l: 'Compte', items: [
+    { k: 'set',     l: 'Paramètres',    i: 'settings', route: '/partenaire/parametres', match: ['/partenaire/parametres'] },
+    { k: 'help',    l: 'Aide & support', i: 'mail',    route: '/partenaire/aide',       match: ['/partenaire/aide'] },
+  ]},
+];
+const ADMIN_GROUPS = [
+  { l: 'Plateforme', items: [
+    { k: 'home',     l: "Vue d'ensemble", i: 'home',   route: '/admin', match: ['/admin'] },
+    { k: 'dossiers', l: 'Dossiers',       i: 'folder', route: '/admin', b: '142', match: ['/admin/dossiers'] },
+    { k: 'clients',  l: 'Clients',        i: 'users',  route: '/admin/clients', match: ['/admin/clients'] },
+    { k: 'partners', l: 'Partenaires',    i: 'layers', route: '/admin/partenaires', b: '24', match: ['/admin/partenaires'] },
+  ]},
+  { l: 'Services', items: [
+    { k: 'compta',   l: 'Comptabilité',          i: 'chart',   route: '/admin/services/comptabilite', match: ['/admin/services/comptabilite'] },
+    { k: 'jur',      l: 'Juridique',             i: 'shield',  route: '/admin/services/juridique',    match: ['/admin/services/juridique'] },
+    { k: 'fin',      l: 'Financement',           i: 'money',   route: '/admin/services/financement',  match: ['/admin/services/financement'] },
+    { k: 'form',     l: 'Formation',             i: 'sparkle', route: '/admin/services/formation',    match: ['/admin/services/formation'] },
+  ]},
+  { l: 'Finance', items: [
+    { k: 'pay',         l: 'Paiements',    i: 'wallet', route: '/admin/paiements',    match: ['/admin/paiements'] },
+    { k: 'commissions', l: 'Commissions',  i: 'money',  route: '/admin/commissions',  match: ['/admin/commissions'] },
+    { k: 'stats',       l: 'Statistiques', i: 'chart',  route: '/admin/statistiques', match: ['/admin/statistiques'] },
+  ]},
+  { l: 'Système', items: [
+    { k: 'set',     l: 'Configuration', i: 'settings', route: '/admin/parametres', match: ['/admin/parametres'] },
+    { k: 'logs',    l: 'Journal d\'événements', i: 'doc', route: '/admin/logs', match: ['/admin/logs'] },
+  ]},
+];
+
+const SideNav = ({ role = 'Partenaire', onClose }) => {
   const cab = useCabinet();
   const nav = useNav();
-  const routeFor = (k) => {
-    if (role === 'Admin') {
-      return ({
-        home: '/admin',
-        dossiers: '/admin',
-        clients: '/admin/clients',
-        partners: '/admin/partenaires',
-        pay: '/admin/paiements',
-        commissions: '/admin/commissions',
-        stats: '/admin/statistiques',
-        set: '/admin/parametres',
-      }[k]) || '/admin';
-    }
-    return ({
-      home: '/partenaire/dashboard',
-      dossiers: '/partenaire/dashboard',
-      clients: '/partenaire/clients',
-      docs: '/partenaire/documents',
-      pay: '/partenaire/paiements',
-      stats: '/partenaire/statistiques',
-      set: '/partenaire/parametres',
-    }[k]) || '/partenaire/dashboard';
-  };
+  const route = (typeof window !== 'undefined' && typeof useRoute === 'function') ? useRoute() : '/';
+  const groups = role === 'Admin' ? ADMIN_GROUPS : PARTNER_GROUPS;
+  // Item is active when current URL starts with one of its `match` prefixes
+  const isActive = (it) => (it.match || []).some((m) => route === m || route.startsWith(m + '/'));
+  const go = (it) => { nav(it.route); if (onClose) onClose(); };
+
   return (
-  <div data-sidenav style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
-    <div style={{ padding: '4px 8px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 12 }}>
-      <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light size={24} /></span>
-      <div data-sidenav-label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
+  <div data-sidenav style={{ width: 240, background: 'var(--ink-900)', color: 'white', padding: '20px 14px 16px', display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
+    <div style={{ padding: '4px 10px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div>
+        <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light size={24} /></span>
+        <div data-sidenav-label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
+      </div>
+      {onClose && (
+        <button data-sidenav-close onClick={onClose} aria-label="Fermer" style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,.7)', cursor: 'pointer', padding: 4, display: 'none' }}>
+          <Icon name="close" size={16} />
+        </button>
+      )}
     </div>
-    {items.map((it) => (
-      <div key={it.k} onClick={() => nav(routeFor(it.k))} title={it.l} style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '8px 10px', borderRadius: 8,
-        background: it.k === active ? 'rgba(255,255,255,.08)' : 'transparent',
-        color: it.k === active ? 'white' : 'rgba(255,255,255,.7)',
-        fontSize: 13, fontWeight: it.k === active ? 500 : 400,
-        cursor: 'pointer',
-      }}>
-        <Icon name={it.i} size={15} />
-        <span data-sidenav-label style={{ flex: 1 }}>{it.l}</span>
-        {it.b && <span data-sidenav-label style={{ background: 'var(--blue-600)', color: 'white', fontSize: 10, padding: '2px 6px', borderRadius: 8, fontWeight: 600 }}>{it.b}</span>}
+
+    {groups.map((g) => (
+      <div key={g.l} style={{ marginBottom: 14 }}>
+        <div data-sidenav-label style={{ fontSize: 10, color: 'rgba(255,255,255,.35)', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6, padding: '0 10px', fontFamily: 'var(--font-mono)' }}>{g.l}</div>
+        {g.items.map((it) => {
+          const active = isActive(it);
+          return (
+            <div key={it.k} onClick={() => go(it)} title={it.l} style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '8px 10px', borderRadius: 8, marginBottom: 2,
+              background: active ? 'rgba(55,82,141,.32)' : 'transparent',
+              color: active ? 'white' : 'rgba(255,255,255,.7)',
+              fontSize: 13, fontWeight: active ? 500 : 400,
+              cursor: 'pointer',
+              borderLeft: active ? '2px solid var(--brand-red)' : '2px solid transparent',
+              paddingLeft: active ? 8 : 10,
+            }}>
+              <Icon name={it.i} size={15} />
+              <span data-sidenav-label style={{ flex: 1 }}>{it.l}</span>
+              {it.b && <span data-sidenav-label style={{ background: active ? 'var(--brand-red)' : 'rgba(255,255,255,.12)', color: 'white', fontSize: 10, padding: '2px 7px', borderRadius: 10, fontWeight: 600 }}>{it.b}</span>}
+            </div>
+          );
+        })}
       </div>
     ))}
-    <div data-sidenav-cabinet style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
+
+    {/* Cabinet card footer */}
+    <div data-sidenav-cabinet style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
       <div className="ava" style={{ background: 'var(--blue-600)', color: 'white' }}>{cab.initials}</div>
       <div style={{ fontSize: 12, minWidth: 0, flex: 1 }}>
         <div style={{ color: 'white', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.name}</div>
         <div style={{ color: 'rgba(255,255,255,.5)', fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.city}</div>
       </div>
+      <Icon name="chevd" size={12} color="rgba(255,255,255,.5)" />
     </div>
   </div>
   );
 };
 
-// Shared nav item lists — referenced by every page so the active highlight matches
-const PARTNER_NAV = [
-  { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '24' },
-  { k: 'clients', l: 'Clients', i: 'users', b: '187' },
-  { k: 'docs', l: 'Documents', i: 'doc' },
-  { k: 'pay', l: 'Paiements', i: 'wallet' },
-  { k: 'stats', l: 'Statistiques', i: 'chart' },
-  { k: 'set', l: 'Paramètres', i: 'settings' },
-];
-const ADMIN_NAV = [
-  { k: 'home', l: "Vue d'ensemble", i: 'home' },
-  { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '142' },
-  { k: 'clients', l: 'Clients', i: 'users' },
-  { k: 'partners', l: 'Partenaires', i: 'layers' },
-  { k: 'pay', l: 'Paiements', i: 'wallet' },
-  { k: 'commissions', l: 'Commissions', i: 'money' },
-  { k: 'stats', l: 'Statistiques', i: 'chart' },
-  { k: 'set', l: 'Configuration', i: 'settings' },
-];
+// Shared nav item lists — kept for backwards compat with existing pages
+const PARTNER_NAV = PARTNER_GROUPS.flatMap((g) => g.items);
+const ADMIN_NAV = ADMIN_GROUPS.flatMap((g) => g.items);
 
-// Shared layout wrapper for every backoffice page
-const BackofficeLayout = ({ active, role = 'Partenaire', title, sub, children, headerExtra }) => (
-  <div className="pas" style={{ width: 1440, minHeight: 900, display: 'flex', background: 'var(--ink-50)' }}>
-    <SideNav active={active} items={role === 'Admin' ? ADMIN_NAV : PARTNER_NAV} role={role} />
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <TopBar title={title} sub={sub} />
-      {headerExtra}
-      <div style={{ flex: 1, padding: 32, overflow: 'auto' }}>{children}</div>
+// Shared layout wrapper for every backoffice page.
+// Handles the mobile drawer state and responsive shell.
+const BackofficeLayout = ({ title, sub, children, headerExtra, role = 'Partenaire' }) => {
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') setDrawerOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
+  return (
+    <div className="pas" data-bo-shell style={{ width: 1440, minHeight: 900, display: 'flex', background: 'var(--ink-50)' }}>
+      {/* Sidebar — wrapped so we can toggle it on mobile */}
+      <div data-bo-sidebar data-open={drawerOpen ? 'true' : 'false'} style={{ flexShrink: 0 }}>
+        <SideNav role={role} onClose={() => setDrawerOpen(false)} />
+      </div>
+      {/* Backdrop for mobile drawer */}
+      {drawerOpen && <div data-bo-backdrop onClick={() => setDrawerOpen(false)} />}
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <TopBar title={title} sub={sub} onOpenDrawer={() => setDrawerOpen(true)} />
+        {headerExtra}
+        <div style={{ flex: 1, padding: 32, overflow: 'auto' }} data-bo-content>{children}</div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const TopBar = ({ title, sub }) => {
+const TopBar = ({ title, sub, onOpenDrawer }) => {
   const [notifOpen, setNotifOpen] = React.useState(false);
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', position: 'relative' }}>
-      <div>
-        <h1 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: 0 }}>{title}</h1>
-        {sub && <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>{sub}</div>}
+    <div data-bo-topbar style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', position: 'relative', gap: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+        {/* Mobile drawer trigger — shown only on mobile via CSS */}
+        {onOpenDrawer && (
+          <button data-bo-burger onClick={onOpenDrawer} aria-label="Ouvrir le menu" style={{ display: 'none', background: 'var(--ink-100)', border: 'none', borderRadius: 8, width: 36, height: 36, alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--ink-700)', flexShrink: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 6h16M3 11h16M3 16h16" /></svg>
+          </button>
+        )}
+        <div style={{ minWidth: 0 }}>
+          <h1 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h1>
+          {sub && <div data-bo-topbar-sub style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{sub}</div>}
+        </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ position: 'relative', width: 280 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        <div data-bo-search style={{ position: 'relative', width: 280 }}>
           <input className="input" placeholder="Rechercher un dossier, un client…" style={{ paddingLeft: 36, height: 36 }} />
           <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-400)' }}><Icon name="search" size={14} /></div>
           <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', font: '500 10px/1 var(--font-mono)', color: 'var(--ink-400)', background: 'var(--ink-100)', padding: '3px 6px', borderRadius: 4 }}>⌘K</span>
         </div>
-        <button onClick={() => setNotifOpen((o) => !o)} className="btn btn-sm btn-ghost" style={{ width: 36, padding: 0, position: 'relative' }}>
+        <button onClick={() => setNotifOpen((o) => !o)} className="btn btn-sm btn-ghost" style={{ width: 36, padding: 0, position: 'relative' }} aria-label="Notifications">
           <Icon name="bell" size={16} />
           <span style={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, borderRadius: '50%', background: 'var(--brand-red)', border: '2px solid white' }} />
         </button>
@@ -3512,23 +3655,9 @@ const PartnerDashboard = () => {
     { ref: 'ANB-2026-04772', client: 'Touré BTP', t: 'SARL', m: 185000, s: 'livre', d: 'il y a 12j', a: 'TB' },
   ];
 
-  const navItems = [
-    { k: 'home', l: 'Vue d\'ensemble', i: 'home' },
-    { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '24' },
-    { k: 'clients', l: 'Clients', i: 'users' },
-    { k: 'docs', l: 'Documents', i: 'doc' },
-    { k: 'pay', l: 'Paiements', i: 'wallet' },
-    { k: 'stats', l: 'Statistiques', i: 'chart' },
-    { k: 'set', l: 'Paramètres', i: 'settings' },
-  ];
-
   return (
-    <div className="pas" style={{ width: 1440, height: 900, display: 'flex', background: 'var(--ink-50)' }}>
-      <SideNav active="dossiers" items={navItems} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <TopBar title="Dossiers" sub="24 dossiers actifs · 6 nouveaux cette semaine" />
-
-        <div style={{ flex: 1, padding: 32, overflow: 'auto' }}>
+    <BackofficeLayout title="Tableau de bord" sub="24 dossiers actifs · 6 nouveaux cette semaine">
+      <div>
           {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
             <StatCard label="Dossiers ce mois" value="24" delta="+18%" deltaPositive />
@@ -3589,48 +3718,32 @@ const PartnerDashboard = () => {
               ))}
             </div>
           </div>
-        </div>
       </div>
-    </div>
+    </BackofficeLayout>
   );
 };
 
 // ── Détail dossier ──
 const PartnerDossier = () => {
   const nav = useNav();
-  const navItems = [
-    { k: 'home', l: 'Vue d\'ensemble', i: 'home' },
-    { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '24' },
-    { k: 'clients', l: 'Clients', i: 'users' },
-    { k: 'docs', l: 'Documents', i: 'doc' },
-    { k: 'pay', l: 'Paiements', i: 'wallet' },
-    { k: 'stats', l: 'Statistiques', i: 'chart' },
-    { k: 'set', l: 'Paramètres', i: 'settings' },
-  ];
   return (
-    <div className="pas" style={{ width: 1440, height: 900, display: 'flex', background: 'var(--ink-50)' }}>
-      <SideNav active="dossiers" items={navItems} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)', marginBottom: 12 }}>
-            <span onClick={() => nav('/partenaire/dashboard')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Dossiers</span> <Icon name="chev" size={11} /> <span>ANB-2026-04812</span>
+    <BackofficeLayout title="Mali Cosmétiques" sub="SARL · Abidjan · Créé le 15 mars 2026"
+      headerExtra={
+        <div style={{ padding: '14px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)' }}>
+            <span onClick={() => nav('/partenaire/dashboard')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Dossiers</span>
+            <Icon name="chev" size={11} />
+            <span>ANB-2026-04812</span>
+            <StatusBadge s="cours" />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <h1 style={{ font: '500 28px/1 var(--font-display)', letterSpacing: '-0.025em', margin: 0 }}>Mali Cosmétiques</h1>
-                <StatusBadge s="cours" />
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 6 }}>SARL · Abidjan · Créé le 15 mars 2026 par Aïssata Diallo</div>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Télécharger tout</button>
-              <button className="btn btn-sm btn-primary">Mettre à jour le statut <Icon name="chevd" size={14} /></button>
-            </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Télécharger tout</button>
+            <button className="btn btn-sm btn-primary">Mettre à jour le statut <Icon name="chevd" size={14} /></button>
           </div>
         </div>
-
-        <div style={{ flex: 1, padding: 32, overflow: 'auto', display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+      }
+    >
+      <div data-bo-detail-grid style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Société */}
             <div className="card" style={{ padding: 24, background: 'white' }}>
@@ -3732,26 +3845,14 @@ const PartnerDossier = () => {
               <div style={{ fontSize: 11, color: 'var(--blue-700)', marginTop: 4, opacity: 0.8 }}>Versée à la livraison du dossier</div>
             </div>
           </div>
-        </div>
       </div>
-    </div>
+    </BackofficeLayout>
   );
 };
 
 // ── Admin ──
 const AdminDashboard = () => {
   const nav = useNav();
-  const navItems = [
-    { k: 'home', l: 'Vue d\'ensemble', i: 'home' },
-    { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '142' },
-    { k: 'clients', l: 'Clients', i: 'users' },
-    { k: 'partners', l: 'Partenaires', i: 'layers' },
-    { k: 'pay', l: 'Paiements', i: 'wallet' },
-    { k: 'commissions', l: 'Commissions', i: 'money' },
-    { k: 'stats', l: 'Statistiques', i: 'chart' },
-    { k: 'set', l: 'Configuration', i: 'settings' },
-  ];
-
   const partners = [
     { n: 'ANB Corporate', city: 'Abidjan', d: 84, ca: 12.4, sat: 4.9, status: 'actif' },
     { n: 'Diop & Associés', city: 'Dakar', d: 67, ca: 9.8, sat: 4.8, status: 'actif' },
@@ -3761,12 +3862,8 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="pas" style={{ width: 1440, height: 900, display: 'flex', background: 'var(--ink-50)' }}>
-      <SideNav active="home" items={navItems} role="Admin" />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <TopBar title="Vue d'ensemble" sub="Performance plateforme · Mars 2026" />
-
-        <div style={{ flex: 1, padding: 32, overflow: 'auto' }}>
+    <BackofficeLayout role="Admin" title="Vue d'ensemble" sub="Performance plateforme · Mars 2026">
+      <div>
           {/* Hero stats — gros chiffres */}
           <div className="card" style={{ padding: 32, background: 'var(--grad-hero)', color: 'white', marginBottom: 24, position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)' }} />
@@ -3854,9 +3951,8 @@ const AdminDashboard = () => {
               ))}
             </div>
           </div>
-        </div>
       </div>
-    </div>
+    </BackofficeLayout>
   );
 };
 
@@ -4175,11 +4271,13 @@ const PartnerParametres = () => {
   const cab = useCabinet();
   const [tab, setTab] = React.useState('profil');
   const tabs = [
-    { k: 'profil',  l: 'Profil cabinet',  i: 'home' },
-    { k: 'team',    l: 'Équipe',           i: 'users' },
-    { k: 'pay',     l: 'Facturation',      i: 'wallet' },
-    { k: 'notif',   l: 'Notifications',    i: 'bell' },
-    { k: 'sec',     l: 'Sécurité',         i: 'shield' },
+    { k: 'profil',  l: 'Profil cabinet',     i: 'home' },
+    { k: 'brand',   l: 'Identité visuelle',  i: 'sparkle' },
+    { k: 'team',    l: 'Équipe',             i: 'users' },
+    { k: 'pay',     l: 'Facturation',        i: 'wallet' },
+    { k: 'plans',   l: 'Forfaits & tarifs',  i: 'money' },
+    { k: 'notif',   l: 'Notifications',      i: 'bell' },
+    { k: 'sec',     l: 'Sécurité',           i: 'shield' },
     { k: 'api',     l: 'API & intégrations', i: 'layers' },
   ];
   return (
@@ -4221,6 +4319,138 @@ const PartnerParametres = () => {
               <div style={{ display: 'flex', gap: 8, marginTop: 28 }}>
                 <button className="btn btn-primary">Enregistrer</button>
                 <button className="btn btn-ghost">Annuler</button>
+              </div>
+            </div>
+          )}
+          {tab === 'brand' && (
+            <div>
+              <h3 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>Identité visuelle</h3>
+              <p style={{ fontSize: 13, color: 'var(--ink-500)', margin: '0 0 28px', lineHeight: 1.5 }}>
+                Personnalisez le logo, les couleurs et la signature de votre cabinet — appliqués sur les emails, factures, devis et l'espace client.
+              </p>
+
+              {/* Logo upload */}
+              <div style={{ marginBottom: 28 }}>
+                <label className="label">Logo du cabinet</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 20, marginTop: 8 }}>
+                  <div style={{ width: 160, height: 160, borderRadius: 12, background: 'var(--ink-50)', border: '1px solid var(--ink-200)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+                    <Logo size={48} />
+                  </div>
+                  <div style={{ border: '2px dashed var(--ink-300)', borderRadius: 12, padding: 32, textAlign: 'center', background: 'var(--ink-50)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--blue-50)', color: 'var(--blue-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                      <Icon name="upload" size={18} />
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Glissez-déposez ou cliquez</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-500)' }}>SVG, PNG ou WebP · 4 Mo max · fond transparent recommandé</div>
+                  </div>
+                </div>
+                <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                  <button className="btn btn-sm btn-ghost">Remplacer</button>
+                  <button className="btn btn-sm btn-ghost" style={{ color: 'var(--brand-red)' }}>Supprimer</button>
+                </div>
+              </div>
+
+              {/* Favicon */}
+              <div style={{ marginBottom: 28 }}>
+                <label className="label">Favicon (icône onglet navigateur)</label>
+                <div style={{ display: 'flex', gap: 14, marginTop: 8, alignItems: 'center' }}>
+                  <div style={{ width: 64, height: 64, borderRadius: 8, background: 'var(--ink-50)', border: '1px solid var(--ink-200)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Logo size={24} />
+                  </div>
+                  <button className="btn btn-sm btn-ghost">Téléverser · 32x32 ou 64x64</button>
+                </div>
+              </div>
+
+              {/* Couleurs */}
+              <div style={{ marginBottom: 28 }}>
+                <label className="label">Couleurs de marque</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginTop: 8 }}>
+                  {[
+                    { l: 'Bleu principal', v: '#37528D' },
+                    { l: 'Rouge accent',   v: '#C61D2E' },
+                    { l: 'Gris secondaire', v: '#646C70' },
+                  ].map((c) => (
+                    <div key={c.l} style={{ padding: 14, border: '1px solid var(--ink-200)', borderRadius: 10, background: 'white' }}>
+                      <div style={{ width: '100%', height: 40, borderRadius: 6, background: c.v, marginBottom: 10 }} />
+                      <div style={{ fontSize: 12, color: 'var(--ink-500)' }}>{c.l}</div>
+                      <input className="input" defaultValue={c.v} style={{ marginTop: 6, fontSize: 12, fontFamily: 'var(--font-mono)' }} />
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 8 }}>Ces couleurs sont appliquées sur les emails, factures et l'espace client.</div>
+              </div>
+
+              {/* Email signature */}
+              <div style={{ marginBottom: 28 }}>
+                <label className="label">Signature email automatique</label>
+                <textarea className="input" style={{ minHeight: 120, fontFamily: 'var(--font-mono)', fontSize: 12 }} defaultValue={`Théophile Anebo
+Directeur Général · ANB Corporate
+Abidjan, Cocody, Angré 8e tranche
+WhatsApp : +225 07 87 44 88 57
+www.anbcorporate.com`} />
+              </div>
+
+              {/* Domain */}
+              <div style={{ marginBottom: 28 }}>
+                <label className="label">Domaine espace client (whitelabel)</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                  <input className="input" defaultValue="client" style={{ width: 220 }} />
+                  <span style={{ color: 'var(--ink-500)' }}>.anbcorporate.com</span>
+                  <span className="chip chip-mint" style={{ marginLeft: 8 }}>SSL actif</span>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6 }}>Domaine personnalisé disponible sur le plan Premium.</div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-primary">Enregistrer les modifications</button>
+                <button className="btn btn-ghost">Aperçu</button>
+              </div>
+            </div>
+          )}
+          {tab === 'plans' && (
+            <div>
+              <h3 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: '0 0 8px' }}>Forfaits & tarifs</h3>
+              <p style={{ fontSize: 13, color: 'var(--ink-500)', margin: '0 0 28px', lineHeight: 1.5 }}>
+                Les tarifs publics affichés sur le site vitrine. Modifications validées sous 24h par l'admin plateforme.
+              </p>
+
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-500)', marginBottom: 14 }}>Création d'entreprise · paiement unique</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                  {[
+                    { n: 'Essentiel', p: '95 000', d: 'Entreprise individuelle' },
+                    { n: 'Société',  p: '185 000', d: 'SARL · SASU · EURL', best: true },
+                    { n: 'Croissance', p: '345 000', d: 'SAS · multi-associés' },
+                  ].map((pl) => (
+                    <div key={pl.n} className="card" style={{ padding: 18, background: pl.best ? 'var(--blue-50)' : 'white', border: pl.best ? '1px solid var(--blue-300)' : '1px solid var(--ink-200)', position: 'relative' }}>
+                      {pl.best && <span className="chip chip-blue" style={{ position: 'absolute', top: -8, right: 12, fontSize: 10 }}>Le plus choisi</span>}
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{pl.n}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-500)', marginTop: 2 }}>{pl.d}</div>
+                      <div className="display-num" style={{ fontSize: 24, marginTop: 10 }}>{pl.p} <span style={{ fontSize: 11, color: 'var(--ink-400)' }}>FCFA</span></div>
+                      <button className="btn btn-sm btn-ghost" style={{ marginTop: 10, width: '100%' }}><Icon name="settings" size={12} /> Modifier</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-500)', marginBottom: 14 }}>Accompagnement mensuel</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+                  {[
+                    { n: 'Starter',  p: '40 000',  d: '1-3 employés' },
+                    { n: 'Eco',      p: '70 000',  d: 'TPE' },
+                    { n: 'Business', p: '100 000', d: 'PME · 3-10', best: true },
+                    { n: 'Premium',  p: '185 000', d: 'Grand volume' },
+                  ].map((pl) => (
+                    <div key={pl.n} className="card" style={{ padding: 16, background: pl.best ? 'var(--blue-50)' : 'white', border: pl.best ? '1px solid var(--blue-300)' : '1px solid var(--ink-200)', position: 'relative' }}>
+                      {pl.best && <span className="chip chip-blue" style={{ position: 'absolute', top: -8, right: 10, fontSize: 10 }}>Best</span>}
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{pl.n}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-500)', marginTop: 2 }}>{pl.d}</div>
+                      <div className="display-num" style={{ fontSize: 20, marginTop: 8 }}>{pl.p} <span style={{ fontSize: 10, color: 'var(--ink-400)' }}>/ mois</span></div>
+                      <button className="btn btn-sm btn-ghost" style={{ marginTop: 10, width: '100%', fontSize: 11 }}>Modifier</button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -5088,14 +5318,451 @@ const NotificationDropdown = ({ open, onClose }) => {
   );
 };
 
+// ═════════════════════════════════════════════════════════════════
+// SERVICE PAGES — one per cabinet expertise.
+// Each renders the same shell (stats + table) populated with realistic
+// activity data, then a side panel with the relevant tariffs / actions.
+// ═════════════════════════════════════════════════════════════════
+const ServiceShell = ({
+  eyebrow, title, sub, stats, tableTitle, tableCols, tableRows,
+  sidePanel, ctaLabel, ctaIcon = 'plus',
+}) => (
+  <BackofficeLayout title={title} sub={sub}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'flex-start' }} data-bo-detail-grid>
+      {/* Left — main content */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ width: 28, height: 1.5, background: 'var(--brand-red)' }} />
+          <span style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--brand-red)', textTransform: 'uppercase', letterSpacing: '0.16em' }}>{eyebrow}</span>
+        </div>
+
+        {/* Stats grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }} data-bo-stats-grid>
+          {stats.map((s, i) => (
+            <StatCard key={i} {...s} />
+          ))}
+        </div>
+
+        {/* Main table */}
+        <div className="card" style={{ background: 'white' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--ink-200)' }}>
+            <div style={{ font: '500 15px/1 var(--font-display)' }}>{tableTitle}</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-sm btn-ghost"><Icon name="filter" size={14} /> Filtrer</button>
+              <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Exporter</button>
+              <button className="btn btn-sm btn-primary"><Icon name={ctaIcon} size={14} /> {ctaLabel}</button>
+            </div>
+          </div>
+          <div data-bo-table>
+            <div style={{ display: 'grid', gridTemplateColumns: tableCols.map(c => c.w).join(' '), padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
+              {tableCols.map((c) => <div key={c.l}>{c.l}</div>)}
+            </div>
+            {tableRows.map((r, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: tableCols.map(c => c.w).join(' '), padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
+                {r.map((cell, j) => <div key={j}>{cell}</div>)}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right — side panel */}
+      {sidePanel}
+    </div>
+  </BackofficeLayout>
+);
+
+// ── PartnerComptabilite ──
+const PartnerComptabilite = () => (
+  <ServiceShell
+    eyebrow="Service · Comptabilité"
+    title="Comptabilité & fiscalité"
+    sub="Tenue des comptes, TVA, IS, états financiers OHADA"
+    stats={[
+      { label: 'Dossiers actifs',     value: '38' },
+      { label: 'États en cours',      value: '12' },
+      { label: 'Déclarations à faire', value: '6', delta: '5 jours', deltaPositive: false },
+      { label: 'CA mensuel',          value: '1,2', suffix: 'M FCFA', delta: '+14%', deltaPositive: true },
+    ]}
+    tableTitle="Dossiers de comptabilité"
+    tableCols={[
+      { l: 'Client', w: '1.6fr' },
+      { l: 'Forme', w: '0.7fr' },
+      { l: 'Forfait', w: '0.9fr' },
+      { l: 'Prochaine échéance', w: '1.1fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">EH</div><div style={{ fontWeight: 500 }}>E.H.M Group</div></div>,
+        'SARL',
+        <span className="num">Premium · 185 K</span>,
+        <span style={{ color: 'var(--ink-700)' }}>TVA · 15 avril</span>,
+        <span className="chip chip-mint"><span className="chip-dot"></span> À jour</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BK</div><div style={{ fontWeight: 500 }}>Expert Bio SARL</div></div>,
+        'SARL',
+        <span className="num">Business · 100 K</span>,
+        <span style={{ color: 'var(--ink-700)' }}>États financiers · 30 avril</span>,
+        <span className="chip chip-amber"><span className="chip-dot"></span> En cours</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BL</div><div style={{ fontWeight: 500 }}>Bamba Logistique</div></div>,
+        'SARL',
+        <span className="num">Business · 100 K</span>,
+        <span style={{ color: 'var(--ink-700)' }}>Bulletins paie · 28 avril</span>,
+        <span className="chip chip-mint"><span className="chip-dot"></span> À jour</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">AD</div><div style={{ fontWeight: 500 }}>Mali Cosmétiques</div></div>,
+        'SARL',
+        <span className="num">Starter · 40 K</span>,
+        <span style={{ color: 'var(--brand-red)' }}>TVA en retard · 10 avril</span>,
+        <span className="chip chip-rose"><span className="chip-dot"></span> Action requise</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">KM</div><div style={{ fontWeight: 500 }}>Kojo Tech</div></div>,
+        'SAS',
+        <span className="num">Eco · 70 K</span>,
+        <span style={{ color: 'var(--ink-700)' }}>Déclaration CNPS · 20 avril</span>,
+        <span className="chip chip-mint"><span className="chip-dot"></span> À jour</span>,
+      ],
+    ]}
+    ctaLabel="Nouveau dossier"
+    sidePanel={
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="card" style={{ padding: 20, background: 'white' }}>
+          <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Forfaits mensuels</div>
+          {[
+            { n: 'Starter', p: '40 000', d: '1-3 employés' },
+            { n: 'Eco',     p: '70 000', d: 'TPE' },
+            { n: 'Business', p: '100 000', d: 'PME' },
+            { n: 'Premium', p: '185 000', d: 'Grand volume' },
+          ].map((p, i) => (
+            <div key={p.n} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < 3 ? '1px solid var(--ink-100)' : 'none' }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500 }}>{p.n}</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-500)' }}>{p.d}</div>
+              </div>
+              <div className="num" style={{ fontWeight: 600, fontSize: 13 }}>{p.p} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+          <Icon name="bolt" size={18} color="var(--blue-700)" />
+          <div style={{ fontWeight: 600, fontSize: 13, marginTop: 8, color: 'var(--blue-900)' }}>Échéances DGI à venir</div>
+          <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4, opacity: .85, lineHeight: 1.5 }}>
+            TVA mensuelle : 15 du mois · IS trimestriel : 20 du mois · CNPS : 25 du mois
+          </div>
+        </div>
+      </div>
+    }
+  />
+);
+
+// ── PartnerJuridique ──
+const PartnerJuridique = () => (
+  <ServiceShell
+    eyebrow="Service · Juridique"
+    title="Assistance juridique"
+    sub="Contrats, contentieux, conformité OHADA"
+    stats={[
+      { label: 'Affaires actives', value: '14' },
+      { label: 'Contrats à rédiger', value: '6' },
+      { label: 'Contentieux', value: '2' },
+      { label: 'Délai moyen', value: '5,2', suffix: ' j' },
+    ]}
+    tableTitle="Affaires juridiques"
+    tableCols={[
+      { l: 'Réf.', w: '1fr' },
+      { l: 'Client', w: '1.4fr' },
+      { l: 'Type', w: '1fr' },
+      { l: 'Urgence', w: '0.7fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      ['JUR-2026-0142', <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">EH</div><div style={{ fontWeight: 500 }}>E.H.M Group</div></div>, 'Contrat commercial', <span className="chip chip-rose">Haute</span>, <span className="chip chip-amber"><span className="chip-dot"></span> En cours</span>],
+      ['JUR-2026-0138', <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BL</div><div style={{ fontWeight: 500 }}>Bamba Logistique</div></div>, 'Pacte associés',     <span className="chip chip-amber">Moyenne</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Validé</span>],
+      ['JUR-2026-0132', <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">DC</div><div style={{ fontWeight: 500 }}>Diop Conseil</div></div>, 'Contentieux fiscal',  <span className="chip chip-rose">Haute</span>, <span className="chip chip-blue"><span className="chip-dot"></span> Audience prévue</span>],
+      ['JUR-2026-0128', <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">TB</div><div style={{ fontWeight: 500 }}>Touré BTP</div></div>, 'Mise en conformité', <span className="chip">Basse</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Livré</span>],
+      ['JUR-2026-0124', <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BK</div><div style={{ fontWeight: 500 }}>Expert Bio SARL</div></div>, 'Marque (OAPI)',      <span className="chip chip-amber">Moyenne</span>, <span className="chip chip-amber"><span className="chip-dot"></span> En cours</span>],
+    ]}
+    ctaLabel="Nouvelle affaire"
+    sidePanel={
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="card" style={{ padding: 20, background: 'white' }}>
+          <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Modèles de contrats</div>
+          {['Pacte d\'associés', 'Bail commercial', 'CDD / CDI', 'Prestation de service', 'NDA bilingue', 'Cession de parts'].map((c) => (
+            <div key={c} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--ink-100)', fontSize: 13 }}>
+              <span>{c}</span>
+              <Icon name="download" size={13} color="var(--ink-400)" />
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+          <Icon name="shield" size={18} color="var(--blue-700)" />
+          <div style={{ fontWeight: 600, fontSize: 13, marginTop: 8, color: 'var(--blue-900)' }}>Audience à venir</div>
+          <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4, opacity: .85, lineHeight: 1.5 }}>
+            Diop Conseil · Tribunal de commerce d'Abidjan · 28 avril 2026 à 9h30
+          </div>
+        </div>
+      </div>
+    }
+  />
+);
+
+// ── PartnerFinancement ──
+const PartnerFinancement = () => (
+  <ServiceShell
+    eyebrow="Service · Financement"
+    title="Intermédiation financière"
+    sub="Crédit bancaire, microfinance, garanties"
+    stats={[
+      { label: 'Dossiers actifs', value: '9' },
+      { label: 'Volume en traitement', value: '128', suffix: ' M FCFA' },
+      { label: 'Taux d\'acceptation', value: '74', suffix: '%' },
+      { label: 'Délai moyen', value: '18', suffix: ' j' },
+    ]}
+    tableTitle="Dossiers de financement"
+    tableCols={[
+      { l: 'Client', w: '1.5fr' },
+      { l: 'Type', w: '1fr' },
+      { l: 'Montant (M FCFA)', w: '1.1fr' },
+      { l: 'Banque', w: '1fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">EH</div><div style={{ fontWeight: 500 }}>E.H.M Group</div></div>,
+        'Crédit d\'investissement',
+        <span className="num">42</span>, 'BICICI',
+        <span className="chip chip-amber"><span className="chip-dot"></span> En analyse</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BK</div><div style={{ fontWeight: 500 }}>Expert Bio SARL</div></div>,
+        'Microfinance · équipement',
+        <span className="num">8</span>, 'COFINA',
+        <span className="chip chip-mint"><span className="chip-dot"></span> Accordé</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">TB</div><div style={{ fontWeight: 500 }}>Touré BTP</div></div>,
+        'Caution bancaire',
+        <span className="num">15</span>, 'SGBCI',
+        <span className="chip chip-mint"><span className="chip-dot"></span> Accordé</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">AD</div><div style={{ fontWeight: 500 }}>Mali Cosmétiques</div></div>,
+        'Crédit BFR',
+        <span className="num">6</span>, 'NSIA Banque',
+        <span className="chip chip-rose"><span className="chip-dot"></span> Refusé</span>,
+      ],
+      [
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">KM</div><div style={{ fontWeight: 500 }}>Kojo Tech</div></div>,
+        'Levée de fonds',
+        <span className="num">57</span>, 'Investisseurs',
+        <span className="chip chip-blue"><span className="chip-dot"></span> En présentation</span>,
+      ],
+    ]}
+    ctaLabel="Nouveau dossier"
+    sidePanel={
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="card" style={{ padding: 20, background: 'white' }}>
+          <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Partenaires financiers</div>
+          {[
+            { n: 'BICICI', t: 'Banque' },
+            { n: 'SGBCI', t: 'Banque' },
+            { n: 'NSIA Banque', t: 'Banque' },
+            { n: 'COFINA', t: 'Microfinance' },
+            { n: 'Advans CI', t: 'Microfinance' },
+            { n: 'Comoé Capital', t: 'Fonds d\'investissement' },
+          ].map((p, i) => (
+            <div key={p.n} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < 5 ? '1px solid var(--ink-100)' : 'none', fontSize: 13 }}>
+              <span style={{ fontWeight: 500 }}>{p.n}</span>
+              <span style={{ fontSize: 11, color: 'var(--ink-500)' }}>{p.t}</span>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+          <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--blue-700)', marginBottom: 10 }}>Volume traité 2026</div>
+          <div className="display-num" style={{ fontSize: 28, color: 'var(--blue-900)' }}>318 <span style={{ fontSize: 13 }}>M FCFA</span></div>
+          <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4 }}>↑ +42% vs 2025</div>
+        </div>
+      </div>
+    }
+  />
+);
+
+// ── PartnerRepresentation ──
+const PartnerRepresentation = () => (
+  <ServiceShell
+    eyebrow="Service · Représentation"
+    title="Représentation commerciale"
+    sub="Prospection, négociation, développement réseau"
+    stats={[
+      { label: 'Mandats actifs', value: '7' },
+      { label: 'Leads qualifiés', value: '42' },
+      { label: 'Taux de signature', value: '38', suffix: '%' },
+      { label: 'CA généré', value: '186', suffix: ' M FCFA' },
+    ]}
+    tableTitle="Mandats de représentation"
+    tableCols={[
+      { l: 'Client donneur', w: '1.4fr' },
+      { l: 'Cible', w: '1fr' },
+      { l: 'Marché', w: '1fr' },
+      { l: 'Leads', w: '0.6fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">EH</div><div style={{ fontWeight: 500 }}>E.H.M Group</div></div>, 'Importateurs', 'Côte d\'Ivoire', <span className="num">18</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BK</div><div style={{ fontWeight: 500 }}>Expert Bio SARL</div></div>, 'Distributeurs', 'UEMOA', <span className="num">9</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">AD</div><div style={{ fontWeight: 500 }}>Mali Cosmétiques</div></div>, 'Pharmacies', 'Sénégal', <span className="num">7</span>, <span className="chip chip-blue"><span className="chip-dot"></span> Démarrage</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">KM</div><div style={{ fontWeight: 500 }}>Kojo Tech</div></div>, 'Grands comptes', 'Ghana', <span className="num">5</span>, <span className="chip chip-amber"><span className="chip-dot"></span> Négociation</span>],
+    ]}
+    ctaLabel="Nouveau mandat"
+    sidePanel={
+      <div className="card" style={{ padding: 20, background: 'white' }}>
+        <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Pipeline ce mois</div>
+        {[
+          { l: 'Premier contact', v: 42, p: 100 },
+          { l: 'Démo / RDV', v: 24, p: 57 },
+          { l: 'Proposition envoyée', v: 14, p: 33 },
+          { l: 'Négociation', v: 8, p: 19 },
+          { l: 'Signature', v: 3, p: 7 },
+        ].map((f) => (
+          <div key={f.l} style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+              <span style={{ fontWeight: 500 }}>{f.l}</span>
+              <span className="num" style={{ color: 'var(--ink-500)' }}>{f.v}</span>
+            </div>
+            <div style={{ height: 5, background: 'var(--ink-100)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ width: `${f.p}%`, height: '100%', background: 'var(--blue-600)' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    }
+  />
+);
+
+// ── PartnerFormation ──
+const PartnerFormation = () => (
+  <ServiceShell
+    eyebrow="Service · Formation"
+    title="Formation professionnelle"
+    sub="Gestion, comptabilité, fiscalité, management"
+    stats={[
+      { label: 'Sessions ce mois', value: '8' },
+      { label: 'Stagiaires', value: '124' },
+      { label: 'Note moyenne', value: '4,8', suffix: '/5' },
+      { label: 'CA formations', value: '4,2', suffix: ' M FCFA' },
+    ]}
+    tableTitle="Sessions à venir"
+    tableCols={[
+      { l: 'Thème', w: '1.8fr' },
+      { l: 'Formateur', w: '1fr' },
+      { l: 'Date', w: '0.9fr' },
+      { l: 'Inscrits', w: '0.7fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      ['Comptabilité OHADA — fondamentaux', 'Aboubacar N\'Dri',  '22 avril · 9h-17h', <span className="num">12/15</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Confirmée</span>],
+      ['TVA & déclarations fiscales',         'Théophile Anebo',     '25 avril · 9h-13h', <span className="num">18/20</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Confirmée</span>],
+      ['Management & leadership',              'Consultant externe', '2-3 mai · 2 jours',   <span className="num">8/15</span>,  <span className="chip chip-amber"><span className="chip-dot"></span> Min. à atteindre</span>],
+      ['Comptabilité informatisée Sage',       'Konan Sylvestre',    '7 mai · 9h-17h',     <span className="num">14/15</span>, <span className="chip chip-mint"><span className="chip-dot"></span> Confirmée</span>],
+      ['Droit du travail ivoirien',            'Mariam Bamba',       '14 mai · 9h-17h',    <span className="num">6/12</span>,  <span className="chip"><span className="chip-dot"></span> Ouverte</span>],
+    ]}
+    ctaLabel="Nouvelle session"
+    sidePanel={
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="card" style={{ padding: 20, background: 'white' }}>
+          <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Catalogue</div>
+          {[
+            { c: 'Comptabilité', n: 8 },
+            { c: 'Fiscalité', n: 5 },
+            { c: 'Juridique', n: 4 },
+            { c: 'Management', n: 6 },
+            { c: 'Outils numériques', n: 3 },
+          ].map((c, i) => (
+            <div key={c.c} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < 4 ? '1px solid var(--ink-100)' : 'none', fontSize: 13 }}>
+              <span style={{ fontWeight: 500 }}>{c.c}</span>
+              <span className="num" style={{ color: 'var(--ink-500)' }}>{c.n} formations</span>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+          <Icon name="bolt" size={18} color="var(--blue-700)" />
+          <div style={{ fontWeight: 600, fontSize: 13, marginTop: 8, color: 'var(--blue-900)' }}>Certification FDFP</div>
+          <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4, opacity: .85, lineHeight: 1.5 }}>
+            Cabinet agréé pour le remboursement de la taxe d'apprentissage.
+          </div>
+        </div>
+      </div>
+    }
+  />
+);
+
+// ── PartnerAgrements ──
+const PartnerAgrements = () => (
+  <ServiceShell
+    eyebrow="Service · Agréments"
+    title="Assistance à l'agrément"
+    sub="Préparation des dossiers techniques et suivi administratif"
+    stats={[
+      { label: 'Dossiers en cours', value: '11' },
+      { label: 'Obtenus 2026', value: '7' },
+      { label: 'Taux de succès', value: '92', suffix: '%' },
+      { label: 'Délai moyen', value: '62', suffix: ' j' },
+    ]}
+    tableTitle="Demandes d'agrément"
+    tableCols={[
+      { l: 'Client', w: '1.5fr' },
+      { l: 'Type d\'agrément', w: '1.6fr' },
+      { l: 'Autorité', w: '1fr' },
+      { l: 'Dépôt', w: '0.8fr' },
+      { l: 'Statut', w: '0.9fr' },
+    ]}
+    tableRows={[
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">BK</div><div style={{ fontWeight: 500 }}>Expert Bio SARL</div></div>, 'Producteur bio (label CI)',     'Min. Agriculture', '12 fév.', <span className="chip chip-mint"><span className="chip-dot"></span> Obtenu</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">EH</div><div style={{ fontWeight: 500 }}>E.H.M Group</div></div>, 'Transitaire agréé',              'Douanes CI',        '24 fév.', <span className="chip chip-amber"><span className="chip-dot"></span> Instruction</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">AD</div><div style={{ fontWeight: 500 }}>Mali Cosmétiques</div></div>, 'AMM cosmétique',                 'ANRMP',             '3 mars',  <span className="chip chip-amber"><span className="chip-dot"></span> Instruction</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">TB</div><div style={{ fontWeight: 500 }}>Touré BTP</div></div>, 'BTP catégorie B',               'Min. Construction', '18 mars', <span className="chip chip-blue"><span className="chip-dot"></span> Pré-dépôt</span>],
+      [<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><div className="ava">KM</div><div style={{ fontWeight: 500 }}>Kojo Tech</div></div>, 'Opérateur télécom (ARTCI)',     'ARTCI',             '2 avril', <span className="chip"><span className="chip-dot"></span> Préparation</span>],
+    ]}
+    ctaLabel="Nouvelle demande"
+    sidePanel={
+      <div className="card" style={{ padding: 20, background: 'white' }}>
+        <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Autorités traitées</div>
+        {[
+          'Min. de l\'Agriculture',
+          'Min. de la Construction',
+          'Min. de la Santé',
+          'Douanes de Côte d\'Ivoire',
+          'ARTCI · Télécoms',
+          'ANRMP · Pharmacie',
+          'BCEAO · Microfinance',
+          'CEPICI · Investissement',
+        ].map((a) => (
+          <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', fontSize: 13 }}>
+            <Icon name="check" size={12} color="var(--accent-mint)" stroke={2.5} />
+            <span>{a}</span>
+          </div>
+        ))}
+      </div>
+    }
+  />
+);
+
 Object.assign(window, {
   PartnerDashboard, PartnerDossier, PartnerClients, PartnerClientDetail,
   PartnerDocuments, PartnerPaiements, PartnerStatistiques, PartnerParametres,
   PartnerNewDossier,
+  PartnerComptabilite, PartnerJuridique, PartnerFinancement,
+  PartnerRepresentation, PartnerFormation, PartnerAgrements,
   AdminDashboard, AdminPartenaires, AdminPartnerDetail, AdminClients,
   AdminPaiements, AdminCommissions, AdminStats, AdminConfig,
-  NotificationDropdown,
-  BackofficeLayout, PARTNER_NAV, ADMIN_NAV,
+  NotificationDropdown, ServiceShell,
+  BackofficeLayout, PARTNER_NAV, ADMIN_NAV, PARTNER_GROUPS, ADMIN_GROUPS,
 });
 // === mobile.jsx ===
 /* global React, Icon, Logo, IOSDevice, StepDot */
@@ -6900,6 +7567,18 @@ function Router({ route, heroVariant = 'B' }) {
     case '/partenaire/paiements':        return <PageViewport bg="var(--ink-50)"><PartnerPaiements /></PageViewport>;
     case '/partenaire/statistiques':     return <PageViewport bg="var(--ink-50)"><PartnerStatistiques /></PageViewport>;
     case '/partenaire/parametres':       return <PageViewport bg="var(--ink-50)"><PartnerParametres /></PageViewport>;
+    case '/partenaire/aide':             return <PageViewport bg="var(--ink-50)"><PartnerParametres /></PageViewport>;
+    case '/partenaire/services/comptabilite':   return <PageViewport bg="var(--ink-50)"><PartnerComptabilite /></PageViewport>;
+    case '/partenaire/services/juridique':      return <PageViewport bg="var(--ink-50)"><PartnerJuridique /></PageViewport>;
+    case '/partenaire/services/financement':    return <PageViewport bg="var(--ink-50)"><PartnerFinancement /></PageViewport>;
+    case '/partenaire/services/representation': return <PageViewport bg="var(--ink-50)"><PartnerRepresentation /></PageViewport>;
+    case '/partenaire/services/formation':      return <PageViewport bg="var(--ink-50)"><PartnerFormation /></PageViewport>;
+    case '/partenaire/services/agrements':      return <PageViewport bg="var(--ink-50)"><PartnerAgrements /></PageViewport>;
+    case '/admin/services/comptabilite':        return <PageViewport bg="var(--ink-50)"><PartnerComptabilite /></PageViewport>;
+    case '/admin/services/juridique':           return <PageViewport bg="var(--ink-50)"><PartnerJuridique /></PageViewport>;
+    case '/admin/services/financement':         return <PageViewport bg="var(--ink-50)"><PartnerFinancement /></PageViewport>;
+    case '/admin/services/formation':           return <PageViewport bg="var(--ink-50)"><PartnerFormation /></PageViewport>;
+    case '/admin/logs':                         return <PageViewport bg="var(--ink-50)"><AdminConfig /></PageViewport>;
     case '/admin':                       return <PageViewport bg="var(--ink-50)"><AdminDashboard /></PageViewport>;
     case '/admin/partenaires':           return <PageViewport bg="var(--ink-50)"><AdminPartenaires /></PageViewport>;
     case '/admin/partenaires/detail':    return <PageViewport bg="var(--ink-50)"><AdminPartnerDetail /></PageViewport>;
