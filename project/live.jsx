@@ -163,6 +163,7 @@ function MobileNav({ open, onClose, route, t, setTweak }) {
           {[
             ['Accueil', '/', 'home'],
             ['Tarifs', '/tarifs', 'money'],
+            ['À propos', '/apropos', 'user'],
             ['FAQ', '/faq', 'doc'],
             ['Contact', '/contact', 'mail'],
           ].map(([l, p, icon]) => (
@@ -250,7 +251,7 @@ function WhatsAppFAB() {
   const [hovered, setHovered] = React.useState(false);
   return (
     <a
-      href="https://wa.me/2250700000000"
+      href="https://wa.me/2250787448857"
       target="_blank"
       rel="noopener noreferrer"
       className="live-whatsapp-fab"
@@ -282,7 +283,7 @@ function Sitemap({ open, onClose }) {
   if (!open) return null;
   const go = (p) => { nav(p); onClose(); };
   const groups = [
-    { t: 'Vitrine', items: [['Accueil', '/'], ['Tarifs', '/tarifs'], ['FAQ', '/faq'], ['Contact', '/contact']] },
+    { t: 'Vitrine', items: [['Accueil', '/'], ['Tarifs', '/tarifs'], ['À propos', '/apropos'], ['FAQ', '/faq'], ['Contact', '/contact']] },
     { t: 'Parcours client', items: [['Quiz 90s', '/quiz'], ['Choix forme', '/creer'], ['Simulation', '/creer/simulation'], ['Identité société', '/creer/identite'], ['Documents', '/creer/documents'], ['Paiement', '/creer/paiement'], ['Suivi dossier', '/creer/suivi']] },
     { t: 'Mobile', items: [['Aperçu 4 écrans', '/mobile']] },
     { t: 'Espace partenaire', items: [['Onboarding cabinet', '/partenaire'], ['Dashboard', '/partenaire/dashboard'], ['Détail dossier', '/partenaire/dossier']] },
@@ -364,6 +365,7 @@ function Router({ route, heroVariant = 'B' }) {
     case '/tarifs':        return <PageViewport bg="white"><PageTarifs /></PageViewport>;
     case '/faq':           return <PageViewport bg="white"><PageFAQ /></PageViewport>;
     case '/contact':       return <PageViewport bg="white"><PageContact /></PageViewport>;
+    case '/apropos':       return <PageViewport bg="white"><PageAPropos /></PageViewport>;
     case '/quiz':          return <PageViewport bg="var(--ink-50)"><Quiz /></PageViewport>;
     case '/creer':         return <PageViewport bg="var(--ink-50)"><Parcours step={0} /></PageViewport>;
     case '/creer/simulation': return <PageViewport bg="var(--ink-50)"><Parcours step={1} /></PageViewport>;
@@ -412,8 +414,8 @@ const LIVE_TWEAK_DEFAULTS = {
   "headline": "Créez votre entreprise en",
   "cabinetName": "ANB Corporate",
   "cabinetCity": "Cocody, Abidjan",
-  "cabinetEmail": "contact@anbcorporate.com",
-  "cabinetPhone": "+225 27 22 00 00 00",
+  "cabinetEmail": "info@anbcorporate.com",
+  "cabinetPhone": "+225 07 87 44 88 57",
   "darkMode": false,
 };
 

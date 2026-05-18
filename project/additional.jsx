@@ -12,8 +12,8 @@ const useAdCopy = () => {
     brandName: c.brandName || 'ANB Corporate',
     cabinetName: c.cabinetName || 'ANB Corporate',
     cabinetCity: c.cabinetCity || 'Cocody, Abidjan',
-    cabinetEmail: c.cabinetEmail || 'contact@anbcorporate.com',
-    cabinetPhone: c.cabinetPhone || '+225 27 22 00 00 00',
+    cabinetEmail: c.cabinetEmail || 'info@anbcorporate.com',
+    cabinetPhone: c.cabinetPhone || '+225 07 87 44 88 57',
   };
 };
 

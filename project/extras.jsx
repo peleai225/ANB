@@ -318,4 +318,162 @@ const Upload = () => {
   );
 };
 
-Object.assign(window, { PageTarifs, PageFAQ, Quiz, Upload });
+
+// Page À propos — cabinet ANB Corporate complet
+const PageAPropos = () => {
+  const nav = useNav();
+  const valeurs = [
+    { v: 'Intégrité', d: 'Nous agissons avec honnêteté et transparence dans toutes nos relations avec nos clients et partenaires.', i: 'shield' },
+    { v: 'Innovation', d: 'Nous adoptons les meilleures technologies pour simplifier et accélérer vos démarches administratives.', i: 'bolt' },
+    { v: 'Rigueur', d: 'Chaque dossier est traité avec la plus grande précision — zéro erreur, zéro délai non justifié.', i: 'check' },
+    { v: 'Confidentialité', d: 'Vos données et informations d'affaires sont protégées conformément à la loi ivoirienne 2013-450.', i: 'lock' },
+  ];
+  const legal = [
+    { l: 'Raison sociale', v: 'ANB CORPORATE (SARL)' },
+    { l: 'Capital social', v: '1 000 000 FCFA' },
+    { l: 'RCCM', v: 'CI-ABJ-03-2025-B13-00359' },
+    { l: 'N° NCC', v: '2500120 F' },
+    { l: 'Régime fiscal', v: 'TEE (Taxe d'État de l'entreprenant)' },
+    { l: 'Adresse', v: 'Abidjan, Cocody, Angré 7e/8e tranche' },
+  ];
+  return (
+    <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
+
+      {/* Hero À propos */}
+      <div style={{ padding: '80px 56px 0', maxWidth: 1280, margin: '0 auto' }}>
+        <div className="chip chip-blue" style={{ marginBottom: 20 }}>Qui sommes-nous</div>
+        <h1 style={{ font: '500 72px/0.95 var(--font-display)', letterSpacing: '-0.045em', margin: '0 0 20px', maxWidth: 900 }}>
+          Votre cabinet d'affaires{' '}
+          <span className="serif" style={{ color: 'var(--blue-600)' }}>à Abidjan.</span>
+        </h1>
+        <p style={{ fontSize: 18, color: 'var(--ink-500)', maxWidth: 720, margin: '0 0 56px', lineHeight: 1.6 }}>
+          Fondé en 2025, ANB Corporate accompagne les entrepreneurs et TPE/PME dans toutes leurs démarches de création, de conformité et de développement d'entreprise en Côte d'Ivoire et dans l'espace OHADA.
+        </p>
+      </div>
+
+      {/* Director + Description */}
+      <div style={{ padding: '0 56px 80px', maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 64, alignItems: 'flex-start' }}>
+          {/* Photo & card */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ position: 'relative' }}>
+              <div style={{ width: '100%', maxWidth: 380, borderRadius: 24, overflow: 'hidden', background: 'var(--blue-50)', boxShadow: '0 24px 60px rgba(37,99,235,.15)', aspectRatio: '4/5' }}>
+                <img src={DIRECTOR_PHOTO} alt="Directeur ANB Corporate" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }} />
+              </div>
+              <div className="card" style={{ position: 'absolute', bottom: -20, right: -8, padding: '12px 18px', background: 'var(--ink-900)', color: 'white', borderRadius: 14, border: 'none', boxShadow: '0 8px 28px rgba(0,0,0,.28)' }}>
+                <div style={{ font: '500 10px/1 var(--font-mono)', color: 'rgba(255,255,255,.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Expert agréé</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>ONECCA-CI · OHADA</div>
+              </div>
+            </div>
+            <div>
+              <div style={{ font: '600 18px/1.2 var(--font-display)', color: 'var(--ink-900)' }}>Abdou N'Diaye Bamba</div>
+              <div style={{ fontSize: 14, color: 'var(--ink-500)', marginTop: 4 }}>Fondateur & Directeur Général</div>
+              <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
+                <a href="https://wa.me/2250787448857" target="_blank" rel="noopener noreferrer" className="btn btn-sm" style={{ background: '#25D366', color: 'white', textDecoration: 'none' }}>
+                  <Icon name="whatsapp" size={14} /> WhatsApp
+                </a>
+                <a href="mailto:info@anbcorporate.com" className="btn btn-sm btn-ghost" style={{ textDecoration: 'none' }}>
+                  <Icon name="mail" size={14} /> Email
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div style={{ paddingTop: 8 }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-500)', marginBottom: 16 }}>Notre cabinet</div>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-700)', margin: '0 0 20px' }}>
+              ANB CORPORATE est un cabinet basé à Abidjan (Cocody, Angré 7e/8e tranche) spécialisé dans l'accompagnement à la création d'entreprise, l'assistance comptable, fiscale et juridique, ainsi que le pilotage de la performance.
+            </p>
+            <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-700)', margin: '0 0 32px' }}>
+              Nous conseillons les porteurs de projets, TPE/PME et organisations à chaque étape : choix de la forme juridique, constitution et enregistrement, rattachements (Impôts, CNPS, Inspection du travail), obligations fiscales & sociales, tableaux de bord et conformité continue.
+            </p>
+
+            {/* Mission */}
+            <div className="card" style={{ padding: '20px 24px', background: 'var(--blue-50)', border: '1.5px solid var(--blue-100)', marginBottom: 28 }}>
+              <div style={{ font: '600 12px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--blue-700)', marginBottom: 10 }}>Notre mission</div>
+              <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--blue-900)', margin: 0, fontStyle: 'italic' }}>
+                « Délivrer une information fiable, optimiser la trésorerie et sécuriser la conformité, pour vous permettre de vous concentrer sur votre cœur de métier. »
+              </p>
+            </div>
+
+            {/* Stats */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
+              {[
+                { v: '1 200', l: 'Entreprises créées' },
+                { v: '5+', l: 'Années d'expertise' },
+                { v: '4,9', l: 'Satisfaction client' },
+              ].map((s, i) => (
+                <div key={i} className="card" style={{ padding: '16px 20px', textAlign: 'center', background: 'white' }}>
+                  <div className="display-num" style={{ fontSize: 32, color: 'var(--blue-600)' }}>{s.v}</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => nav('/quiz')} className="btn btn-primary btn-lg">
+              Créer mon entreprise <Icon name="arrow" size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Valeurs */}
+      <div style={{ padding: '80px 56px', background: 'var(--ink-50)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div className="chip chip-blue" style={{ marginBottom: 16 }}>Nos valeurs</div>
+            <h2 style={{ font: '500 48px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
+              Ce qui guide <span className="serif" style={{ color: 'var(--blue-600)' }}>chaque dossier.</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+            {valeurs.map((v, i) => (
+              <div key={i} className="card" style={{ padding: 24, background: 'white', textAlign: 'center' }}>
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--blue-50)', color: 'var(--blue-700)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Icon name={v.i} size={22} />
+                </div>
+                <div style={{ font: '700 18px/1.2 var(--font-display)', letterSpacing: '-0.02em', marginBottom: 12, color: 'var(--ink-900)' }}>{v.v}</div>
+                <div style={{ fontSize: 13, color: 'var(--ink-600)', lineHeight: 1.55 }}>{v.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Informations légales */}
+      <div style={{ padding: '80px 56px', background: 'var(--paper)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ marginBottom: 40 }}>
+            <div className="chip chip-blue" style={{ marginBottom: 16 }}>Transparence</div>
+            <h2 style={{ font: '500 48px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
+              Informations <span className="serif" style={{ color: 'var(--blue-600)' }}>légales.</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {legal.map((it, i) => (
+              <div key={i} className="card" style={{ padding: '20px 24px', background: i < 3 ? 'var(--ink-50)' : 'white' }}>
+                <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 8 }}>{it.l}</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink-900)' }}>{it.v}</div>
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{ marginTop: 24, padding: '24px 28px', background: 'var(--blue-50)', border: '1px solid var(--blue-100)', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+            <Icon name="phone" size={24} color="var(--blue-700)" />
+            <div style={{ flex: 1 }}>
+              <div style={{ font: '600 16px/1 var(--font-display)' }}>+225 07 87 44 88 57</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-600)', marginTop: 4 }}>Lundi–Vendredi · 8h–18h · Réponse WhatsApp 7j/7</div>
+            </div>
+            <a href="mailto:info@anbcorporate.com" style={{ fontSize: 15, color: 'var(--blue-700)', fontWeight: 500, textDecoration: 'none' }}>info@anbcorporate.com</a>
+          </div>
+        </div>
+      </div>
+
+      <CtaClosure />
+      <VitrineFooter />
+    </div>
+  );
+};
+
+Object.assign(window, { PageTarifs, PageFAQ, Quiz, Upload, PageAPropos });
