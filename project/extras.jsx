@@ -3,6 +3,7 @@
 
 // Page Tarifs — 2 sections : création one-shot + accompagnement mensuel
 const PageTarifs = () => {
+  const nav = useNav();
   const creation = [
     { n: 'Essentiel', p: '95 000', d: 'Entreprise individuelle (EI)', best: false, f: ['Immatriculation RCCM', 'Statuts générés automatiquement', 'Dépôt au greffe inclus', 'Rattachement Impôts & CNPS', 'Support email'] },
     { n: 'Société', p: '185 000', d: 'SARL · SASU · EURL', best: true, f: ['Tout Essentiel +', 'Rédaction des statuts', 'Annonce légale incluse', 'Support WhatsApp prioritaire', 'Domiciliation 3 mois Cocody', '1 mois comptable offert'] },
@@ -31,7 +32,7 @@ const PageTarifs = () => {
         {perMois ? 'Sans engagement · résiliable à tout moment' : 'Ou 3× sans frais Mobile Money'}
       </div>
 
-      <button className="btn" style={{ width: '100%', marginTop: 20, background: pl.best ? 'white' : 'var(--ink-900)', color: pl.best ? 'var(--ink-900)' : 'white' }}>
+      <button onClick={() => nav(perMois ? '/contact' : '/quiz')} className="btn" style={{ width: '100%', marginTop: 20, background: pl.best ? 'white' : 'var(--ink-900)', color: pl.best ? 'var(--ink-900)' : 'white' }}>
         {perMois ? 'Souscrire' : 'Commencer'} <Icon name="arrow" size={14} />
       </button>
 
@@ -137,10 +138,12 @@ const PageFAQ = () => {
 };
 
 // Quiz de 90s
-const Quiz = () => (
+const Quiz = () => {
+  const nav = useNav();
+  return (
   <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800 }}>
     <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Logo size={26} />
+      <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <span style={{ fontSize: 12, color: 'var(--ink-500)' }}>Question 3 sur 5</span>
         <div style={{ width: 200, height: 4, borderRadius: 2, background: 'var(--ink-200)', overflow: 'hidden' }}>
@@ -178,15 +181,17 @@ const Quiz = () => (
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 48 }}>
-        <button className="btn btn-ghost"><Icon name="arrowL" size={14} /> Précédent</button>
-        <button className="btn btn-primary btn-lg">Question suivante <Icon name="arrow" size={16} /></button>
+        <button onClick={() => nav('/')} className="btn btn-ghost"><Icon name="arrowL" size={14} /> Précédent</button>
+        <button onClick={() => nav('/creer')} className="btn btn-primary btn-lg">Question suivante <Icon name="arrow" size={16} /></button>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 // Upload documents
 const Upload = () => {
+  const nav = useNav();
   const docs = [
     { n: 'CNI gérant.jpg', size: '2.1 Mo', s: 'done' },
     { n: 'Justif. domicile.pdf', size: '320 Ko', s: 'done' },
@@ -196,7 +201,7 @@ const Upload = () => {
   return (
     <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800 }}>
       <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Logo size={26} />
+        <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
         <div className="ava">AD</div>
       </div>
 
@@ -270,6 +275,11 @@ const Upload = () => {
               ))}
             </div>
           </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
+          <button onClick={() => nav('/creer/identite')} className="btn btn-ghost"><Icon name="arrowL" size={14} /> Retour</button>
+          <button onClick={() => nav('/creer/paiement')} className="btn btn-primary btn-lg">Continuer vers le paiement <Icon name="arrow" size={16} /></button>
         </div>
       </div>
     </div>

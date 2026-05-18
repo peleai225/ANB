@@ -21,30 +21,41 @@ const useCopy = () => {
   };
 };
 
-const VitrineNav = ({ light = false }) => (
+const VitrineNav = ({ light = false }) => {
+  const nav = useNav();
+  const links = [
+    { l: 'Services', p: '/#services' },
+    { l: 'Comment ça marche', p: '/#how' },
+    { l: 'Tarifs', p: '/tarifs' },
+    { l: 'Partenaires', p: '/partenaire' },
+    { l: 'FAQ', p: '/faq' },
+  ];
+  return (
   <div style={{
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     padding: '20px 56px',
     color: light ? 'white' : 'var(--ink-900)',
   }}>
-    <Logo light={light} />
+    <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
     <div style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
-      {['Services', 'Comment ça marche', 'Tarifs', 'Partenaires', 'FAQ'].map((s) => (
-        <span key={s} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s}</span>
+      {links.map((s) => (
+        <span key={s.l} onClick={() => nav(s.p)} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s.l}</span>
       ))}
     </div>
     <div style={{ display: 'flex', gap: 10 }}>
-      <button className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
-      <button className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
+      <button onClick={() => nav('/partenaire/dashboard')} className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
+      <button onClick={() => nav('/quiz')} className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
         Créer mon entreprise <Icon name="arrow" size={14} />
       </button>
     </div>
   </div>
-);
+  );
+};
 
 // HERO A — Gradient bold, gros chiffres, claim massif
 const HeroA = () => {
   const copy = useCopy();
+  const nav = useNav();
   return (
   <div className="grain" style={{ position: 'relative', background: 'var(--grad-hero)', color: 'white', overflow: 'hidden' }}>
     <VitrineNav light />
@@ -61,10 +72,10 @@ const HeroA = () => {
           De la SARL à la SAS, immatriculez votre société depuis votre téléphone. Paiement Mobile Money, suivi temps réel, accompagnement comptable inclus 3 mois.
         </p>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button className="btn btn-lg" style={{ background: 'white', color: 'var(--ink-900)' }}>
+          <button onClick={() => nav('/quiz')} className="btn btn-lg" style={{ background: 'white', color: 'var(--ink-900)' }}>
             {copy.ctaLabel} <Icon name="arrow" size={16} />
           </button>
-          <button className="btn btn-lg" style={{ background: 'transparent', color: 'white', border: '1px solid rgba(255,255,255,.25)' }}>
+          <button onClick={() => nav('/contact')} className="btn btn-lg" style={{ background: 'transparent', color: 'white', border: '1px solid rgba(255,255,255,.25)' }}>
             <Icon name="play" size={14} /> Voir la démo (2 min)
           </button>
         </div>
@@ -106,7 +117,7 @@ const HeroA = () => {
             ))}
           </div>
 
-          <button className="btn" style={{ marginTop: 20, width: '100%', background: 'var(--blue-500)', color: 'white' }}>
+          <button onClick={() => nav('/creer/simulation')} className="btn" style={{ marginTop: 20, width: '100%', background: 'var(--blue-500)', color: 'white' }}>
             Continuer <Icon name="arrow" size={14} />
           </button>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,.5)', marginTop: 12, textAlign: 'center' }}>
@@ -122,6 +133,7 @@ const HeroA = () => {
 // HERO B — Minimal éditorial, fond clair, serif italic
 const HeroB = () => {
   const copy = useCopy();
+  const nav = useNav();
   return (
   <div style={{ background: 'var(--paper)', color: 'var(--ink-900)' }}>
     <VitrineNav />
@@ -138,8 +150,8 @@ const HeroB = () => {
           Cabinet d'expertise comptable & juridique à Abidjan. Création de société, formalités RCCM, accompagnement OHADA — à partir de 95 000 FCFA, en 72h.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          <button className="btn btn-lg btn-primary">{copy.ctaLabel} <Icon name="arrow" size={16} /></button>
-          <button className="btn btn-lg btn-ghost">Voir les tarifs</button>
+          <button onClick={() => nav('/quiz')} className="btn btn-lg btn-primary">{copy.ctaLabel} <Icon name="arrow" size={16} /></button>
+          <button onClick={() => nav('/tarifs')} className="btn btn-lg btn-ghost">Voir les tarifs</button>
         </div>
       </div>
 
@@ -166,6 +178,7 @@ const HeroB = () => {
 
 // Section comment ça marche — partagée entre les variations
 const HowItWorks = () => {
+  const nav = useNav();
   const steps = [
     { n: '01', t: 'Choisissez votre forme', d: 'SARL, SAS, SASU, EI, EURL — quiz guidé en 90 sec.', icon: 'target' },
     { n: '02', t: 'Simulez le coût', d: 'Prix tout inclus, transparent, sans surprise.', icon: 'money' },
@@ -183,7 +196,7 @@ const HowItWorks = () => {
               Cinq étapes. <span className="serif" style={{ color: 'var(--ink-500)' }}>Zéro déplacement.</span>
             </h2>
           </div>
-          <button className="btn btn-ghost">Voir le détail <Icon name="arrow" size={14} /></button>
+          <button onClick={() => nav('/quiz')} className="btn btn-ghost">Voir le détail <Icon name="arrow" size={14} /></button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16 }}>
           {steps.map((s, i) => (
@@ -285,6 +298,7 @@ const VitrineFooter = () => {
 
 // Section Services — 7 expertises ANB Corporate
 const Services = () => {
+  const nav = useNav();
   const services = [
     { i: 'pkg', t: 'Création d\'entreprise', d: 'Formalités RCCM, rattachement Impôts, CNPS, génération automatique des statuts.', tag: 'Notre cœur de métier' },
     { i: 'chart', t: 'Comptabilité & fiscalité', d: 'Tenue des comptes, états financiers, déclarations TVA et IS, conformité OHADA.' },
@@ -307,7 +321,7 @@ const Services = () => {
               Une fois votre société immatriculée, ANB Corporate continue à vos côtés : comptabilité, juridique, financement, formation. Tout est centralisé sur votre espace.
             </p>
           </div>
-          <button className="btn btn-ghost">Voir tous les services <Icon name="arrow" size={14} /></button>
+          <button onClick={() => nav('/tarifs')} className="btn btn-ghost">Voir tous les services <Icon name="arrow" size={14} /></button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           {services.map((s, i) => (

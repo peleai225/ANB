@@ -18,18 +18,22 @@ const ParcoursStepBar = ({ active = 0 }) => {
   );
 };
 
-const AppHeader = () => (
+const AppHeader = () => {
+  const nav = useNav();
+  return (
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
-    <Logo size={26} />
+    <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <button className="btn btn-sm btn-ghost"><Icon name="whatsapp" size={14} /> Aide</button>
       <div className="ava">AD</div>
     </div>
   </div>
-);
+  );
+};
 
 // 1 — Choix du type d'entreprise
 const ScreenChoix = () => {
+  const nav = useNav();
   const types = [
     { code: 'SARL', name: 'SARL', desc: 'Société à responsabilité limitée', cap: 'Min. 100 000 FCFA', best: 'PME, commerce', recommended: true, price: '185 000' },
     { code: 'SAS', name: 'SAS', desc: 'Société par actions simplifiée', cap: 'Min. 1 000 000 FCFA', best: 'Levée de fonds', price: '245 000' },
@@ -44,11 +48,11 @@ const ScreenChoix = () => {
         <h1 style={{ font: '500 44px/1 var(--font-display)', letterSpacing: '-0.03em', margin: '0 0 12px' }}>
           Quelle forme pour votre <span className="serif" style={{ color: 'var(--blue-600)' }}>entreprise</span> ?
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--ink-500)', margin: '0 0 36px' }}>Pas sûr ? Notre quiz de 90 secondes vous oriente. <span style={{ color: 'var(--blue-600)', fontWeight: 500, cursor: 'pointer' }}>Lancer le quiz →</span></p>
+        <p style={{ fontSize: 16, color: 'var(--ink-500)', margin: '0 0 36px' }}>Pas sûr ? Notre quiz de 90 secondes vous oriente. <span onClick={() => nav('/quiz')} style={{ color: 'var(--blue-600)', fontWeight: 500, cursor: 'pointer' }}>Lancer le quiz →</span></p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           {types.map((t) => (
-            <div key={t.code} className="card" style={{ padding: 24, position: 'relative', background: t.recommended ? 'white' : 'white', border: t.recommended ? '2px solid var(--blue-600)' : '1px solid var(--ink-200)', cursor: 'pointer' }}>
+            <div key={t.code} onClick={() => nav('/creer/simulation')} className="card" style={{ padding: 24, position: 'relative', background: t.recommended ? 'white' : 'white', border: t.recommended ? '2px solid var(--blue-600)' : '1px solid var(--ink-200)', cursor: 'pointer' }}>
               {t.recommended && (
                 <div style={{ position: 'absolute', top: -10, left: 16, background: 'var(--blue-600)', color: 'white', font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 4 }}>
                   Recommandé
@@ -78,6 +82,7 @@ const ScreenChoix = () => {
 
 // 2 — Simulation de prix
 const ScreenSimulation = () => {
+  const nav = useNav();
   return (
     <div style={{ padding: '48px 64px', background: 'var(--ink-50)', minHeight: 600 }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32 }}>
@@ -127,7 +132,7 @@ const ScreenSimulation = () => {
             </div>
           ))}
 
-          <button className="btn btn-lg" style={{ width: '100%', background: 'white', color: 'var(--ink-900)', marginTop: 24 }}>
+          <button onClick={() => nav('/creer/identite')} className="btn btn-lg" style={{ width: '100%', background: 'white', color: 'var(--ink-900)', marginTop: 24 }}>
             Continuer <Icon name="arrow" size={16} />
           </button>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 11, color: 'rgba(255,255,255,.5)', marginTop: 12 }}>
@@ -140,7 +145,9 @@ const ScreenSimulation = () => {
 };
 
 // 3 — Formulaire
-const ScreenForm = () => (
+const ScreenForm = () => {
+  const nav = useNav();
+  return (
   <div style={{ padding: '48px 64px', background: 'var(--ink-50)', minHeight: 600 }}>
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <div className="chip chip-blue" style={{ marginBottom: 16 }}>Étape 3 sur 6</div>
@@ -204,15 +211,17 @@ const ScreenForm = () => (
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-        <button className="btn btn-ghost"><Icon name="arrowL" size={14} /> Retour</button>
-        <button className="btn btn-primary btn-lg">Continuer <Icon name="arrow" size={16} /></button>
+        <button onClick={() => nav('/creer/simulation')} className="btn btn-ghost"><Icon name="arrowL" size={14} /> Retour</button>
+        <button onClick={() => nav('/creer/documents')} className="btn btn-primary btn-lg">Continuer <Icon name="arrow" size={16} /></button>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 // 4 — Paiement Mobile Money
 const ScreenPaiement = () => {
+  const nav = useNav();
   const methods = [
     { id: 'wave', name: 'Wave', desc: 'Sénégal, Côte d\'Ivoire', color: '#1DC3F0', selected: true },
     { id: 'om', name: 'Orange Money', desc: 'Tous pays UEMOA', color: '#FF6600' },
@@ -266,7 +275,7 @@ const ScreenPaiement = () => {
               </div>
             </div>
 
-            <button className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: 20 }}>
+            <button onClick={() => nav('/creer/suivi')} className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: 20 }}>
               Payer 61 666 FCFA <Icon name="arrow" size={16} />
             </button>
             <div style={{ fontSize: 11, color: 'var(--ink-400)', textAlign: 'center', marginTop: 10 }}>Premier versement aujourd'hui</div>

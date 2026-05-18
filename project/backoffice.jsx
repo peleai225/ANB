@@ -22,14 +22,23 @@ const useCabinet = () => {
 
 const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
   const cab = useCabinet();
+  const nav = useNav();
+  const routeFor = (k) => {
+    if (role === 'Admin') {
+      if (k === 'partners') return '/partenaire';
+      return '/admin';
+    }
+    if (k === 'dossiers') return '/partenaire/dashboard';
+    return '/partenaire/dashboard';
+  };
   return (
   <div style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
     <div style={{ padding: '4px 8px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 12 }}>
-      <Logo light size={24} />
+      <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light size={24} /></span>
       <div style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
     </div>
     {items.map((it) => (
-      <div key={it.k} style={{
+      <div key={it.k} onClick={() => nav(routeFor(it.k))} style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '8px 10px', borderRadius: 8,
         background: it.k === active ? 'rgba(255,255,255,.08)' : 'transparent',
@@ -111,6 +120,7 @@ const StatusBadge = ({ s }) => {
 
 // ── Backoffice partenaire — Dashboard ──
 const PartnerDashboard = () => {
+  const nav = useNav();
   const dossiers = [
     { ref: 'ANB-2026-04812', client: 'Mali Cosmétiques', t: 'SARL', m: 185000, s: 'cours', d: 'il y a 2j', a: 'AD' },
     { ref: 'ANB-2026-04809', client: 'Kojo Tech', t: 'SAS', m: 245000, s: 'greffe', d: 'il y a 3j', a: 'KM' },
@@ -180,7 +190,7 @@ const PartnerDashboard = () => {
               <div></div>
             </div>
             {dossiers.map((d) => (
-              <div key={d.ref} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
+              <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div className="ava">{d.a}</div>
                   <div style={{ fontWeight: 500 }}>{d.client}</div>
@@ -202,6 +212,7 @@ const PartnerDashboard = () => {
 
 // ── Détail dossier ──
 const PartnerDossier = () => {
+  const nav = useNav();
   const navItems = [
     { k: 'home', l: 'Vue d\'ensemble', i: 'home' },
     { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '24' },
@@ -217,7 +228,7 @@ const PartnerDossier = () => {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)', marginBottom: 12 }}>
-            <span>Dossiers</span> <Icon name="chev" size={11} /> <span>ANB-2026-04812</span>
+            <span onClick={() => nav('/partenaire/dashboard')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Dossiers</span> <Icon name="chev" size={11} /> <span>ANB-2026-04812</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <div>
@@ -344,6 +355,7 @@ const PartnerDossier = () => {
 
 // ── Admin ──
 const AdminDashboard = () => {
+  const nav = useNav();
   const navItems = [
     { k: 'home', l: 'Vue d\'ensemble', i: 'home' },
     { k: 'dossiers', l: 'Dossiers', i: 'folder', b: '142' },
@@ -428,7 +440,7 @@ const AdminDashboard = () => {
           <div className="card" style={{ background: 'white' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--ink-200)' }}>
               <div style={{ font: '500 15px/1 var(--font-display)' }}>Partenaires (24)</div>
-              <button className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Ajouter un partenaire</button>
+              <button onClick={() => nav('/partenaire')} className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Ajouter un partenaire</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
               <div>Cabinet</div>

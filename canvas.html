@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ANB Corporate — Création d'entreprise en Côte d'Ivoire</title>
+<title>ANB Corporate · Canvas de design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -4107,302 +4107,29 @@ const InvoicePDF = () => {
 };
 
 Object.assign(window, { PageContact, PartnerOnboarding, EmailMockup, InvoicePDF });
-// === live.jsx ===
-/* global React, ReactDOM */
-// live.jsx — site navigable (vs design canvas).
-// Hash-based routing pour fonctionner depuis file:// comme depuis un serveur.
-
-// ─────────────────────────────────────────────────────────────
-// Hash router minimal
-// ─────────────────────────────────────────────────────────────
-const parseHash = () => {
-  const raw = window.location.hash.slice(1) || '/';
-  return raw.split('#')[0]; // strip nested anchors
-};
-
-const useRoute = () => {
-  const [route, setRoute] = React.useState(parseHash());
-  React.useEffect(() => {
-    const on = () => setRoute(parseHash());
-    window.addEventListener('hashchange', on);
-    return () => window.removeEventListener('hashchange', on);
-  }, []);
-  return route;
-};
-
-const goTo = (path) => {
-  // Always scroll the page-content viewport to top on navigation
-  window.location.hash = path;
-  setTimeout(() => {
-    const sc = document.querySelector('.live-scroll');
-    if (sc) sc.scrollTo({ top: 0, behavior: 'instant' });
-    else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, 0);
-};
-
-// ─────────────────────────────────────────────────────────────
-// Page viewport — centers fixed-width screens, allows horizontal
-// scroll on narrow displays (the components are designed for desktop).
-// ─────────────────────────────────────────────────────────────
-function PageViewport({ children, bg }) {
-  return (
-    <div className="live-scroll" style={{
-      width: '100vw',
-      height: '100vh',
-      overflow: 'auto',
-      background: bg || 'var(--canvas-color, #F0EEE9)',
-      WebkitOverflowScrolling: 'touch',
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        minWidth: 'fit-content',
-        minHeight: '100%',
-      }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Mobile preview — show iOS screens in a row for mobile-flow demo
-// ─────────────────────────────────────────────────────────────
-function MobilePreview() {
-  return (
-    <div className="pas" style={{ width: 1800, padding: '40px 24px', background: 'var(--ink-50)' }}>
-      <div style={{ textAlign: 'center', marginBottom: 32, maxWidth: 720, margin: '0 auto 32px' }}>
-        <div className="chip chip-blue" style={{ marginBottom: 16 }}>Aperçu mobile</div>
-        <h1 style={{ font: '500 36px/1 var(--font-display)', letterSpacing: '-0.03em', margin: 0 }}>
-          Le parcours, <span className="serif" style={{ color: 'var(--blue-600)' }}>depuis le téléphone.</span>
-        </h1>
-        <p style={{ fontSize: 15, color: 'var(--ink-500)', marginTop: 12 }}>
-          Le marché UEMOA est mobile-first. Voici les 4 écrans clés du parcours mobile.
-        </p>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
-        {[
-          { S: MobileHero, l: '1 · Accueil' },
-          { S: MobileChoix, l: '2 · Choix forme' },
-          { S: MobilePaiement, l: '3 · Paiement' },
-          { S: MobileSuivi, l: '4 · Suivi' },
-        ].map(({ S, l }) => (
-          <div key={l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <IOSDevice width={402} height={874}>
-              <S />
-            </IOSDevice>
-            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink-700)' }}>{l}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Showcase pages — email & invoice (with browser/A4 chrome)
-// ─────────────────────────────────────────────────────────────
-function ShowcaseEmail() {
-  return (
-    <div className="pas" style={{ width: 980, padding: '40px 0 60px' }}>
-      <EmailMockup />
-    </div>
-  );
-}
-
-function ShowcaseInvoice() {
-  return (
-    <div className="pas" style={{ width: 880, padding: '40px 0 60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-      <div style={{ fontSize: 12, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'var(--font-mono)' }}>
-        Facture imprimable · format A4 · prête pour PDF
-      </div>
-      <InvoicePDF />
-      <button onClick={() => window.print()} className="btn btn-primary btn-lg">
-        <Icon name="download" size={16} /> Imprimer / Télécharger en PDF
-      </button>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// 404
-// ─────────────────────────────────────────────────────────────
-function NotFound({ path }) {
-  const nav = useNav();
-  return (
-    <div className="pas" style={{ width: 720, padding: '120px 40px', textAlign: 'center' }}>
-      <div className="display-num" style={{ fontSize: 96, color: 'var(--ink-300)', marginBottom: 8 }}>404</div>
-      <h1 style={{ font: '500 28px/1 var(--font-display)', letterSpacing: '-0.025em', margin: '0 0 12px' }}>
-        Page introuvable
-      </h1>
-      <p style={{ fontSize: 15, color: 'var(--ink-500)', margin: '0 0 24px' }}>
-        L'adresse <code style={{ background: 'var(--ink-100)', padding: '2px 8px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 13 }}>{path}</code> n'existe pas sur ce site.
-      </p>
-      <button onClick={() => nav('/')} className="btn btn-primary"><Icon name="home" size={14} /> Retour à l'accueil</button>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Sitemap overlay — accessible via Cmd+K / Ctrl+K
-// ─────────────────────────────────────────────────────────────
-function Sitemap({ open, onClose }) {
-  const nav = useNav();
-  if (!open) return null;
-  const go = (p) => { nav(p); onClose(); };
-  const groups = [
-    { t: 'Vitrine', items: [['Accueil', '/'], ['Tarifs', '/tarifs'], ['FAQ', '/faq'], ['Contact', '/contact']] },
-    { t: 'Parcours client', items: [['Quiz 90s', '/quiz'], ['Choix forme', '/creer'], ['Simulation', '/creer/simulation'], ['Identité société', '/creer/identite'], ['Documents', '/creer/documents'], ['Paiement', '/creer/paiement'], ['Suivi dossier', '/creer/suivi']] },
-    { t: 'Mobile', items: [['Aperçu 4 écrans', '/mobile']] },
-    { t: 'Espace partenaire', items: [['Onboarding cabinet', '/partenaire'], ['Dashboard', '/partenaire/dashboard'], ['Détail dossier', '/partenaire/dossier']] },
-    { t: 'Admin & docs', items: [['Vue admin', '/admin'], ['Email RCCM', '/showcase/email'], ['Facture A4', '/showcase/facture']] },
-  ];
-  return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 2147483645, background: 'rgba(10,14,26,.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '8vh', fontFamily: 'var(--font-body)' }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 720, maxWidth: '90vw', maxHeight: '80vh', overflow: 'auto', background: 'var(--paper, #FFFFFF)', borderRadius: 16, padding: 32, boxShadow: '0 30px 80px rgba(0,0,0,.4)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--ink-200)' }}>
-          <div>
-            <div className="display-num" style={{ fontSize: 24, color: 'var(--ink-900)' }}>Plan du site</div>
-            <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 4 }}>{groups.reduce((s, g) => s + g.items.length, 0)} pages · raccourci <kbd style={{ background: 'var(--ink-100)', padding: '1px 6px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 11 }}>⌘K</kbd></div>
-          </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--ink-500)', fontSize: 22, lineHeight: 1 }}>×</button>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 28 }}>
-          {groups.map((g) => (
-            <div key={g.t}>
-              <div style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>{g.t}</div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {g.items.map(([l, p]) => (
-                  <div key={p} onClick={() => go(p)} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 6, cursor: 'pointer', alignItems: 'center', fontSize: 14, color: 'var(--ink-800)' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--ink-100)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                    <span>{l}</span>
-                    <span style={{ fontSize: 11, color: 'var(--ink-400)', fontFamily: 'var(--font-mono)' }}>{p}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Live shell — top-right floating toolbar (sitemap + theme + canvas link)
-// ─────────────────────────────────────────────────────────────
-function LiveToolbar({ onOpenMap, t, setTweak }) {
-  return (
-    <div style={{
-      position: 'fixed', top: 12, right: 12, zIndex: 2147483640,
-      display: 'flex', gap: 6, padding: 6,
-      background: 'rgba(255,255,255,.78)',
-      backdropFilter: 'blur(20px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-      borderRadius: 12, border: '0.5px solid rgba(255,255,255,.6)',
-      boxShadow: '0 8px 30px rgba(0,0,0,.15)',
-      fontFamily: 'var(--font-body)',
-    }}>
-      <button onClick={onOpenMap} title="Plan du site (⌘K)" style={btnStyle}>
-        <Icon name="grid" size={14} /> <span style={{ fontSize: 12, marginLeft: 6 }}>Plan du site</span>
-      </button>
-      <button onClick={() => setTweak('darkMode', !t.darkMode)} title="Mode sombre" style={btnStyle}>
-        <Icon name="moon" size={14} />
-      </button>
-    </div>
-  );
-}
-const btnStyle = {
-  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-  height: 30, padding: '0 10px',
-  background: 'rgba(255,255,255,.5)',
-  border: '0.5px solid rgba(0,0,0,.08)', borderRadius: 8,
-  color: 'var(--ink-900, #0A0E1A)', cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-// ─────────────────────────────────────────────────────────────
-// Router — maps URL hash to component, all wrapped in PageViewport
-// ─────────────────────────────────────────────────────────────
-function Router({ route, heroVariant = 'B' }) {
-  const HomeScreen = () => <Vitrine variant={heroVariant === 'A' ? 'A' : 'B'} />;
-
-  switch (route) {
-    case '/':              return <PageViewport bg="white"><HomeScreen /></PageViewport>;
-    case '/tarifs':        return <PageViewport bg="white"><PageTarifs /></PageViewport>;
-    case '/faq':           return <PageViewport bg="white"><PageFAQ /></PageViewport>;
-    case '/contact':       return <PageViewport bg="white"><PageContact /></PageViewport>;
-    case '/quiz':          return <PageViewport bg="var(--ink-50)"><Quiz /></PageViewport>;
-    case '/creer':         return <PageViewport bg="var(--ink-50)"><Parcours step={0} /></PageViewport>;
-    case '/creer/simulation': return <PageViewport bg="var(--ink-50)"><Parcours step={1} /></PageViewport>;
-    case '/creer/identite':   return <PageViewport bg="var(--ink-50)"><Parcours step={2} /></PageViewport>;
-    case '/creer/documents':  return <PageViewport bg="var(--ink-50)"><Upload /></PageViewport>;
-    case '/creer/paiement':   return <PageViewport bg="var(--ink-50)"><Parcours step={4} /></PageViewport>;
-    case '/creer/suivi':      return <PageViewport bg="var(--ink-50)"><Parcours step={5} /></PageViewport>;
-    case '/mobile':           return <PageViewport bg="var(--ink-50)"><MobilePreview /></PageViewport>;
-    case '/partenaire':       return <PageViewport bg="var(--ink-50)"><PartnerOnboarding /></PageViewport>;
-    case '/partenaire/dashboard': return <PageViewport bg="var(--ink-50)"><PartnerDashboard /></PageViewport>;
-    case '/partenaire/dossier':   return <PageViewport bg="var(--ink-50)"><PartnerDossier /></PageViewport>;
-    case '/admin':            return <PageViewport bg="var(--ink-50)"><AdminDashboard /></PageViewport>;
-    case '/showcase/email':   return <PageViewport bg="var(--ink-100)"><ShowcaseEmail /></PageViewport>;
-    case '/showcase/facture': return <PageViewport bg="var(--ink-100)"><ShowcaseInvoice /></PageViewport>;
-    default:                  return <PageViewport bg="white"><NotFound path={route} /></PageViewport>;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// LiveApp — public entry. Mounts router + tweak panel + toolbar.
-// Reuses the same tweak system as the canvas (settings persist via
-// the same EDITMODE block, so rebrand survives across both modes).
-// ─────────────────────────────────────────────────────────────
-const LIVE_TWEAK_DEFAULTS = {
-  "fontDisplay": "Geist",
-  "fontBody": "Geist",
-  "fontSerif": "Instrument Serif",
+// ═════════════════════════════════════════════════════════════
+// Canvas App
+// ═════════════════════════════════════════════════════════════
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "fontDisplay": "Geist", "fontBody": "Geist", "fontSerif": "Instrument Serif",
   "heroVariant": "B",
-  "primaryColor": "#2563EB",
-  "primaryDark": "#1E3A8A",
-  "primaryDeep": "#0B1E54",
-  "inkColor": "#0A0E1A",
-  "paperColor": "#FFFFFF",
-  "canvasColor": "#F0EEE9",
-  "accentMint": "#10B981",
-  "accentAmber": "#F59E0B",
-  "accentRose": "#F43F5E",
-  "radiusScale": 1,
-  "gradientIntensity": 1,
-  "showGrain": true,
-  "ctaLabel": "Créer mon entreprise",
-  "ctaStyle": "primary",
-  "buttonShape": "pill",
+  "primaryColor": "#2563EB", "primaryDark": "#1E3A8A", "primaryDeep": "#0B1E54",
+  "inkColor": "#0A0E1A", "paperColor": "#FFFFFF", "canvasColor": "#F0EEE9",
+  "accentMint": "#10B981", "accentAmber": "#F59E0B", "accentRose": "#F43F5E",
+  "radiusScale": 1, "gradientIntensity": 1, "showGrain": true,
+  "ctaLabel": "Créer mon entreprise", "ctaStyle": "primary", "buttonShape": "pill",
   "heroBadge": "Cabinet certifié · Cocody, Abidjan 🇨🇮",
-  "brandName": "ANB Corporate",
-  "headline": "Créez votre entreprise en",
-  "cabinetName": "ANB Corporate",
-  "cabinetCity": "Cocody, Abidjan",
-  "cabinetEmail": "contact@anbcorporate.com",
-  "cabinetPhone": "+225 27 22 00 00 00",
-  "darkMode": false,
-};
+  "brandName": "ANB Corporate", "headline": "Créez votre entreprise en",
+  "cabinetName": "ANB Corporate", "cabinetCity": "Cocody, Abidjan",
+  "cabinetEmail": "contact@anbcorporate.com", "cabinetPhone": "+225 27 22 00 00 00",
+  "darkMode": false
+}/*EDITMODE-END*/;
 
-function _hexToRgb(hex) {
-  const m = hex.replace('#', '').match(/.{2}/g);
-  if (!m) return '37,99,235';
-  return m.map(h => parseInt(h, 16)).join(',');
-}
-function _lighten(hex, amt) {
-  const [r, g, b] = _hexToRgb(hex).split(',').map(Number);
-  const mix = (c) => Math.round(c + (255 - c) * amt);
-  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
-}
+function _hexToRgb(hex){const m=hex.replace('#','').match(/.{2}/g);if(!m)return '37,99,235';return m.map(h=>parseInt(h,16)).join(',');}
+function _lighten(hex,amt){const[r,g,b]=_hexToRgb(hex).split(',').map(Number);const mix=(c)=>Math.round(c+(255-c)*amt);return `rgb(${mix(r)},${mix(g)},${mix(b)})`;}
 
-function LiveApp() {
-  const [t, setTweak] = useTweaks(LIVE_TWEAK_DEFAULTS);
-  const route = useRoute();
-  const [mapOpen, setMapOpen] = React.useState(false);
-
-  // Apply tweaks → CSS variables (same as canvas App)
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   React.useEffect(() => {
     const r = document.documentElement.style;
     r.setProperty('--font-display', `"${t.fontDisplay}", system-ui, sans-serif`);
@@ -4423,25 +4150,19 @@ function LiveApp() {
     r.setProperty('--accent-amber', t.accentAmber);
     r.setProperty('--accent-rose', t.accentRose);
     const s = t.radiusScale;
-    r.setProperty('--r-xs', `${6 * s}px`);
-    r.setProperty('--r-sm', `${10 * s}px`);
-    r.setProperty('--r-md', `${14 * s}px`);
-    r.setProperty('--r-lg', `${20 * s}px`);
-    r.setProperty('--r-xl', `${28 * s}px`);
-    r.setProperty('--r-pill', t.buttonShape === 'square' ? `${8 * s}px` : '999px');
+    r.setProperty('--r-xs', `${6*s}px`);
+    r.setProperty('--r-sm', `${10*s}px`);
+    r.setProperty('--r-md', `${14*s}px`);
+    r.setProperty('--r-lg', `${20*s}px`);
+    r.setProperty('--r-xl', `${28*s}px`);
+    r.setProperty('--r-pill', t.buttonShape === 'square' ? `${8*s}px` : '999px');
     const gi = t.gradientIntensity;
-    const c1 = _lighten(t.primaryColor, Math.max(0, 0.05 - 0.05 * gi));
-    r.setProperty('--grad-hero',
-      `radial-gradient(125% 125% at 0% 0%, ${c1} 0%, ${t.primaryDark} ${45 * gi}%, ${t.primaryDeep} 100%)`);
+    const c1 = _lighten(t.primaryColor, Math.max(0, 0.05 - 0.05*gi));
+    r.setProperty('--grad-hero', `radial-gradient(125% 125% at 0% 0%, ${c1} 0%, ${t.primaryDark} ${45*gi}%, ${t.primaryDeep} 100%)`);
     const rgb = _hexToRgb(t.primaryColor);
     r.setProperty('--shadow-blue', `0 12px 32px rgba(${rgb},.28), 0 4px 12px rgba(${rgb},.18)`);
-    if (t.darkMode) {
-      document.body.setAttribute('data-theme', 'dark');
-      document.body.style.background = '#0A0E1A';
-    } else {
-      document.body.removeAttribute('data-theme');
-      document.body.style.background = t.canvasColor;
-    }
+    if (t.darkMode) { document.body.setAttribute('data-theme', 'dark'); document.body.style.background = '#0A0E1A'; }
+    else { document.body.removeAttribute('data-theme'); document.body.style.background = t.canvasColor; }
   }, [t]);
 
   React.useEffect(() => {
@@ -4450,30 +4171,56 @@ function LiveApp() {
       headline: t.headline, buttonShape: t.buttonShape, ctaStyle: t.ctaStyle,
       cabinetName: t.cabinetName, cabinetCity: t.cabinetCity,
       cabinetEmail: t.cabinetEmail, cabinetPhone: t.cabinetPhone,
-      heroVariant: t.heroVariant,
     };
     window.dispatchEvent(new CustomEvent('pas-copy-update'));
-  }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle, t.cabinetName, t.cabinetCity, t.cabinetEmail, t.cabinetPhone, t.heroVariant]);
-
-  // Keyboard shortcuts
-  React.useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setMapOpen((o) => !o);
-      } else if (e.key === 'Escape') {
-        setMapOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle, t.cabinetName, t.cabinetCity, t.cabinetEmail, t.cabinetPhone]);
 
   return (
-    <NavCtx.Provider value={goTo}>
-      <Router route={route} heroVariant={t.heroVariant} />
-      <LiveToolbar onOpenMap={() => setMapOpen(true)} t={t} setTweak={setTweak} />
-      <Sitemap open={mapOpen} onClose={() => setMapOpen(false)} />
+    <>
+      <DesignCanvas>
+        <DCSection id="vitrine" title="01 · Site vitrine" subtitle="Page d'accueil — 2 directions hero">
+          <DCArtboard id="hero-a" label="A · Bold gradient + simulateur" width={1440} height={2950}>
+            <Vitrine variant={t.heroVariant === 'B' ? 'B' : 'A'} />
+          </DCArtboard>
+          <DCArtboard id="hero-b" label="B · Éditorial minimal serif" width={1440} height={2950}>
+            <Vitrine variant={t.heroVariant === 'A' ? 'B' : 'A'} />
+          </DCArtboard>
+        </DCSection>
+        <DCSection id="vitrine-pages" title="01b · Pages vitrine" subtitle="Tarifs · FAQ · Contact">
+          <DCArtboard id="tarifs" label="Tarifs (création + mensuel)" width={1440} height={1500}><PageTarifs /></DCArtboard>
+          <DCArtboard id="faq" label="FAQ" width={1440} height={1100}><PageFAQ /></DCArtboard>
+          <DCArtboard id="contact" label="Contact + carte Abidjan" width={1440} height={1000}><PageContact /></DCArtboard>
+        </DCSection>
+        <DCSection id="parcours-desktop" title="02 · Parcours client — Desktop" subtitle="Du quiz au suivi de dossier">
+          <DCArtboard id="quiz" label="Quiz 90s" width={1280} height={800}><Quiz /></DCArtboard>
+          <DCArtboard id="p1" label="Choix de la forme" width={1280} height={900}><Parcours step={0} /></DCArtboard>
+          <DCArtboard id="p2" label="Simulation prix" width={1280} height={900}><Parcours step={1} /></DCArtboard>
+          <DCArtboard id="p3" label="Formulaire identité" width={1280} height={1100}><Parcours step={2} /></DCArtboard>
+          <DCArtboard id="upload" label="Upload documents" width={1280} height={900}><Upload /></DCArtboard>
+          <DCArtboard id="p5" label="Paiement Mobile Money" width={1280} height={900}><Parcours step={4} /></DCArtboard>
+          <DCArtboard id="p6" label="Suivi du dossier" width={1280} height={900}><Parcours step={5} /></DCArtboard>
+        </DCSection>
+        <DCSection id="parcours-mobile" title="03 · Parcours client — Mobile" subtitle="Le marché UEMOA est mobile-first">
+          <DCArtboard id="m1" label="Accueil" width={402} height={874}><MobileWrap Screen={MobileHero} /></DCArtboard>
+          <DCArtboard id="m2" label="Choix de la forme" width={402} height={874}><MobileWrap Screen={MobileChoix} /></DCArtboard>
+          <DCArtboard id="m3" label="Paiement" width={402} height={874}><MobileWrap Screen={MobilePaiement} /></DCArtboard>
+          <DCArtboard id="m4" label="Suivi" width={402} height={874}><MobileWrap Screen={MobileSuivi} /></DCArtboard>
+        </DCSection>
+        <DCSection id="partner" title="04 · Backoffice partenaire" subtitle="Cabinets / consultants">
+          <DCArtboard id="bp1" label="Dashboard — dossiers" width={1440} height={900}><PartnerDashboard /></DCArtboard>
+          <DCArtboard id="bp2" label="Détail dossier client" width={1440} height={900}><PartnerDossier /></DCArtboard>
+        </DCSection>
+        <DCSection id="admin" title="05 · Administration" subtitle="Vue plateforme — KPI globaux">
+          <DCArtboard id="ad1" label="Vue d'ensemble" width={1440} height={900}><AdminDashboard /></DCArtboard>
+        </DCSection>
+        <DCSection id="onboarding" title="06 · Onboarding partenaire" subtitle="Pour les cabinets qui rejoignent la plateforme">
+          <DCArtboard id="ob1" label="Étape 2 · Équipe & capacité" width={1280} height={1000}><PartnerOnboarding /></DCArtboard>
+        </DCSection>
+        <DCSection id="comms" title="07 · Communications & documents" subtitle="Email transactionnel · Facture imprimable">
+          <DCArtboard id="email" label="Email — RCCM prêt" width={900} height={1280}><EmailMockup /></DCArtboard>
+          <DCArtboard id="invoice" label="Facture A4 (imprimable)" width={794} height={1123}><InvoicePDF /></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
 
       <TweaksPanel title="Tweaks · Rebrand">
         <TweakSection label="Marque & copy" />
@@ -4481,44 +4228,41 @@ function LiveApp() {
         <TweakText label="Titre hero" value={t.headline} onChange={(v) => setTweak('headline', v)} />
         <TweakText label="Badge hero" value={t.heroBadge} onChange={(v) => setTweak('heroBadge', v)} />
         <TweakText label="Texte CTA" value={t.ctaLabel} onChange={(v) => setTweak('ctaLabel', v)} />
-
         <TweakSection label="Cabinet" />
         <TweakText label="Nom cabinet" value={t.cabinetName} onChange={(v) => setTweak('cabinetName', v)} />
         <TweakText label="Ville" value={t.cabinetCity} onChange={(v) => setTweak('cabinetCity', v)} />
         <TweakText label="Email" value={t.cabinetEmail} onChange={(v) => setTweak('cabinetEmail', v)} />
         <TweakText label="Téléphone" value={t.cabinetPhone} onChange={(v) => setTweak('cabinetPhone', v)} />
-
         <TweakSection label="Typographie" />
-        <TweakSelect label="Display" value={t.fontDisplay} options={['Geist', 'Inter', 'Poppins']} onChange={(v) => setTweak('fontDisplay', v)} />
-        <TweakSelect label="Body" value={t.fontBody} options={['Geist', 'Inter', 'Poppins']} onChange={(v) => setTweak('fontBody', v)} />
-        <TweakSelect label="Serif accent" value={t.fontSerif} options={['Instrument Serif', 'Geist', 'Inter']} onChange={(v) => setTweak('fontSerif', v)} />
-
-        <TweakSection label="Couleurs" />
+        <TweakSelect label="Display" value={t.fontDisplay} options={['Geist','Inter','Poppins']} onChange={(v) => setTweak('fontDisplay', v)} />
+        <TweakSelect label="Body" value={t.fontBody} options={['Geist','Inter','Poppins']} onChange={(v) => setTweak('fontBody', v)} />
+        <TweakSelect label="Serif accent" value={t.fontSerif} options={['Instrument Serif','Geist','Inter']} onChange={(v) => setTweak('fontSerif', v)} />
+        <TweakSection label="Couleurs primaires" />
         <TweakColor label="Bleu principal" value={t.primaryColor} onChange={(v) => setTweak('primaryColor', v)} />
         <TweakColor label="Bleu foncé" value={t.primaryDark} onChange={(v) => setTweak('primaryDark', v)} />
         <TweakColor label="Bleu profond" value={t.primaryDeep} onChange={(v) => setTweak('primaryDeep', v)} />
         <TweakColor label="Encre" value={t.inkColor} onChange={(v) => setTweak('inkColor', v)} />
         <TweakColor label="Papier" value={t.paperColor} onChange={(v) => setTweak('paperColor', v)} />
-
+        <TweakColor label="Canvas" value={t.canvasColor} onChange={(v) => setTweak('canvasColor', v)} />
+        <TweakSection label="Accents data viz" />
+        <TweakColor label="Vert (succès)" value={t.accentMint} onChange={(v) => setTweak('accentMint', v)} />
+        <TweakColor label="Ambre (alerte)" value={t.accentAmber} onChange={(v) => setTweak('accentAmber', v)} />
+        <TweakColor label="Rose (erreur)" value={t.accentRose} onChange={(v) => setTweak('accentRose', v)} />
         <TweakSection label="Forme & échelle" />
         <TweakSlider label="Rayon coins" min={0.5} max={2} step={0.1} value={t.radiusScale} onChange={(v) => setTweak('radiusScale', v)} />
         <TweakSlider label="Intensité gradient" min={0.4} max={1.4} step={0.05} value={t.gradientIntensity} onChange={(v) => setTweak('gradientIntensity', v)} />
         <TweakRadio label="Boutons" value={t.buttonShape} options={[{value: 'pill', label: 'Pilule'}, {value: 'square', label: 'Carrés'}]} onChange={(v) => setTweak('buttonShape', v)} />
-
-        <TweakSection label="Hero" />
+        <TweakSection label="Hero vitrine" />
         <TweakRadio label="Variation" value={t.heroVariant} options={[{value: 'A', label: 'Bold'}, {value: 'B', label: 'Éditorial'}]} onChange={(v) => setTweak('heroVariant', v)} />
-
+        <TweakToggle label="Texture grain" value={t.showGrain} onChange={(v) => setTweak('showGrain', v)} />
         <TweakSection label="Thème" />
         <TweakToggle label="Mode sombre intégral" value={t.darkMode} onChange={(v) => setTweak('darkMode', v)} />
       </TweaksPanel>
-    </NavCtx.Provider>
+    </>
   );
 }
 
-Object.assign(window, { LiveApp, useRoute, goTo, PageViewport, MobilePreview, Sitemap });
-
-
-ReactDOM.createRoot(document.getElementById("root")).render(<LiveApp />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>

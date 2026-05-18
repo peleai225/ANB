@@ -94,6 +94,8 @@ const AbidjanMap = ({ pinLabel = "ANB Corporate · Angré 7e" }) => (
 
 const PageContact = () => {
   const c = useAdCopy();
+  const nav = useNav();
+  const [sent, setSent] = React.useState(false);
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
       <div style={{ padding: '60px 56px 80px', maxWidth: 1280, margin: '0 auto' }}>
@@ -158,9 +160,21 @@ const PageContact = () => {
               </div>
             </div>
 
-            <button className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: 20 }}>
-              Envoyer ma demande <Icon name="arrow" size={16} />
-            </button>
+            {sent ? (
+              <div style={{ marginTop: 20, padding: 20, borderRadius: 12, background: 'rgba(16,185,129,.1)', border: '1px solid rgba(16,185,129,.3)', display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent-mint)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon name="check" size={18} stroke={2.5} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink-900)' }}>Demande envoyée</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-600)', marginTop: 2 }}>Nous vous recontactons sous 2h. Retour à l'accueil <span onClick={() => nav('/')} style={{ color: 'var(--blue-600)', cursor: 'pointer', fontWeight: 500 }}>→</span></div>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setSent(true)} className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: 20 }}>
+                Envoyer ma demande <Icon name="arrow" size={16} />
+              </button>
+            )}
           </div>
 
           {/* Map + contact card */}
@@ -210,16 +224,17 @@ const PageContact = () => {
 
 const PartnerOnboarding = () => {
   const c = useAdCopy();
+  const nav = useNav();
+  const [active, setActive] = React.useState(1);
   const steps = ['Cabinet', 'Équipe', 'Documents', 'Validation'];
-  const active = 1;
   return (
     <div className="pas" style={{ width: 1280, background: 'var(--ink-50)', minHeight: 800, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'var(--paper)' }}>
-        <Logo size={26} />
+        <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo size={26} /></span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <span style={{ fontSize: 12, color: 'var(--ink-500)' }}>Onboarding partenaire · Étape {active + 1}/4</span>
-          <button className="btn btn-sm btn-ghost">Reprendre plus tard</button>
+          <button onClick={() => nav('/')} className="btn btn-sm btn-ghost">Reprendre plus tard</button>
         </div>
       </div>
 
@@ -301,8 +316,10 @@ const PartnerOnboarding = () => {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-            <button className="btn btn-ghost"><Icon name="arrowL" size={14} /> Retour</button>
-            <button className="btn btn-primary btn-lg">Étape suivante · Documents <Icon name="arrow" size={16} /></button>
+            <button onClick={() => active > 0 ? setActive(active - 1) : nav('/')} className="btn btn-ghost"><Icon name="arrowL" size={14} /> Retour</button>
+            <button onClick={() => active < 3 ? setActive(active + 1) : nav('/partenaire/dashboard')} className="btn btn-primary btn-lg">
+              {active < 3 ? `Étape suivante · ${steps[active + 1]}` : 'Activer mon cabinet'} <Icon name="arrow" size={16} />
+            </button>
           </div>
         </div>
 

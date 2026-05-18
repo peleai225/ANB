@@ -1,6 +1,11 @@
 /* global React */
 // Primitives — icônes minimales, badges, micro-composants
 
+// Navigation context — used by Live site (real navigation), falls back to
+// a console log in canvas mode (no provider).
+const NavCtx = React.createContext((path) => { console.log('[canvas mode] nav:', path); });
+const useNav = () => React.useContext(NavCtx);
+
 const Icon = ({ name, size = 16, stroke = 1.6, color = "currentColor" }) => {
   const p = (d) => <path d={d} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" />;
   const c = (cx, cy, r) => <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={stroke} />;
@@ -128,4 +133,4 @@ const BrowserChrome = ({ url, children, height }) => (
   </div>
 );
 
-Object.assign(window, { Icon, Logo, Stat, StepDot, BrowserChrome });
+Object.assign(window, { Icon, Logo, Stat, StepDot, BrowserChrome, NavCtx, useNav });
