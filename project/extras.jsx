@@ -326,14 +326,14 @@ const PageAPropos = () => {
     { v: 'Intégrité', d: 'Nous agissons avec honnêteté et transparence dans toutes nos relations avec nos clients et partenaires.', i: 'shield' },
     { v: 'Innovation', d: 'Nous adoptons les meilleures technologies pour simplifier et accélérer vos démarches administratives.', i: 'bolt' },
     { v: 'Rigueur', d: 'Chaque dossier est traité avec la plus grande précision — zéro erreur, zéro délai non justifié.', i: 'check' },
-    { v: 'Confidentialité', d: 'Vos données et informations d'affaires sont protégées conformément à la loi ivoirienne 2013-450.', i: 'lock' },
+    { v: 'Confidentialité', d: "Vos données et informations d'affaires sont protégées conformément à la loi ivoirienne 2013-450.", i: 'lock' },
   ];
   const legal = [
     { l: 'Raison sociale', v: 'ANB CORPORATE (SARL)' },
     { l: 'Capital social', v: '1 000 000 FCFA' },
     { l: 'RCCM', v: 'CI-ABJ-03-2025-B13-00359' },
     { l: 'N° NCC', v: '2500120 F' },
-    { l: 'Régime fiscal', v: 'TEE (Taxe d'État de l'entreprenant)' },
+    { l: 'Régime fiscal', v: "TEE (Taxe d'État de l'entreprenant)" },
     { l: 'Adresse', v: 'Abidjan, Cocody, Angré 7e/8e tranche' },
   ];
   return (
@@ -402,7 +402,7 @@ const PageAPropos = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 28 }}>
               {[
                 { v: '1 200', l: 'Entreprises créées' },
-                { v: '5+', l: 'Années d'expertise' },
+                { v: '5+', l: "Années d'expertise" },
                 { v: '4,9', l: 'Satisfaction client' },
               ].map((s, i) => (
                 <div key={i} className="card" style={{ padding: '16px 20px', textAlign: 'center', background: 'white' }}>
