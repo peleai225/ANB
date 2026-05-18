@@ -32,13 +32,13 @@ const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
     return '/partenaire/dashboard';
   };
   return (
-  <div style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
+  <div data-sidenav style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
     <div style={{ padding: '4px 8px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 12 }}>
       <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light size={24} /></span>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
+      <div data-sidenav-label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
     </div>
     {items.map((it) => (
-      <div key={it.k} onClick={() => nav(routeFor(it.k))} style={{
+      <div key={it.k} onClick={() => nav(routeFor(it.k))} title={it.l} style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '8px 10px', borderRadius: 8,
         background: it.k === active ? 'rgba(255,255,255,.08)' : 'transparent',
@@ -47,11 +47,11 @@ const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
         cursor: 'pointer',
       }}>
         <Icon name={it.i} size={15} />
-        <span style={{ flex: 1 }}>{it.l}</span>
-        {it.b && <span style={{ background: 'var(--blue-600)', color: 'white', fontSize: 10, padding: '2px 6px', borderRadius: 8, fontWeight: 600 }}>{it.b}</span>}
+        <span data-sidenav-label style={{ flex: 1 }}>{it.l}</span>
+        {it.b && <span data-sidenav-label style={{ background: 'var(--blue-600)', color: 'white', fontSize: 10, padding: '2px 6px', borderRadius: 8, fontWeight: 600 }}>{it.b}</span>}
       </div>
     ))}
-    <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div data-sidenav-cabinet style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
       <div className="ava" style={{ background: 'var(--blue-600)', color: 'white' }}>{cab.initials}</div>
       <div style={{ fontSize: 12, minWidth: 0, flex: 1 }}>
         <div style={{ color: 'white', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.name}</div>

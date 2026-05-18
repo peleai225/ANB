@@ -37,12 +37,12 @@ const VitrineNav = ({ light = false }) => {
     color: light ? 'white' : 'var(--ink-900)',
   }}>
     <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
-    <div style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
+    <div data-vitrine-menu style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
       {links.map((s) => (
         <span key={s.l} onClick={() => nav(s.p)} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s.l}</span>
       ))}
     </div>
-    <div style={{ display: 'flex', gap: 10 }}>
+    <div data-vitrine-actions style={{ display: 'flex', gap: 10 }}>
       <button onClick={() => nav('/partenaire/dashboard')} className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
       <button onClick={() => nav('/quiz')} className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
         Créer mon entreprise <Icon name="arrow" size={14} />

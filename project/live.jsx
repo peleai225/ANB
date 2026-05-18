@@ -21,33 +21,27 @@ const useRoute = () => {
 };
 
 const goTo = (path) => {
-  // Always scroll the page-content viewport to top on navigation
   window.location.hash = path;
-  setTimeout(() => {
-    const sc = document.querySelector('.live-scroll');
-    if (sc) sc.scrollTo({ top: 0, behavior: 'instant' });
-    else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, 0);
+  setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 0);
 };
 
 // ─────────────────────────────────────────────────────────────
-// Page viewport — centers fixed-width screens, allows horizontal
-// scroll on narrow displays (the components are designed for desktop).
+// Page viewport — full-bleed scroll container. The CSS responsive
+// rules in styles.css collapse fixed widths on tablet/mobile.
 // ─────────────────────────────────────────────────────────────
 function PageViewport({ children, bg }) {
   return (
     <div className="live-scroll" style={{
       width: '100vw',
-      height: '100vh',
-      overflow: 'auto',
+      minHeight: '100vh',
       background: bg || 'var(--canvas-color, #F0EEE9)',
       WebkitOverflowScrolling: 'touch',
     }}>
       <div style={{
         display: 'flex',
         justifyContent: 'center',
-        minWidth: 'fit-content',
-        minHeight: '100%',
+        minHeight: '100vh',
+        width: '100%',
       }}>
         {children}
       </div>
@@ -291,6 +285,17 @@ function LiveApp() {
   const [t, setTweak] = useTweaks(LIVE_TWEAK_DEFAULTS);
   const route = useRoute();
   const [mapOpen, setMapOpen] = React.useState(false);
+
+  // Mark body as live-mode → enables the responsive CSS overrides
+  React.useEffect(() => {
+    document.body.classList.add('live-mode');
+    document.body.style.overflow = 'auto';
+    // Update meta viewport for proper mobile rendering
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'viewport'; document.head.appendChild(meta); }
+    meta.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+    return () => document.body.classList.remove('live-mode');
+  }, []);
 
   // Apply tweaks → CSS variables (same as canvas App)
   React.useEffect(() => {

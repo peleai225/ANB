@@ -240,6 +240,133 @@ body[data-theme="dark"] .pas .chip-amber { background: rgba(245,158,11,.18); col
 body[data-theme="dark"] .pas .chip-rose { background: rgba(244,63,94,.16); color: #FDA4AF; }
 body[data-theme="dark"] .pas .ava { background: var(--ink-200); color: var(--blue-300); }
 body[data-theme="dark"] .pas .hr { background: var(--ink-200); }
+
+/* ─────────────────────────────────────────────────────────────
+   LIVE MODE — Responsive
+   Applied only when body.live-mode (set by LiveApp). The canvas
+   keeps fixed widths for design review.
+   ───────────────────────────────────────────────────────────── */
+
+body.live-mode { overflow-x: hidden !important; overflow-y: auto !important; }
+body.live-mode .pas {
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+body.live-mode .pas img, body.live-mode .pas svg { max-width: 100%; height: auto; }
+body.live-mode .pas input, body.live-mode .pas textarea, body.live-mode .pas select { max-width: 100%; }
+
+/* The fixed-height backoffice/admin shells become flowing pages */
+body.live-mode .pas[style*="height: 900"] {
+  height: auto !important;
+  min-height: 100vh !important;
+}
+
+/* NOTE: React inline styles serialize WITHOUT quotes around the value, so
+   the selector to match `style={{ padding: '100px 56px' }}` is
+   [style*="padding: 100px 56px"] — no inner quotes. */
+
+/* === ≤ 1280px (small desktop / large tablet) === */
+@media (max-width: 1280px) {
+  body.live-mode .pas h1 { font-size: clamp(26px, 5.2vw, 80px) !important; line-height: 1.05 !important; }
+  body.live-mode .pas h2 { font-size: clamp(22px, 4.2vw, 48px) !important; line-height: 1.1 !important; }
+  body.live-mode .pas .display-num { font-size: clamp(24px, 5vw, 56px) !important; }
+  body.live-mode .pas [style*="padding: 100px 56px"] { padding: 64px 32px !important; }
+  body.live-mode .pas [style*="padding: 60px 56px"] { padding: 40px 24px !important; }
+  body.live-mode .pas [style*="padding: 40px 56px"] { padding: 28px 24px !important; }
+}
+
+/* === ≤ 1024px (tablet) === */
+@media (max-width: 1024px) {
+  /* Collapse big grids */
+  body.live-mode .pas [style*="repeat(5, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+  body.live-mode .pas [style*="repeat(4, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+  body.live-mode .pas [style*="repeat(3, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+  body.live-mode .pas [style*="1.5fr 1fr 1fr 1fr"] { grid-template-columns: repeat(2, 1fr) !important; }
+  /* Stack asymmetric 2-cols */
+  body.live-mode .pas [style*="1.3fr 1fr"],
+  body.live-mode .pas [style*="1.4fr 1fr"],
+  body.live-mode .pas [style*="1.5fr 1fr"],
+  body.live-mode .pas [style*="1.2fr 1fr"],
+  body.live-mode .pas [style*="1.1fr 1.1fr"],
+  body.live-mode .pas [style*="1fr 1.1fr"],
+  body.live-mode .pas [style*="1fr 320px"] { grid-template-columns: 1fr !important; }
+  /* Paddings shrink (React serializes without quotes) */
+  body.live-mode .pas [style*="padding: 48px 64px"] { padding: 32px 20px !important; }
+  body.live-mode .pas [style*="padding: 60px 64px"] { padding: 32px 20px !important; }
+  body.live-mode .pas [style*="padding: 20px 56px"] { padding: 14px 20px !important; }
+  /* Backoffice sidebar shrinks */
+  body.live-mode .pas [data-sidenav] { width: 64px !important; padding: 16px 8px !important; }
+  body.live-mode .pas [data-sidenav] [data-sidenav-label] { display: none !important; }
+  body.live-mode .pas [data-sidenav] [data-sidenav-cabinet] { display: none !important; }
+  /* Hide brand text inside Logo when sidebar is collapsed */
+  body.live-mode .pas [data-sidenav] svg + span { display: none !important; }
+}
+
+/* === ≤ 768px (mobile) === */
+@media (max-width: 768px) {
+  /* Single column for ALL grids that were still 2-col */
+  body.live-mode .pas [style*="repeat(2, 1fr)"],
+  body.live-mode .pas [style*="repeat(3, 1fr)"],
+  body.live-mode .pas [style*="repeat(4, 1fr)"],
+  body.live-mode .pas [style*="repeat(5, 1fr)"] { grid-template-columns: 1fr !important; }
+  body.live-mode .pas [style*="1.5fr 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+
+  /* Padding very tight */
+  body.live-mode .pas [style*="padding: 100px 56px"] { padding: 40px 16px !important; }
+  body.live-mode .pas [style*="padding: 60px 56px"] { padding: 28px 16px !important; }
+  body.live-mode .pas [style*="padding: 48px 64px"] { padding: 20px 16px !important; }
+  body.live-mode .pas [style*="padding: 40px 56px"] { padding: 20px 16px !important; }
+  body.live-mode .pas [style*="padding: 20px 56px"] { padding: 12px 16px !important; }
+  body.live-mode .pas [style*="padding: 20px 32px"] { padding: 12px 16px !important; }
+  body.live-mode .pas [style*="padding: 16px 32px"] { padding: 12px 16px !important; }
+
+  /* Big numbers / titles */
+  body.live-mode .pas .display-num { font-size: clamp(22px, 7vw, 44px) !important; }
+  body.live-mode .pas h1 { font-size: clamp(24px, 7vw, 40px) !important; }
+
+  /* Hide nav middle (menu items) on VitrineNav */
+  body.live-mode .pas [data-vitrine-menu] { display: none !important; }
+  body.live-mode .pas [data-vitrine-actions] > button:first-child { display: none !important; }
+
+  /* Backoffice sidebar collapses entirely */
+  body.live-mode .pas [data-sidenav] { display: none !important; }
+
+  /* Backoffice tables — horizontal scroll the parent card */
+  body.live-mode .pas [data-bo-table] { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  body.live-mode .pas [data-bo-table] > div { min-width: 720px; }
+
+  /* Forms gap reduce */
+  body.live-mode .pas [style*="gap: 32"] { gap: 16px !important; }
+  body.live-mode .pas [style*="gap: 28"] { gap: 14px !important; }
+  body.live-mode .pas [style*="gap: 24"] { gap: 12px !important; }
+
+  /* Buttons stay tap-friendly */
+  body.live-mode .pas .btn { min-height: 44px; }
+  body.live-mode .pas .btn-sm { min-height: 36px; }
+
+  /* iOS device frame scales down */
+  body.live-mode .pas [style*="width: 402"] { transform: scale(0.85); transform-origin: top center; }
+
+  /* Email mockup / invoice scale down to fit phone width */
+  body.live-mode .pas [style*="width: 900"],
+  body.live-mode .pas [style*="width: 794"] {
+    transform: scale(0.42);
+    transform-origin: top left;
+    margin-bottom: -58% !important;
+  }
+}
+
+/* === ≤ 480px (small phone) === */
+@media (max-width: 480px) {
+  body.live-mode .pas h1 { font-size: clamp(22px, 8vw, 32px) !important; }
+  body.live-mode .pas h2 { font-size: clamp(20px, 6vw, 28px) !important; }
+  body.live-mode .pas .display-num { font-size: clamp(20px, 8vw, 36px) !important; }
+  body.live-mode .pas [style*="font-size: 19"] { font-size: 15px !important; }
+  body.live-mode .pas [style*="font-size: 20"] { font-size: 15px !important; }
+  body.live-mode .pas [style*="font-size: 18"] { font-size: 14px !important; }
+}
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
@@ -1814,12 +1941,12 @@ const VitrineNav = ({ light = false }) => {
     color: light ? 'white' : 'var(--ink-900)',
   }}>
     <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
-    <div style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
+    <div data-vitrine-menu style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
       {links.map((s) => (
         <span key={s.l} onClick={() => nav(s.p)} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s.l}</span>
       ))}
     </div>
-    <div style={{ display: 'flex', gap: 10 }}>
+    <div data-vitrine-actions style={{ display: 'flex', gap: 10 }}>
       <button onClick={() => nav('/partenaire/dashboard')} className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
       <button onClick={() => nav('/quiz')} className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
         Créer mon entreprise <Icon name="arrow" size={14} />
@@ -2549,13 +2676,13 @@ const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
     return '/partenaire/dashboard';
   };
   return (
-  <div style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
+  <div data-sidenav style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
     <div style={{ padding: '4px 8px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 12 }}>
       <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light size={24} /></span>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
+      <div data-sidenav-label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 12, fontFamily: 'var(--font-mono)' }}>{role}</div>
     </div>
     {items.map((it) => (
-      <div key={it.k} onClick={() => nav(routeFor(it.k))} style={{
+      <div key={it.k} onClick={() => nav(routeFor(it.k))} title={it.l} style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '8px 10px', borderRadius: 8,
         background: it.k === active ? 'rgba(255,255,255,.08)' : 'transparent',
@@ -2564,11 +2691,11 @@ const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
         cursor: 'pointer',
       }}>
         <Icon name={it.i} size={15} />
-        <span style={{ flex: 1 }}>{it.l}</span>
-        {it.b && <span style={{ background: 'var(--blue-600)', color: 'white', fontSize: 10, padding: '2px 6px', borderRadius: 8, fontWeight: 600 }}>{it.b}</span>}
+        <span data-sidenav-label style={{ flex: 1 }}>{it.l}</span>
+        {it.b && <span data-sidenav-label style={{ background: 'var(--blue-600)', color: 'white', fontSize: 10, padding: '2px 6px', borderRadius: 8, fontWeight: 600 }}>{it.b}</span>}
       </div>
     ))}
-    <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div data-sidenav-cabinet style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
       <div className="ava" style={{ background: 'var(--blue-600)', color: 'white' }}>{cab.initials}</div>
       <div style={{ fontSize: 12, minWidth: 0, flex: 1 }}>
         <div style={{ color: 'white', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.name}</div>
