@@ -25,29 +25,42 @@ const useCopy = () => {
 // Official WhatsApp deep link (group invite for direct contact with the cabinet)
 const ANB_WHATSAPP = "https://api.whatsapp.com/message/IRTHY2K7GJ3ZN1?autoload=1&app_absent=0";
 
+// Lightweight scroll watcher — true once the page has scrolled past `threshold`.
+const useScrolled = (threshold = 40) => {
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const on = () => setScrolled(window.scrollY > threshold);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, [threshold]);
+  return scrolled;
+};
+
 // InfoTopbar — thin contact strip above the main nav. Hidden on mobile via CSS.
 const InfoTopbar = ({ light = false }) => (
   <div data-vitrine-topbar style={{
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    padding: '8px 56px',
-    background: light ? 'rgba(0,0,0,.18)' : 'var(--ink-900)',
-    color: 'rgba(255,255,255,.78)',
-    fontSize: 12, fontFamily: 'var(--font-body)',
+    padding: '14px 56px',
+    background: light ? 'rgba(0,0,0,.22)' : 'var(--ink-900)',
+    color: 'rgba(255,255,255,.82)',
+    fontSize: 13, fontFamily: 'var(--font-body)',
     borderBottom: light ? '1px solid rgba(255,255,255,.08)' : 'none',
+    lineHeight: 1.4,
   }}>
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-      <Icon name="home" size={12} color="rgba(255,255,255,.55)" />
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+      <Icon name="home" size={13} color="rgba(255,255,255,.6)" />
       <span>Abidjan · Cocody · Angré 8<sup style={{ fontSize: 9 }}>e</sup> tranche</span>
     </div>
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 20 }}>
-      <a href="mailto:info@anbcorporate.com" style={{ color: 'rgba(255,255,255,.78)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <Icon name="mail" size={12} color="rgba(255,255,255,.55)" />
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 28 }}>
+      <a href="mailto:info@anbcorporate.com" style={{ color: 'rgba(255,255,255,.82)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+        <Icon name="mail" size={13} color="rgba(255,255,255,.6)" />
         info@anbcorporate.com
       </a>
-      <a href={ANB_WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ color: 'white', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <Icon name="whatsapp" size={13} color="#25D366" />
+      <a href={ANB_WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ color: 'white', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+        <Icon name="whatsapp" size={14} color="#25D366" />
         +225 07 87 44 88 57
-        <span style={{ fontSize: 10, color: '#86EFAC', background: 'rgba(37,211,102,.18)', padding: '2px 7px', borderRadius: 10, marginLeft: 4 }}>WhatsApp · 5 min</span>
+        <span style={{ fontSize: 10, color: '#86EFAC', background: 'rgba(37,211,102,.18)', padding: '3px 9px', borderRadius: 10, marginLeft: 4, letterSpacing: '0.02em' }}>WhatsApp · 5 min</span>
       </a>
     </div>
   </div>
@@ -55,6 +68,7 @@ const InfoTopbar = ({ light = false }) => (
 
 const VitrineNav = ({ light = false, showTopbar = true }) => {
   const nav = useNav();
+  const scrolled = useScrolled(40);
   const links = [
     { l: 'Services', p: '/#services' },
     { l: 'Tarifs', p: '/tarifs' },
@@ -62,13 +76,30 @@ const VitrineNav = ({ light = false, showTopbar = true }) => {
     { l: 'FAQ', p: '/faq' },
     { l: 'Contact', p: '/contact' },
   ];
+
+  // Sticky background fades in once scrolled. Adapts to light (over dark hero) vs default.
+  const navBg = scrolled
+    ? (light ? 'rgba(15, 26, 46, .72)' : 'rgba(255, 255, 255, .82)')
+    : 'transparent';
+  const navBorder = scrolled
+    ? (light ? '1px solid rgba(255,255,255,.08)' : '1px solid rgba(15,26,46,.08)')
+    : '1px solid transparent';
+  const navColor = light ? 'white' : 'var(--ink-900)';
+
   return (
   <>
     {showTopbar && <InfoTopbar light={light} />}
-    <div data-vitrine-nav style={{
+    <div data-vitrine-nav data-scrolled={scrolled ? 'true' : 'false'} style={{
+      position: 'sticky', top: 0, zIndex: 50,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '20px 56px',
-      color: light ? 'white' : 'var(--ink-900)',
+      padding: scrolled ? '14px 56px' : '22px 56px',
+      color: navColor,
+      background: navBg,
+      backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+      WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+      borderBottom: navBorder,
+      boxShadow: scrolled ? (light ? '0 1px 16px rgba(0,0,0,.18)' : '0 1px 16px rgba(15,26,46,.06)') : 'none',
+      transition: 'padding .25s ease, background .25s ease, box-shadow .25s ease, border-color .25s ease',
     }}>
       <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
       <div data-vitrine-menu style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
@@ -93,7 +124,6 @@ const HeroA = () => {
   const nav = useNav();
   return (
   <div className="grain" style={{ position: 'relative', background: 'var(--grad-hero)', color: 'white', overflow: 'hidden' }}>
-    <VitrineNav light />
     <div style={{ position: 'relative', padding: '40px 56px 80px', display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 60, alignItems: 'center' }}>
       <div>
         <div className="chip" style={{ background: 'rgba(255,255,255,.12)', color: 'rgba(255,255,255,.9)', backdropFilter: 'blur(10px)', marginBottom: 24 }}>
@@ -177,7 +207,6 @@ const HeroB = () => {
       width: 1400, height: 600, pointerEvents: 'none',
       background: 'radial-gradient(ellipse at center, rgba(55,82,141,.07) 0%, rgba(55,82,141,0) 70%)',
     }} />
-    <VitrineNav />
     <div style={{ padding: '40px 56px 80px', maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
       {/* Editorial dateline — like a luxury magazine */}
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginBottom: 36, fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--ink-500)' }}>
@@ -727,6 +756,9 @@ const VideosBlock = () => {
 
 const Vitrine = ({ variant = 'A' }) => (
   <div className="pas" style={{ width: 1440, background: 'white' }}>
+    {/* Nav rendered once at the top so it can stick for the whole page.
+        HeroA uses light=true (dark gradient backdrop). */}
+    <VitrineNav light={variant === 'A'} />
     {variant === 'A' ? <HeroA /> : <HeroB />}
     <HowItWorks />
     <Services />
