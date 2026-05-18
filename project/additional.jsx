@@ -190,7 +190,7 @@ const PageContact = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 {[
-                  { i: 'pin', l: 'Adresse', v: `${c.cabinetCity} · Angré 7e/8e tranche` },
+                  { i: 'pin', l: 'Adresse', v: `${c.cabinetCity} · Angré 8e tranche` },
                   { i: 'mail', l: 'Email', v: c.cabinetEmail },
                   { i: 'phone', l: 'Téléphone', v: c.cabinetPhone },
                   { i: 'clock', l: 'Horaires', v: 'Lun-Ven · 8h-18h' },
@@ -695,7 +695,7 @@ const EmailMockup = () => {
           {/* Footer */}
           <div style={{ marginTop: 36, paddingTop: 24, borderTop: '1px solid var(--ink-200)', textAlign: 'center' }}>
             <div style={{ fontSize: 12, color: 'var(--ink-500)', lineHeight: 1.6 }}>
-              {c.cabinetName} · {c.cabinetCity} · Angré 7e/8e tranche<br />
+              {c.cabinetName} · {c.cabinetCity} · Angré 8e tranche<br />
               RCCM CI-ABJ-03-2025-B13-00359 · NCC 2500120 F<br />
               <span style={{ color: 'var(--ink-400)' }}>{c.cabinetEmail} · {c.cabinetPhone}</span>
             </div>
@@ -732,7 +732,7 @@ const InvoicePDF = () => {
           <Logo size={32} />
           <div style={{ fontSize: 11, color: 'var(--ink-500)', lineHeight: 1.55, marginTop: 14 }}>
             {c.cabinetName}<br />
-            {c.cabinetCity} · Angré 7e/8e tranche<br />
+            {c.cabinetCity} · Angré 8e tranche<br />
             RCCM CI-ABJ-03-2025-B13-00359<br />
             NCC 2500120 F · Régime TEE<br />
             {c.cabinetEmail} · {c.cabinetPhone}

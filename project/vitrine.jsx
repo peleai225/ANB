@@ -22,7 +22,38 @@ const useCopy = () => {
   };
 };
 
-const VitrineNav = ({ light = false }) => {
+// Official WhatsApp deep link (group invite for direct contact with the cabinet)
+const ANB_WHATSAPP = "https://api.whatsapp.com/message/IRTHY2K7GJ3ZN1?autoload=1&app_absent=0";
+
+// InfoTopbar — thin contact strip above the main nav. Hidden on mobile via CSS.
+const InfoTopbar = ({ light = false }) => (
+  <div data-vitrine-topbar style={{
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '8px 56px',
+    background: light ? 'rgba(0,0,0,.18)' : 'var(--ink-900)',
+    color: 'rgba(255,255,255,.78)',
+    fontSize: 12, fontFamily: 'var(--font-body)',
+    borderBottom: light ? '1px solid rgba(255,255,255,.08)' : 'none',
+  }}>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+      <Icon name="home" size={12} color="rgba(255,255,255,.55)" />
+      <span>Abidjan · Cocody · Angré 8<sup style={{ fontSize: 9 }}>e</sup> tranche</span>
+    </div>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 20 }}>
+      <a href="mailto:info@anbcorporate.com" style={{ color: 'rgba(255,255,255,.78)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Icon name="mail" size={12} color="rgba(255,255,255,.55)" />
+        info@anbcorporate.com
+      </a>
+      <a href={ANB_WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ color: 'white', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Icon name="whatsapp" size={13} color="#25D366" />
+        +225 07 87 44 88 57
+        <span style={{ fontSize: 10, color: '#86EFAC', background: 'rgba(37,211,102,.18)', padding: '2px 7px', borderRadius: 10, marginLeft: 4 }}>WhatsApp · 5 min</span>
+      </a>
+    </div>
+  </div>
+);
+
+const VitrineNav = ({ light = false, showTopbar = true }) => {
   const nav = useNav();
   const links = [
     { l: 'Services', p: '/#services' },
@@ -32,24 +63,27 @@ const VitrineNav = ({ light = false }) => {
     { l: 'Contact', p: '/contact' },
   ];
   return (
-  <div data-vitrine-nav style={{
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '20px 56px',
-    color: light ? 'white' : 'var(--ink-900)',
-  }}>
-    <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
-    <div data-vitrine-menu style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
-      {links.map((s) => (
-        <span key={s.l} onClick={() => nav(s.p)} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s.l}</span>
-      ))}
+  <>
+    {showTopbar && <InfoTopbar light={light} />}
+    <div data-vitrine-nav style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '20px 56px',
+      color: light ? 'white' : 'var(--ink-900)',
+    }}>
+      <span onClick={() => nav('/')} style={{ cursor: 'pointer' }}><Logo light={light} /></span>
+      <div data-vitrine-menu style={{ display: 'flex', gap: 28, font: '500 14px/1 var(--font-body)' }}>
+        {links.map((s) => (
+          <span key={s.l} onClick={() => nav(s.p)} style={{ opacity: light ? 0.85 : 0.75, cursor: 'pointer' }}>{s.l}</span>
+        ))}
+      </div>
+      <div data-vitrine-actions style={{ display: 'flex', gap: 10 }}>
+        <button onClick={() => nav('/connexion')} className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
+        <button onClick={() => nav('/quiz')} className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
+          Créer mon entreprise <Icon name="arrow" size={14} />
+        </button>
+      </div>
     </div>
-    <div data-vitrine-actions style={{ display: 'flex', gap: 10 }}>
-      <button onClick={() => nav('/connexion')} className="btn btn-sm" style={{ background: 'transparent', color: light ? 'white' : 'var(--ink-900)', border: `1px solid ${light ? 'rgba(255,255,255,.25)' : 'var(--ink-200)'}` }}>Connexion</button>
-      <button onClick={() => nav('/quiz')} className="btn btn-sm" style={{ background: light ? 'white' : 'var(--ink-900)', color: light ? 'var(--ink-900)' : 'white' }}>
-        Créer mon entreprise <Icon name="arrow" size={14} />
-      </button>
-    </div>
-  </div>
+  </>
   );
 };
 
@@ -148,7 +182,7 @@ const HeroB = () => {
       {/* Editorial dateline — like a luxury magazine */}
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginBottom: 36, fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--ink-500)' }}>
         <span style={{ width: 36, height: 1, background: 'var(--brand-red)' }} />
-        <span>Cabinet d'affaires · Cocody, Abidjan</span>
+        <span>Cabinet d'affaires · Abidjan · Cocody · Angré 8<sup style={{ fontSize: 8 }}>e</sup> tranche</span>
         <span style={{ width: 36, height: 1, background: 'var(--brand-red)' }} />
       </div>
 
@@ -310,7 +344,7 @@ const DirectorBlock = () => {
             </div>
           </div>
           <div style={{ textAlign: 'center', paddingTop: 8 }}>
-            <div style={{ font: '500 18px/1 var(--font-display)', color: 'var(--ink-900)', letterSpacing: '-0.01em' }}>Abdou N'Diaye Bamba</div>
+            <div style={{ font: '500 18px/1 var(--font-display)', color: 'var(--ink-900)', letterSpacing: '-0.01em' }}>Théophile Anebo</div>
             <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>Fondateur · Directeur Général</div>
           </div>
         </div>
@@ -324,7 +358,7 @@ const DirectorBlock = () => {
             <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>vos ambitions.</span>
           </h2>
           <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-700)', margin: '0 0 24px' }}>
-            ANB CORPORATE accompagne les porteurs de projets, TPE/PME et organisations basés en Côte d'Ivoire et dans l'espace OHADA — depuis Cocody, Angré 7<sup>e</sup>/8<sup>e</sup> tranche.
+            ANB CORPORATE accompagne les porteurs de projets, TPE/PME et organisations basés en Côte d'Ivoire et dans l'espace OHADA — depuis Cocody, Angré 8<sup>e</sup> tranche.
           </p>
           <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-700)', margin: '0 0 36px' }}>
             Création de société, constitution et enregistrement, rattachements (Impôts, CNPS, Inspection du travail), obligations fiscales & sociales, tableaux de bord, conformité continue. Une seule équipe, du premier jour aux états financiers.
@@ -419,7 +453,7 @@ const VitrineFooter = () => {
         </p>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,.45)', marginTop: 16, lineHeight: 1.6 }}>
           {copy.cabinetCity}<br />
-          Angré 7e/8e tranche<br />
+          Angré 8e tranche<br />
           RCCM CI-ABJ-03-2025-B13-00359<br />
           NCC 2500120 F
         </div>
@@ -583,13 +617,39 @@ const PartnersBlock = () => {
 // Videos can be wired to real assets later; cards show the layout intent.
 // ─────────────────────────────────────────────────────────────
 const VideosBlock = () => {
-  const nav = useNav();
+  // Real TikTok videos from @theophile.anebo (the DG's official account).
+  // Cards open the original TikTok in a new tab.
   const videos = [
-    { thumb: '#1F3155', tag: 'Témoignage',  title: '« En 72h, ma SARL était lancée »',     views: '12K', dur: '0:52', by: 'Eric H. · E.H.M Group' },
-    { thumb: '#2D3833', tag: 'Conseil',     title: 'SARL ou SAS ? 3 questions à se poser', views: '8.4K', dur: '1:14', by: 'ANB Corporate' },
-    { thumb: '#3F2A1F', tag: 'Coulisses',   title: 'Une journée au cabinet ANB',           views: '5.7K', dur: '1:30', by: 'ANB Corporate' },
-    { thumb: '#1D2B3F', tag: 'Fiscalité',   title: 'Régime TEE : quel impact en 2026 ?',   views: '15K', dur: '1:05', by: 'ANB Corporate' },
-    { thumb: '#3F1F2E', tag: 'Témoignage',  title: 'L\'agritech qui pousse — Expert Bio', views: '9.2K', dur: '1:48', by: 'Dr. Bio Konaté' },
+    {
+      url:   'https://www.tiktok.com/@theophile.anebo/video/7491666901572111671',
+      thumb: '#2A3F1F', tag: 'Conseil', dur: '1:42',
+      title: 'Les 5 documents pour votre registre de commerce',
+      by:    '@theophile.anebo', views: '24K',
+    },
+    {
+      url:   'https://www.tiktok.com/@theophile.anebo/video/7445342044995734790',
+      thumb: '#1F3155', tag: 'Innovation', dur: '0:58',
+      title: 'Obtenir un registre de commerce avec QR code',
+      by:    '@theophile.anebo', views: '18K',
+    },
+    {
+      url:   'https://www.tiktok.com/@theophile.anebo/video/7499519748917497143',
+      thumb: '#3F1F2E', tag: 'Partenariat', dur: '1:15',
+      title: 'INOVATIS, l\'assurance qu\'il vous faut',
+      by:    '@theophile.anebo', views: '12K',
+    },
+    {
+      url:   'https://www.tiktok.com/@theophile.anebo/video/7490478490475711799',
+      thumb: '#243C72', tag: 'Service', dur: '1:08',
+      title: 'Actualiser votre registre de commerce',
+      by:    '@theophile.anebo', views: '9.7K',
+    },
+    {
+      url:   'https://www.tiktok.com/@theophile.anebo/video/7483544166840945975',
+      thumb: '#3F2A1F', tag: 'Coulisses', dur: '0:44',
+      title: '« Ah les clients 🤧 »',
+      by:    '@theophile.anebo', views: '15K',
+    },
   ];
   return (
     <div data-videos style={{ padding: '120px 56px', background: 'var(--ink-900)', color: 'white', position: 'relative', overflow: 'hidden' }}>
@@ -600,29 +660,29 @@ const VideosBlock = () => {
           <div style={{ maxWidth: 600 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
               <span style={{ width: 36, height: 1.5, background: 'var(--brand-red)' }} />
-              <span style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--brand-red)', textTransform: 'uppercase', letterSpacing: '0.18em' }}>En vidéo</span>
+              <span style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--brand-red)', textTransform: 'uppercase', letterSpacing: '0.18em' }}>Sur TikTok · @theophile.anebo</span>
             </div>
             <h2 style={{ font: '500 56px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: 0, color: 'white' }}>
-              Témoignages,{' '}
-              <span className="serif" style={{ color: 'var(--blue-400)', fontStyle: 'italic' }}>conseils, coulisses.</span>
+              Conseils,{' '}
+              <span className="serif" style={{ color: 'var(--blue-400)', fontStyle: 'italic' }}>témoignages, coulisses.</span>
             </h2>
             <p style={{ fontSize: 16, color: 'rgba(255,255,255,.6)', marginTop: 16, lineHeight: 1.6 }}>
-              Format vertical, 90 secondes max. Découvrez ANB par ceux qui l'ont vécu — entrepreneurs, experts, équipes.
+              Le directeur, <strong style={{ color: 'white' }}>Théophile Anebo</strong>, partage chaque semaine ses conseils sur la création d'entreprise en Côte d'Ivoire — format vertical, 90 secondes max.
             </p>
           </div>
-          <button onClick={() => nav('/contact')} className="btn" style={{ background: 'rgba(255,255,255,.08)', color: 'white', border: '1px solid rgba(255,255,255,.18)', backdropFilter: 'blur(10px)' }}>
-            <Icon name="play" size={14} /> Voir toutes les vidéos
-          </button>
+          <a href="https://www.tiktok.com/@theophile.anebo" target="_blank" rel="noopener noreferrer" className="btn" style={{ background: 'rgba(255,255,255,.08)', color: 'white', border: '1px solid rgba(255,255,255,.18)', backdropFilter: 'blur(10px)', textDecoration: 'none' }}>
+            <Icon name="play" size={14} /> Voir le profil TikTok
+          </a>
         </div>
 
         {/* Horizontal scroll of 9:16 cards */}
         <div data-videos-scroll style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
           {videos.map((v, i) => (
-            <div key={i} data-video-card style={{
+            <a key={i} data-video-card href={v.url} target="_blank" rel="noopener noreferrer" style={{
               aspectRatio: '9/16', borderRadius: 16, overflow: 'hidden',
               background: `linear-gradient(180deg, ${v.thumb} 0%, rgba(0,0,0,.5) 100%), ${v.thumb}`,
-              position: 'relative', cursor: 'pointer',
-              border: '1px solid rgba(255,255,255,.08)',
+              position: 'relative', cursor: 'pointer', display: 'block',
+              border: '1px solid rgba(255,255,255,.08)', textDecoration: 'none',
               transition: 'transform .25s, box-shadow .25s',
             }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 24px 48px rgba(0,0,0,.4)'; }}
@@ -642,7 +702,7 @@ const VideosBlock = () => {
               {/* Bottom: title + author + views */}
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px', background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,.85) 70%)' }}>
                 <div style={{ font: '600 14px/1.3 var(--font-display)', letterSpacing: '-0.01em', color: 'white', marginBottom: 8 }}>
-                  « {v.title} »
+                  {v.title}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.7)' }}>
                   <span>{v.by}</span>
@@ -652,13 +712,13 @@ const VideosBlock = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
 
         {/* Tip below */}
         <div style={{ marginTop: 32, fontSize: 12, color: 'rgba(255,255,255,.4)', textAlign: 'center', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>
-          Nouvelles vidéos chaque semaine · Aussi sur TikTok @anbcorporate
+          Nouvelles vidéos chaque semaine · Suivez @theophile.anebo sur TikTok
         </div>
       </div>
     </div>
@@ -679,4 +739,4 @@ const Vitrine = ({ variant = 'A' }) => (
   </div>
 );
 
-Object.assign(window, { Vitrine, VitrineNav, VitrineFooter, CtaClosure, DirectorBlock, VideosBlock, PartnersBlock, DIRECTOR_PHOTO, PARTNER_EXPERTBIO, PARTNER_EHMGROUP });
+Object.assign(window, { Vitrine, VitrineNav, InfoTopbar, VitrineFooter, CtaClosure, DirectorBlock, VideosBlock, PartnersBlock, DIRECTOR_PHOTO, PARTNER_EXPERTBIO, PARTNER_EHMGROUP, ANB_WHATSAPP });

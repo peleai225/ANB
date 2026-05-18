@@ -530,6 +530,17 @@ body.live-mode .pas [data-bo-table] > div { min-width: 640px; }
   body.live-mode .pas [data-vitrine-menu] span:nth-child(5) { display: none !important; }
 }
 
+/* ── InfoTopbar — hide on mobile (the contact details live in the drawer + footer) ── */
+@media (max-width: 768px) {
+  body.live-mode .pas [data-vitrine-topbar] { display: none !important; }
+}
+@media (max-width: 1024px) {
+  body.live-mode .pas [data-vitrine-topbar] {
+    padding: 6px 24px !important;
+    font-size: 11px !important;
+  }
+}
+
 /* ── Ensure sticky backoffice cards don't break single-col ── */
 @media (max-width: 1024px) {
   body.live-mode .pas [style*="position: sticky"] { position: static !important; }

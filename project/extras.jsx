@@ -338,7 +338,7 @@ const PageAPropos = () => {
     { l: 'RCCM', v: 'CI-ABJ-03-2025-B13-00359' },
     { l: 'N° NCC', v: '2500120 F' },
     { l: 'Régime fiscal', v: "TEE (Taxe d'État de l'entreprenant)" },
-    { l: 'Adresse', v: 'Abidjan, Cocody, Angré 7e/8e tranche' },
+    { l: 'Adresse', v: 'Abidjan, Cocody, Angré 8e tranche' },
   ];
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
@@ -371,10 +371,10 @@ const PageAPropos = () => {
               </div>
             </div>
             <div>
-              <div style={{ font: '600 18px/1.2 var(--font-display)', color: 'var(--ink-900)' }}>Abdou N'Diaye Bamba</div>
+              <div style={{ font: '600 18px/1.2 var(--font-display)', color: 'var(--ink-900)' }}>Théophile Anebo</div>
               <div style={{ fontSize: 14, color: 'var(--ink-500)', marginTop: 4 }}>Fondateur & Directeur Général</div>
               <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
-                <a href="https://wa.me/2250787448857" target="_blank" rel="noopener noreferrer" className="btn btn-sm" style={{ background: '#25D366', color: 'white', textDecoration: 'none' }}>
+                <a href="https://api.whatsapp.com/message/IRTHY2K7GJ3ZN1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" className="btn btn-sm" style={{ background: '#25D366', color: 'white', textDecoration: 'none' }}>
                   <Icon name="whatsapp" size={14} /> WhatsApp
                 </a>
                 <a href="mailto:info@anbcorporate.com" className="btn btn-sm btn-ghost" style={{ textDecoration: 'none' }}>
@@ -388,7 +388,7 @@ const PageAPropos = () => {
           <div style={{ paddingTop: 8 }}>
             <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-500)', marginBottom: 16 }}>Notre cabinet</div>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-700)', margin: '0 0 20px' }}>
-              ANB CORPORATE est un cabinet basé à Abidjan (Cocody, Angré 7e/8e tranche) spécialisé dans l'accompagnement à la création d'entreprise, l'assistance comptable, fiscale et juridique, ainsi que le pilotage de la performance.
+              ANB CORPORATE est un cabinet basé à Abidjan (Cocody, Angré 8e tranche) spécialisé dans l'accompagnement à la création d'entreprise, l'assistance comptable, fiscale et juridique, ainsi que le pilotage de la performance.
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--ink-700)', margin: '0 0 32px' }}>
               Nous conseillons les porteurs de projets, TPE/PME et organisations à chaque étape : choix de la forme juridique, constitution et enregistrement, rattachements (Impôts, CNPS, Inspection du travail), obligations fiscales & sociales, tableaux de bord et conformité continue.
