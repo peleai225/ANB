@@ -1,15 +1,18 @@
 /* PeleAI Speed — Design tokens */
 :root {
-  /* Bleus du brief */
-  --blue-900: #0B1E54;
-  --blue-800: #1E3A8A;
-  --blue-700: #1E40AF;
-  --blue-600: #2563EB;
-  --blue-500: #3B82F6;
-  --blue-400: #60A5FA;
-  --blue-300: #93C5FD;
-  --blue-100: #DBEAFE;
-  --blue-50:  #EFF6FF;
+  /* Palette officielle ANB Corporate (échantillonnée depuis le logo) */
+  --blue-900: #142348;
+  --blue-800: #1F3155;
+  --blue-700: #243C72;
+  --blue-600: #37528D;  /* bleu officiel ANB */
+  --blue-500: #4A66A0;
+  --blue-400: #6B83B5;
+  --blue-300: #9BAFD0;
+  --blue-100: #DDE3EF;
+  --blue-50:  #EEF1F7;
+  --brand-red: #C61D2E;    /* rouge officiel (filet sous le logo) */
+  --brand-red-dark: #A11825;
+  --brand-grey: #646C70;   /* gris officiel (carré central) */
 
   /* Neutres tièdes (un peu hors brief pur, plus chaleureux) */
   --ink-900: #0A0E1A;
@@ -54,7 +57,38 @@
   --shadow-sm: 0 1px 3px rgba(11,30,84,.06), 0 1px 2px rgba(11,30,84,.04);
   --shadow-md: 0 4px 14px rgba(11,30,84,.08), 0 2px 4px rgba(11,30,84,.04);
   --shadow-lg: 0 16px 40px rgba(11,30,84,.12), 0 4px 12px rgba(11,30,84,.06);
-  --shadow-blue: 0 12px 32px rgba(37,99,235,.28), 0 4px 12px rgba(37,99,235,.18);
+  --shadow-blue: 0 12px 32px rgba(55,82,141,.28), 0 4px 12px rgba(55,82,141,.18);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Brand accents — echo the red bar under the official logo.
+   Used as a thin rule above headings, like an editorial dateline.
+   ───────────────────────────────────────────────────────────── */
+.pas .brand-rule {
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--brand-red);
+  margin-bottom: 18px;
+  border-radius: 1px;
+}
+.pas .brand-rule.thin { height: 2px; width: 36px; }
+.pas .brand-rule.light { background: rgba(255,255,255,.9); }
+.pas .brand-eyebrow {
+  font: 500 11px/1 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--brand-red);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.pas .brand-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1.5px;
+  background: var(--brand-red);
+  display: inline-block;
 }
 
 /* Resets locaux pour artboards */

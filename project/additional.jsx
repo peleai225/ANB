@@ -100,13 +100,14 @@ const PageContact = () => {
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
       <VitrineNav />
       <div style={{ padding: '60px 56px 80px', maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ marginBottom: 48 }}>
-          <div className="chip chip-blue" style={{ marginBottom: 20 }}>Contact</div>
-          <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0, maxWidth: 760 }}>
-            Parlons de votre <span className="serif" style={{ color: 'var(--blue-600)' }}>projet.</span>
+        <div style={{ marginBottom: 56 }}>
+          <span className="brand-rule" />
+          <div className="brand-eyebrow" style={{ marginBottom: 24 }}>Contact</div>
+          <h1 style={{ font: '500 72px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0, maxWidth: 800 }}>
+            Parlons de votre <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>projet.</span>
           </h1>
-          <p style={{ fontSize: 17, color: 'var(--ink-500)', marginTop: 16, maxWidth: 640 }}>
-            Réponse sous 2h en jour ouvré. Pour les questions urgentes, WhatsApp est le canal le plus rapide.
+          <p style={{ fontSize: 18, color: 'var(--ink-600)', marginTop: 20, maxWidth: 660, lineHeight: 1.55 }}>
+            Réponse sous 2 heures en jour ouvré. Pour les questions urgentes, WhatsApp est le canal le plus rapide — moins de 5 minutes.
           </p>
         </div>
 

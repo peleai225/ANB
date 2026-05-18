@@ -51,12 +51,15 @@ const PageTarifs = () => {
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
       <VitrineNav />
       <div style={{ padding: '60px 56px 80px' }}>
-        <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 48px' }}>
-          <div className="chip chip-blue" style={{ marginBottom: 20 }}>Tarifs · Mars 2026</div>
-          <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0 }}>
-            Un prix. <span className="serif" style={{ color: 'var(--blue-600)' }}>Tout inclus.</span>
+        <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 64px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+            <span style={{ width: 48, height: 3, background: 'var(--brand-red)', borderRadius: 1 }} />
+          </div>
+          <div className="brand-eyebrow" style={{ justifyContent: 'center', marginBottom: 20 }}>Tarifs · Mars 2026</div>
+          <h1 style={{ font: '500 72px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0 }}>
+            Un prix. <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>Tout inclus.</span>
           </h1>
-          <p style={{ fontSize: 17, color: 'var(--ink-500)', marginTop: 16 }}>
+          <p style={{ fontSize: 18, color: 'var(--ink-600)', marginTop: 20, lineHeight: 1.55 }}>
             Pas de frais cachés. Paiement en 3× sans frais via Wave, Orange Money, MTN MoMo.
           </p>
         </div>
@@ -118,9 +121,10 @@ const PageFAQ = () => {
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
       <VitrineNav />
       <div style={{ padding: '60px 56px 100px', maxWidth: 1000, margin: '0 auto' }}>
-        <div className="chip chip-blue" style={{ marginBottom: 20 }}>FAQ · 8 questions</div>
-        <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 56px', maxWidth: 700 }}>
-          Vos questions, <span className="serif" style={{ color: 'var(--blue-600)' }}>nos réponses.</span>
+        <span className="brand-rule" />
+        <div className="brand-eyebrow" style={{ marginBottom: 24 }}>FAQ · 8 questions</div>
+        <h1 style={{ font: '500 72px/1 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 56px', maxWidth: 760 }}>
+          Vos questions, <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>nos réponses.</span>
         </h1>
 
         <div className="card" style={{ background: 'white' }}>

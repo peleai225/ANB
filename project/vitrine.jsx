@@ -131,40 +131,65 @@ const HeroA = () => {
   );
 };
 
-// HERO B — Minimal éditorial, fond clair, serif italic
+// HERO B — Éditorial, fond clair, serif italic. Premium corporate cabinet feel.
 const HeroB = () => {
   const copy = useCopy();
   const nav = useNav();
   return (
-  <div style={{ background: 'var(--paper)', color: 'var(--ink-900)' }}>
+  <div style={{ background: 'var(--paper)', color: 'var(--ink-900)', position: 'relative', overflow: 'hidden' }}>
+    {/* Soft brand-blue glow at top, fades to white. Adds atmosphere without being noisy. */}
+    <div style={{
+      position: 'absolute', top: -200, left: '50%', transform: 'translateX(-50%)',
+      width: 1400, height: 600, pointerEvents: 'none',
+      background: 'radial-gradient(ellipse at center, rgba(55,82,141,.07) 0%, rgba(55,82,141,0) 70%)',
+    }} />
     <VitrineNav />
-    <div style={{ padding: '60px 56px 80px', display: 'grid', gridTemplateColumns: '1fr', gap: 60, maxWidth: 1280, margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', maxWidth: 920, margin: '0 auto' }}>
-        <div className="chip chip-blue" style={{ marginBottom: 28 }}>
-          <Icon name="sparkle" size={12} /> {copy.heroBadge}
-        </div>
+    <div style={{ padding: '40px 56px 80px', maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
+      {/* Editorial dateline — like a luxury magazine */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginBottom: 36, fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--ink-500)' }}>
+        <span style={{ width: 36, height: 1, background: 'var(--brand-red)' }} />
+        <span>Cabinet d'affaires · Cocody, Abidjan</span>
+        <span style={{ width: 36, height: 1, background: 'var(--brand-red)' }} />
+      </div>
+
+      <div style={{ textAlign: 'center', maxWidth: 960, margin: '0 auto' }}>
         <h1 style={{ font: '500 104px/0.95 var(--font-display)', letterSpacing: '-0.05em', margin: 0 }}>
-          Lancez votre <span className="serif" style={{ color: 'var(--blue-600)' }}>idée</span>.<br />
+          Lancez votre <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>idée</span>.<br />
           Pas la paperasse.
         </h1>
-        <p style={{ fontSize: 20, lineHeight: 1.5, color: 'var(--ink-500)', maxWidth: 620, margin: '32px auto 36px' }}>
-          Cabinet d'expertise comptable & juridique à Abidjan. Création de société, formalités RCCM, accompagnement OHADA — à partir de 95 000 FCFA, en 72h.
+        <p style={{ fontSize: 20, lineHeight: 1.55, color: 'var(--ink-600)', maxWidth: 640, margin: '32px auto 40px' }}>
+          Création de société, comptabilité, fiscalité et juridique — accompagnés par un cabinet ivoirien certifié, depuis Cocody. À partir de <strong style={{ color: 'var(--ink-900)' }}>95 000 FCFA</strong>, immatriculation en <strong style={{ color: 'var(--ink-900)' }}>72 heures</strong>.
         </p>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => nav('/quiz')} className="btn btn-lg btn-primary">{copy.ctaLabel} <Icon name="arrow" size={16} /></button>
           <button onClick={() => nav('/tarifs')} className="btn btn-lg btn-ghost">Voir les tarifs</button>
         </div>
+        {/* Micro trust line */}
+        <div style={{ marginTop: 24, fontSize: 12, color: 'var(--ink-500)', display: 'inline-flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="check" size={12} color="var(--accent-mint)" /> Sans engagement
+          </span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-300)' }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="check" size={12} color="var(--accent-mint)" /> Réponse en 5 min
+          </span>
+          <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-300)' }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Icon name="check" size={12} color="var(--accent-mint)" /> Wave · Orange Money · MTN
+          </span>
+        </div>
       </div>
 
-      {/* Big number band */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)', padding: '40px 0' }}>
+      {/* Big number band — refined with subtle brand-red micro accents */}
+      <div style={{ marginTop: 80, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)', padding: '36px 0' }}>
         {[
-          { v: '1 200', l: 'entreprises créées depuis 2020' },
-          { v: '72h', l: 'délai moyen de traitement' },
-          { v: '5+', l: 'années d\'expérience', suf: 'ans' },
+          { v: '1 200', l: 'entreprises créées' },
+          { v: '72h', l: 'délai moyen' },
+          { v: '5+', l: "années d'expertise" },
           { v: '4,9', l: 'satisfaction client', suf: '/5' },
         ].map((s, i) => (
-          <div key={i} style={{ borderLeft: i ? '1px solid var(--ink-200)' : 'none', padding: '0 28px' }}>
+          <div key={i} style={{ borderLeft: i ? '1px solid var(--ink-200)' : 'none', padding: '0 28px', position: 'relative' }}>
+            <span style={{ position: 'absolute', top: -36, left: 28, width: 3, height: 3, borderRadius: '50%', background: 'var(--brand-red)' }} />
             <div className="display-num" style={{ fontSize: 56, color: 'var(--ink-900)' }}>
               {s.v}<span style={{ fontSize: 22, color: 'var(--ink-400)' }}>{s.suf || ''}</span>
             </div>
@@ -188,13 +213,13 @@ const HowItWorks = () => {
     { n: '05', t: 'Recevez vos documents', d: 'Kbis, statuts, attestation — sous 72h.', icon: 'shield' },
   ];
   return (
-    <div style={{ padding: '100px 56px', background: 'var(--paper)' }}>
+    <div style={{ padding: '120px 56px', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 56 }}>
           <div>
-            <div className="chip chip-blue" style={{ marginBottom: 16 }}>Comment ça marche</div>
+            <div className="brand-eyebrow" style={{ marginBottom: 20 }}>Le parcours</div>
             <h2 style={{ font: '500 56px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0, maxWidth: 720 }}>
-              Cinq étapes. <span className="serif" style={{ color: 'var(--ink-500)' }}>Zéro déplacement.</span>
+              Cinq étapes. <span className="serif" style={{ color: 'var(--ink-500)', fontStyle: 'italic' }}>Zéro déplacement.</span>
             </h2>
           </div>
           <button onClick={() => nav('/quiz')} className="btn btn-ghost">Voir le détail <Icon name="arrow" size={14} /></button>
@@ -227,12 +252,12 @@ const Testimonials = () => {
     { n: 'Mme Aya Touré', r: 'Trésorière, Union Sportive d\'Abidjan', q: 'Cabinet sérieux, suivi temps réel sur la plateforme. On voit exactement où en est notre dossier.', a: 'AT' },
   ];
   return (
-    <div style={{ padding: '100px 56px', background: 'var(--ink-50)' }}>
+    <div style={{ padding: '120px 56px', background: 'var(--ink-50)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ marginBottom: 48 }}>
-          <div className="chip" style={{ marginBottom: 16 }}>Témoignages</div>
+        <div style={{ marginBottom: 56 }}>
+          <div className="brand-eyebrow" style={{ marginBottom: 20 }}>Ils nous ont fait confiance</div>
           <h2 style={{ font: '500 56px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
-            1 200 entrepreneurs <span className="serif" style={{ color: 'var(--blue-600)' }}>nous ont fait confiance.</span>
+            1 200 entrepreneurs ont choisi <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>la voie ANB.</span>
           </h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
@@ -263,58 +288,79 @@ const Testimonials = () => {
 const DirectorBlock = () => {
   const nav = useNav();
   return (
-    <div style={{ padding: '80px 56px', background: 'var(--paper)', borderTop: '1px solid var(--ink-100)' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'center' }}>
+    <div style={{ padding: '120px 56px', background: 'var(--paper)', borderTop: '1px solid var(--ink-100)', position: 'relative', overflow: 'hidden' }}>
+      {/* Faint quote glyph in background */}
+      <div aria-hidden style={{
+        position: 'absolute', top: 40, right: -40, font: '500 480px/0.8 var(--font-serif)',
+        color: 'var(--blue-50)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5,
+      }}>"</div>
+      <div style={{ maxWidth: 1240, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1.35fr', gap: 80, alignItems: 'center', position: 'relative' }}>
         {/* Photo side */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28 }}>
           <div style={{ position: 'relative' }}>
-            <div style={{ width: 320, height: 380, borderRadius: 24, overflow: 'hidden', background: 'var(--blue-50)', position: 'relative', boxShadow: '0 24px 60px rgba(37,99,235,.15)' }}>
+            {/* Brand red corner accent */}
+            <div aria-hidden style={{ position: 'absolute', top: -16, left: -16, width: 80, height: 80, borderTop: '3px solid var(--brand-red)', borderLeft: '3px solid var(--brand-red)', borderRadius: '6px 0 0 0' }} />
+            <div style={{ width: 340, height: 420, borderRadius: 4, overflow: 'hidden', background: 'var(--blue-50)', position: 'relative', boxShadow: '0 32px 80px rgba(20,35,72,.18), 0 8px 24px rgba(20,35,72,.10)' }}>
               <img src={DIRECTOR_PHOTO} alt="Directeur ANB Corporate" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
             </div>
             {/* Badge expertise */}
-            <div className="card" style={{ position: 'absolute', bottom: -18, right: -18, padding: '10px 16px', background: 'var(--ink-900)', color: 'white', borderRadius: 14, boxShadow: '0 8px 24px rgba(0,0,0,.25)', border: 'none' }}>
-              <div style={{ font: '600 12px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,.5)', marginBottom: 4 }}>Expert agréé</div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>ONECCA-CI · OHADA</div>
+            <div style={{ position: 'absolute', bottom: -22, right: -22, padding: '12px 18px', background: 'var(--ink-900)', color: 'white', borderRadius: 4, boxShadow: '0 12px 32px rgba(0,0,0,.28)', border: 'none' }}>
+              <div style={{ font: '600 10px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--brand-red)', marginBottom: 6 }}>Expert agréé</div>
+              <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>ONECCA-CI · OHADA</div>
             </div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ font: '600 16px/1 var(--font-display)', color: 'var(--ink-900)' }}>Abdou N'Diaye Bamba</div>
-            <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>Fondateur & Directeur Général, ANB Corporate</div>
+          <div style={{ textAlign: 'center', paddingTop: 8 }}>
+            <div style={{ font: '500 18px/1 var(--font-display)', color: 'var(--ink-900)', letterSpacing: '-0.01em' }}>Abdou N'Diaye Bamba</div>
+            <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>Fondateur · Directeur Général</div>
           </div>
         </div>
 
         {/* Content side */}
         <div>
-          <div className="chip chip-blue" style={{ marginBottom: 20 }}>Qui sommes-nous</div>
-          <h2 style={{ font: '500 48px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 20px' }}>
-            Votre cabinet d'accompagnement{' '}
-            <span className="serif" style={{ color: 'var(--blue-600)' }}>à Abidjan.</span>
+          <span className="brand-rule" />
+          <div className="brand-eyebrow" style={{ marginBottom: 20 }}>Qui sommes-nous</div>
+          <h2 style={{ font: '500 56px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 28px' }}>
+            Un cabinet à la mesure de{' '}
+            <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>vos ambitions.</span>
           </h2>
-          <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-600)', margin: '0 0 28px' }}>
-            ANB CORPORATE est un cabinet basé à Cocody (Angré 7e/8e tranche) spécialisé dans l'accompagnement à la création d'entreprise, l'assistance comptable, fiscale et juridique, ainsi que le pilotage de la performance.
+          <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-700)', margin: '0 0 24px' }}>
+            ANB CORPORATE accompagne les porteurs de projets, TPE/PME et organisations basés en Côte d'Ivoire et dans l'espace OHADA — depuis Cocody, Angré 7<sup>e</sup>/8<sup>e</sup> tranche.
           </p>
-          <p style={{ fontSize: 16, lineHeight: 1.65, color: 'var(--ink-600)', margin: '0 0 32px' }}>
-            Nous conseillons les porteurs de projets, TPE/PME et organisations à chaque étape : choix de la forme juridique, constitution et enregistrement, rattachements (Impôts, CNPS, Inspection du travail), obligations fiscales & sociales, tableaux de bord et conformité continue.
+          <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-700)', margin: '0 0 36px' }}>
+            Création de société, constitution et enregistrement, rattachements (Impôts, CNPS, Inspection du travail), obligations fiscales & sociales, tableaux de bord, conformité continue. Une seule équipe, du premier jour aux états financiers.
           </p>
 
-          {/* Mission block */}
-          <div className="card" style={{ padding: '18px 24px', background: 'var(--blue-50)', border: '1px solid var(--blue-100)', marginBottom: 24 }}>
-            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--blue-700)', marginBottom: 8 }}>Notre mission</div>
-            <p style={{ fontSize: 15, lineHeight: 1.55, color: 'var(--blue-900)', margin: 0, fontStyle: 'italic' }}>
-              « Délivrer une information fiable, optimiser la trésorerie et sécuriser la conformité, pour vous permettre de vous concentrer sur votre cœur de métier. »
+          {/* Mission pull quote — serif italic, brand red rule */}
+          <blockquote style={{ margin: '0 0 36px', paddingLeft: 28, borderLeft: '3px solid var(--brand-red)', position: 'relative' }}>
+            <div className="brand-eyebrow" style={{ marginBottom: 12 }}>Notre raison d'être</div>
+            <p className="serif" style={{ font: '500 26px/1.4 var(--font-serif)', fontStyle: 'italic', color: 'var(--ink-900)', margin: 0, letterSpacing: '-0.01em' }}>
+              « Délivrer une information fiable, optimiser la trésorerie et sécuriser la conformité — pour vous permettre de vous concentrer sur votre cœur de métier. »
             </p>
-          </div>
+          </blockquote>
 
-          {/* Values */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 32 }}>
-            {['Intégrité', 'Innovation', 'Rigueur', 'Confidentialité'].map((v) => (
-              <span key={v} className="chip chip-blue" style={{ fontSize: 13, padding: '6px 14px' }}>{v}</span>
+          {/* Values — refined as a horizontal scale */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, marginBottom: 36, borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)', padding: '20px 0' }}>
+            {[
+              { v: 'Intégrité', n: '01' },
+              { v: 'Innovation', n: '02' },
+              { v: 'Rigueur', n: '03' },
+              { v: 'Confidentialité', n: '04' },
+            ].map((x, i) => (
+              <div key={x.v} style={{ borderLeft: i ? '1px solid var(--ink-200)' : 'none', paddingLeft: i ? 20 : 0 }}>
+                <div style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--brand-red)', marginBottom: 8 }}>{x.n}</div>
+                <div style={{ font: '500 15px/1 var(--font-display)', color: 'var(--ink-900)', letterSpacing: '-0.01em' }}>{x.v}</div>
+              </div>
             ))}
           </div>
 
-          <button onClick={() => nav('/apropos')} className="btn btn-ghost" style={{ gap: 8 }}>
-            Découvrir notre cabinet <Icon name="arrow" size={14} />
-          </button>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button onClick={() => nav('/apropos')} className="btn btn-primary" style={{ gap: 8 }}>
+              Découvrir notre cabinet <Icon name="arrow" size={14} />
+            </button>
+            <button onClick={() => nav('/contact')} className="btn btn-ghost" style={{ gap: 8 }}>
+              Prendre rendez-vous
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -325,15 +371,19 @@ const CtaClosure = () => {
   const copy = useCopy();
   const nav = useNav();
   return (
-    <div data-cta-closure style={{ padding: '80px 56px', background: 'var(--grad-hero)', color: 'white', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+    <div data-cta-closure style={{ padding: '100px 56px', background: 'var(--grad-hero)', color: 'white', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)', pointerEvents: 'none' }} />
+      {/* Brand red rule centered — premium signature accent */}
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+        <span style={{ width: 56, height: 3, background: 'var(--brand-red)', borderRadius: 1 }} />
+      </div>
       <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto' }}>
-        <div className="chip" style={{ background: 'rgba(255,255,255,.12)', color: 'rgba(255,255,255,.9)', backdropFilter: 'blur(10px)', marginBottom: 24, display: 'inline-flex' }}>
-          <span className="chip-dot" style={{ color: '#34D399' }}></span> 1 200 entreprises créées · délai moyen 72h
+        <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,.7)', marginBottom: 24 }}>
+          1 200 entreprises créées · Délai moyen 72h
         </div>
-        <h2 style={{ font: '500 56px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 20px', color: 'white' }}>
+        <h2 style={{ font: '500 60px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 20px', color: 'white' }}>
           Votre entreprise,{' '}
-          <span className="serif" style={{ color: '#93C5FD' }}>en 72 heures.</span>
+          <span className="serif" style={{ color: '#93C5FD', fontStyle: 'italic' }}>en 72 heures.</span>
         </h2>
         <p style={{ fontSize: 18, color: 'rgba(255,255,255,.75)', margin: '0 0 36px', lineHeight: 1.5 }}>
           À partir de 95 000 FCFA. Paiement Wave · Orange Money · MTN. Accompagnement humain inclus.
@@ -413,15 +463,15 @@ const Services = () => {
     { i: 'check', t: 'Assistance à l\'agrément', d: 'Préparation des dossiers techniques et suivi administratif jusqu\'à l\'obtention.' },
   ];
   return (
-    <div style={{ padding: '100px 56px', background: 'var(--ink-50)' }}>
+    <div style={{ padding: '120px 56px', background: 'var(--ink-50)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 56 }}>
           <div style={{ maxWidth: 720 }}>
-            <div className="chip chip-blue" style={{ marginBottom: 16 }}>7 expertises sous le même toit</div>
+            <div className="brand-eyebrow" style={{ marginBottom: 20 }}>Sept expertises · une seule équipe</div>
             <h2 style={{ font: '500 56px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
-              Au-delà de la création, <span className="serif" style={{ color: 'var(--blue-600)' }}>un cabinet complet.</span>
+              Au-delà de la création, <span className="serif" style={{ color: 'var(--blue-600)', fontStyle: 'italic' }}>un cabinet complet.</span>
             </h2>
-            <p style={{ fontSize: 17, color: 'var(--ink-500)', marginTop: 16, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 17, color: 'var(--ink-600)', marginTop: 18, lineHeight: 1.55 }}>
               Une fois votre société immatriculée, ANB Corporate continue à vos côtés : comptabilité, juridique, financement, formation. Tout est centralisé sur votre espace.
             </p>
           </div>
