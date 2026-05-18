@@ -2782,7 +2782,7 @@ const PartnersBlock = () => {
 // ─────────────────────────────────────────────────────────────
 const VideosBlock = () => {
   // Real TikTok videos from @theophile.anebo (the DG's official account).
-  // Cards open the original TikTok in a new tab.
+  // Cards open the original TikTok in a new tab; thumbnail fetched via TikTok oEmbed.
   const videos = [
     {
       url:   'https://www.tiktok.com/@theophile.anebo/video/7491666901572111671',
@@ -2799,7 +2799,7 @@ const VideosBlock = () => {
     {
       url:   'https://www.tiktok.com/@theophile.anebo/video/7499519748917497143',
       thumb: '#3F1F2E', tag: 'Partenariat', dur: '1:15',
-      title: 'INOVATIS, l\'assurance qu\'il vous faut',
+      title: "INOVATIS, l'assurance qu'il vous faut",
       by:    '@theophile.anebo', views: '12K',
     },
     {
@@ -2815,6 +2815,25 @@ const VideosBlock = () => {
       by:    '@theophile.anebo', views: '15K',
     },
   ];
+
+  // Fetch TikTok thumbnails via the public oEmbed endpoint. Best-effort:
+  // if it fails (CORS, network), the card falls back to its solid color.
+  const [thumbs, setThumbs] = React.useState({});
+  React.useEffect(() => {
+    let aborted = false;
+    videos.forEach((v) => {
+      fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(v.url)}`)
+        .then((r) => r.ok ? r.json() : null)
+        .then((data) => {
+          if (aborted || !data || !data.thumbnail_url) return;
+          setThumbs((prev) => ({ ...prev, [v.url]: data.thumbnail_url }));
+        })
+        .catch(() => {});
+    });
+    return () => { aborted = true; };
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div data-videos style={{ padding: '120px 56px', background: 'var(--ink-900)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       {/* Subtle blue glow */}
@@ -2841,10 +2860,14 @@ const VideosBlock = () => {
 
         {/* Horizontal scroll of 9:16 cards */}
         <div data-videos-scroll style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
-          {videos.map((v, i) => (
+          {videos.map((v, i) => {
+            const thumb = thumbs[v.url];
+            return (
             <a key={i} data-video-card href={v.url} target="_blank" rel="noopener noreferrer" style={{
               aspectRatio: '9/16', borderRadius: 16, overflow: 'hidden',
-              background: `linear-gradient(180deg, ${v.thumb} 0%, rgba(0,0,0,.5) 100%), ${v.thumb}`,
+              backgroundColor: v.thumb,
+              backgroundImage: thumb ? `url(${thumb})` : 'none',
+              backgroundSize: 'cover', backgroundPosition: 'center',
               position: 'relative', cursor: 'pointer', display: 'block',
               border: '1px solid rgba(255,255,255,.08)', textDecoration: 'none',
               transition: 'transform .25s, box-shadow .25s',
@@ -2852,24 +2875,35 @@ const VideosBlock = () => {
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 24px 48px rgba(0,0,0,.4)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
             >
+              {/* Dark gradient overlay for legibility on top of the thumbnail */}
+              <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.85) 100%)' }} />
+
               {/* Play indicator — center */}
-              <div style={{ position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%, -50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,.16)', backdropFilter: 'blur(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,.3)' }}>
+              <div style={{ position: 'absolute', top: '42%', left: '50%', transform: 'translate(-50%, -50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,.18)', backdropFilter: 'blur(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid rgba(255,255,255,.4)' }}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="white" style={{ marginLeft: 3 }}><path d="M5 3l12 7-12 7V3z" /></svg>
               </div>
 
               {/* Top: tag + duration */}
               <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ font: '500 10px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.12em', padding: '5px 9px', borderRadius: 6, background: 'rgba(198,29,46,.9)', color: 'white' }}>{v.tag}</span>
-                <span style={{ font: '500 11px/1 var(--font-mono)', padding: '5px 8px', borderRadius: 6, background: 'rgba(0,0,0,.5)', color: 'white', backdropFilter: 'blur(8px)' }}>{v.dur}</span>
+                <span style={{ font: '500 11px/1 var(--font-mono)', padding: '5px 8px', borderRadius: 6, background: 'rgba(0,0,0,.55)', color: 'white', backdropFilter: 'blur(8px)' }}>{v.dur}</span>
+              </div>
+
+              {/* TikTok corner mark — confirms the source */}
+              <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)' }}>
+                {/* small TikTok-style logo to signal the platform */}
               </div>
 
               {/* Bottom: title + author + views */}
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px', background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,.85) 70%)' }}>
-                <div style={{ font: '600 14px/1.3 var(--font-display)', letterSpacing: '-0.01em', color: 'white', marginBottom: 8 }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px' }}>
+                <div style={{ font: '600 14px/1.3 var(--font-display)', letterSpacing: '-0.01em', color: 'white', marginBottom: 8, textShadow: '0 1px 3px rgba(0,0,0,.4)' }}>
                   {v.title}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.7)' }}>
-                  <span>{v.by}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.85)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.34a8.16 8.16 0 0 0 5 .14V5a4.85 4.85 0 0 1-2.07.13z" /></svg>
+                    {v.by}
+                  </span>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                     {v.views}
@@ -2877,7 +2911,8 @@ const VideosBlock = () => {
                 </div>
               </div>
             </a>
-          ))}
+            );
+          })}
         </div>
 
         {/* Tip below */}
@@ -3401,21 +3436,29 @@ const BackofficeLayout = ({ active, role = 'Partenaire', title, sub, children, h
   </div>
 );
 
-const TopBar = ({ title, sub }) => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
-    <div>
-      <h1 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: 0 }}>{title}</h1>
-      {sub && <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>{sub}</div>}
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-      <div style={{ position: 'relative', width: 280 }}>
-        <input className="input" placeholder="Rechercher un dossier..." style={{ paddingLeft: 36, height: 36 }} />
-        <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-400)' }}><Icon name="search" size={14} /></div>
+const TopBar = ({ title, sub }) => {
+  const [notifOpen, setNotifOpen] = React.useState(false);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', position: 'relative' }}>
+      <div>
+        <h1 style={{ font: '500 22px/1 var(--font-display)', letterSpacing: '-0.02em', margin: 0 }}>{title}</h1>
+        {sub && <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>{sub}</div>}
       </div>
-      <button className="btn btn-sm btn-ghost" style={{ width: 36, padding: 0 }}><Icon name="bell" size={16} /></button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ position: 'relative', width: 280 }}>
+          <input className="input" placeholder="Rechercher un dossier, un client…" style={{ paddingLeft: 36, height: 36 }} />
+          <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-400)' }}><Icon name="search" size={14} /></div>
+          <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', font: '500 10px/1 var(--font-mono)', color: 'var(--ink-400)', background: 'var(--ink-100)', padding: '3px 6px', borderRadius: 4 }}>⌘K</span>
+        </div>
+        <button onClick={() => setNotifOpen((o) => !o)} className="btn btn-sm btn-ghost" style={{ width: 36, padding: 0, position: 'relative' }}>
+          <Icon name="bell" size={16} />
+          <span style={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, borderRadius: '50%', background: 'var(--brand-red)', border: '2px solid white' }} />
+        </button>
+      </div>
+      <NotificationDropdown open={notifOpen} onClose={() => setNotifOpen(false)} />
     </div>
-  </div>
-);
+  );
+};
 
 const StatCard = ({ label, value, suffix, delta, deltaPositive }) => (
   <div className="card" style={{ padding: 20, background: 'white' }}>
@@ -3517,6 +3560,7 @@ const PartnerDashboard = () => {
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-sm btn-ghost"><Icon name="filter" size={14} /> Filtrer</button>
                 <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Exporter</button>
+                <button onClick={() => nav('/partenaire/dossier/nouveau')} className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Nouveau dossier</button>
               </div>
             </div>
             <div data-bo-table>
@@ -3860,7 +3904,7 @@ const PartnerClients = () => {
             <div>Client</div><div>Email</div><div>Dossiers</div><div>CA total</div><div>Dernière activité</div><div></div>
           </div>
           {clients.map((c) => (
-            <div key={c.n} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.4fr 0.7fr 0.9fr 0.9fr 0.6fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
+            <div key={c.n} onClick={() => nav('/partenaire/clients/detail')} style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.4fr 0.7fr 0.9fr 0.9fr 0.6fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="ava">{c.a}</div>
                 <div>
@@ -4316,6 +4360,7 @@ const PartnerParametres = () => {
 // ADMIN — Partenaires, Clients, Paiements, Commissions, Stats, Config
 // ═════════════════════════════════════════════════════════════════
 const AdminPartenaires = () => {
+  const nav = useNav();
   const partners = [
     { n: 'ANB Corporate',     city: 'Abidjan',  d: 84, ca: 12.4, sat: 4.9, status: 'actif',  since: '2025' },
     { n: 'Diop & Associés',   city: 'Dakar',    d: 67, ca: 9.8,  sat: 4.8, status: 'actif',  since: '2024' },
@@ -4351,7 +4396,7 @@ const AdminPartenaires = () => {
             <div>Cabinet</div><div>Ville</div><div>Dossiers</div><div>CA (M FCFA)</div><div>Note</div><div>Depuis</div><div>Statut</div>
           </div>
           {partners.map((p) => (
-            <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.7fr 1fr 0.7fr 0.8fr 0.9fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
+            <div key={p.n} onClick={() => nav('/admin/partenaires/detail')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.7fr 1fr 0.7fr 0.8fr 0.9fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="ava" style={{ background: 'var(--ink-900)', color: 'white' }}>{p.n.split(' ')[0][0]}{p.n.split(' ').slice(-1)[0][0]}</div>
                 <div style={{ fontWeight: 500 }}>{p.n}</div>
@@ -4620,11 +4665,436 @@ const AdminConfig = () => (
   </BackofficeLayout>
 );
 
+// ═════════════════════════════════════════════════════════════════
+// PARTNER — Client detail (drill-down from Clients list)
+// ═════════════════════════════════════════════════════════════════
+const PartnerClientDetail = () => {
+  const nav = useNav();
+  return (
+    <BackofficeLayout active="clients" title="Aïssata Diallo" sub="Cliente VIP · 2 dossiers · 370 000 FCFA CA cumulé"
+      headerExtra={
+        <div style={{ padding: '12px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)' }}>
+            <span onClick={() => nav('/partenaire/clients')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Clients</span>
+            <Icon name="chev" size={11} />
+            <span>Aïssata Diallo</span>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-sm btn-ghost"><Icon name="whatsapp" size={14} /> WhatsApp</button>
+            <button className="btn btn-sm btn-ghost"><Icon name="mail" size={14} /> Email</button>
+            <button className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Nouveau dossier</button>
+          </div>
+        </div>
+      }
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'flex-start' }}>
+        {/* Main */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            <StatCard label="Dossiers" value="2" />
+            <StatCard label="CA cumulé" value="370" suffix="K FCFA" />
+            <StatCard label="Panier moyen" value="185" suffix="K" />
+            <StatCard label="Ancienneté" value="14" suffix=" mois" />
+          </div>
+
+          {/* Dossiers */}
+          <div className="card" style={{ background: 'white' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--ink-200)', font: '500 15px/1 var(--font-display)' }}>Dossiers</div>
+            <div data-bo-table>
+              {[
+                { ref: 'ANB-2026-04812', t: 'SARL', m: 185000, s: 'cours',  d: '2 avr.' },
+                { ref: 'ANB-2025-03991', t: 'EI',   m: 95000,  s: 'livre',  d: '14 oct.' },
+                { ref: 'ANB-2025-03742', t: 'EI',   m: 95000,  s: 'livre',  d: '8 mars' },
+              ].map((d) => (
+                <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.7fr 1fr 1fr 0.7fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
+                  <div className="num" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ink-700)' }}>{d.ref}</div>
+                  <div style={{ color: 'var(--ink-700)' }}>{d.t}</div>
+                  <div className="num" style={{ fontWeight: 500 }}>{d.m.toLocaleString('fr-FR')} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
+                  <div><StatusBadge s={d.s} /></div>
+                  <div style={{ color: 'var(--ink-500)' }}>{d.d}</div>
+                  <Icon name="chev" size={14} color="var(--ink-400)" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Activity feed */}
+          <div className="card" style={{ padding: 24, background: 'white' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 16 }}>Activité récente</div>
+            {[
+              { i: 'wallet', what: 'Paiement Wave reçu — 61 666 FCFA', d: 'il y a 2j' },
+              { i: 'doc',    what: 'Documents Mali Cosmétiques validés', d: 'il y a 4j' },
+              { i: 'plus',   what: 'Nouveau dossier ANB-2026-04812 créé', d: 'il y a 6j' },
+              { i: 'mail',   what: 'Email envoyé : confirmation', d: 'il y a 6j' },
+              { i: 'user',   what: 'Compte créé', d: 'il y a 14 mois' },
+            ].map((a, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--ink-100)' : 'none' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--ink-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-600)' }}>
+                  <Icon name={a.i} size={13} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13 }}>{a.what}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-400)' }}>{a.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Notes */}
+          <div className="card" style={{ padding: 24, background: 'white' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 12 }}>Notes internes</div>
+            <textarea className="input" placeholder="Ajouter une note privée (non visible par le client)…" style={{ minHeight: 80, resize: 'vertical' }} defaultValue="Cliente recommande beaucoup d'autres entrepreneurs. Très active sur WhatsApp. Préfère Wave pour les paiements." />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+              <button className="btn btn-sm btn-primary">Enregistrer la note</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="card" style={{ padding: 20, background: 'white', textAlign: 'center' }}>
+            <div className="ava" style={{ width: 80, height: 80, fontSize: 28, margin: '0 auto 14px' }}>AD</div>
+            <div style={{ font: '500 17px/1.2 var(--font-display)', letterSpacing: '-0.01em' }}>Aïssata Diallo</div>
+            <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 4 }}>aissata@malicosmo.ci</div>
+            <span className="chip chip-amber" style={{ marginTop: 12, fontSize: 11 }}>VIP</span>
+          </div>
+
+          <div className="card" style={{ padding: 20, background: 'white' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Coordonnées</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
+              {[
+                ['Email', 'aissata@malicosmo.ci'],
+                ['WhatsApp', '+225 07 11 22 33 44'],
+                ['Adresse', 'Cocody, Abidjan'],
+                ['Inscrite le', '14 février 2025'],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-400)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k}</div>
+                  <div style={{ marginTop: 2 }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+            <Icon name="bolt" size={18} color="var(--blue-700)" />
+            <div style={{ fontWeight: 600, fontSize: 13, marginTop: 8, color: 'var(--blue-900)' }}>Recommander un service</div>
+            <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4, opacity: .85 }}>
+              Cliente sans abonnement comptable mensuel — opportunité business.
+            </div>
+            <button className="btn btn-sm" style={{ marginTop: 12, background: 'var(--blue-700)', color: 'white', width: '100%', justifyContent: 'center' }}>
+              Envoyer une proposition <Icon name="arrow" size={12} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </BackofficeLayout>
+  );
+};
+
+// ═════════════════════════════════════════════════════════════════
+// PARTNER — Nouveau dossier (form)
+// ═════════════════════════════════════════════════════════════════
+const PartnerNewDossier = () => {
+  const nav = useNav();
+  const [step, setStep] = React.useState(0);
+  const steps = ['Client', 'Société', 'Documents', 'Confirmation'];
+  return (
+    <BackofficeLayout active="dossiers" title="Nouveau dossier" sub="Créer une société pour un client"
+      headerExtra={
+        <div style={{ padding: '12px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)' }}>
+            <span onClick={() => nav('/partenaire/dashboard')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Dossiers</span>
+            <Icon name="chev" size={11} />
+            <span>Nouveau</span>
+          </div>
+        </div>
+      }
+    >
+      {/* Stepper */}
+      <div className="card" style={{ padding: 24, background: 'white', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          {steps.map((l, i) => (
+            <React.Fragment key={l}>
+              <div onClick={() => setStep(i)} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: i <= step ? 'var(--blue-600)' : 'var(--ink-200)', color: i <= step ? 'white' : 'var(--ink-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>
+                  {i < step ? <Icon name="check" size={13} stroke={2.5} /> : (i + 1)}
+                </div>
+                <span style={{ fontSize: 13, fontWeight: i === step ? 600 : 400, color: i <= step ? 'var(--ink-900)' : 'var(--ink-500)' }}>{l}</span>
+              </div>
+              {i < steps.length - 1 && <div style={{ flex: 1, height: 1, background: 'var(--ink-200)', margin: '0 16px' }} />}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      <div className="card" style={{ padding: 32, background: 'white' }}>
+        {step === 0 && (
+          <div>
+            <h3 style={{ font: '500 22px/1 var(--font-display)', margin: '0 0 8px' }}>Qui est le client ?</h3>
+            <p style={{ fontSize: 13, color: 'var(--ink-500)', margin: '0 0 28px' }}>Sélectionnez un client existant ou créez-en un nouveau.</p>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+              <button className="btn btn-primary" style={{ flex: 1 }}><Icon name="search" size={14} /> Client existant</button>
+              <button className="btn btn-ghost" style={{ flex: 1 }}><Icon name="plus" size={14} /> Nouveau client</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+              <div><label className="label">Prénom</label><input className="input" placeholder="Aïssata" /></div>
+              <div><label className="label">Nom</label><input className="input" placeholder="Diallo" /></div>
+              <div><label className="label">Email</label><input className="input" type="email" placeholder="aissata@entreprise.ci" /></div>
+              <div><label className="label">WhatsApp</label><input className="input" placeholder="+225 07 00 00 00 00" /></div>
+            </div>
+          </div>
+        )}
+        {step === 1 && (
+          <div>
+            <h3 style={{ font: '500 22px/1 var(--font-display)', margin: '0 0 8px' }}>Informations société</h3>
+            <p style={{ fontSize: 13, color: 'var(--ink-500)', margin: '0 0 28px' }}>Ces données seront utilisées pour générer les statuts.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+              <div><label className="label">Dénomination sociale</label><input className="input" placeholder="Mali Cosmétiques" /></div>
+              <div>
+                <label className="label">Forme juridique</label>
+                <select className="input"><option>SARL</option><option>SAS</option><option>SASU</option><option>EURL</option><option>EI</option></select>
+              </div>
+              <div><label className="label">Capital social (FCFA)</label><input className="input" type="number" placeholder="1 000 000" /></div>
+              <div><label className="label">Durée (années)</label><input className="input" type="number" defaultValue="99" /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="label">Activité principale</label><textarea className="input" placeholder="Description précise de l'activité" style={{ minHeight: 80 }} /></div>
+              <div style={{ gridColumn: '1 / -1' }}><label className="label">Adresse du siège</label><input className="input" placeholder="Cocody, Abidjan" /></div>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
+          <div>
+            <h3 style={{ font: '500 22px/1 var(--font-display)', margin: '0 0 8px' }}>Documents requis</h3>
+            <p style={{ fontSize: 13, color: 'var(--ink-500)', margin: '0 0 28px' }}>Téléversez les pièces justificatives. Les statuts seront générés automatiquement.</p>
+            {[
+              { l: 'CNI / Passeport du gérant',      req: true,  ok: true },
+              { l: 'Justificatif de domicile',       req: true,  ok: true },
+              { l: 'Extrait de naissance',           req: true,  ok: false },
+              { l: 'Casier judiciaire',              req: true,  ok: false },
+              { l: 'Contrat de bail du local',       req: false, ok: false },
+              { l: 'Photo de profil (optionnelle)',  req: false, ok: false },
+            ].map((d) => (
+              <div key={d.l} className="card" style={{ padding: 14, background: 'var(--ink-50)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: 'none', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 6, background: d.ok ? 'var(--accent-mint)' : 'var(--ink-200)', color: d.ok ? 'white' : 'var(--ink-500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {d.ok ? <Icon name="check" size={14} stroke={2.5} /> : <Icon name="upload" size={14} />}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{d.l}</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-500)' }}>{d.req ? 'Obligatoire' : 'Optionnel'} · PDF, JPG, PNG jusqu'à 5 Mo</div>
+                  </div>
+                </div>
+                {d.ok ? <span className="chip chip-mint" style={{ fontSize: 11 }}>Téléversé</span> : <button className="btn btn-sm btn-ghost">Téléverser</button>}
+              </div>
+            ))}
+          </div>
+        )}
+        {step === 3 && (
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--accent-mint)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+              <Icon name="check" size={32} stroke={2.5} />
+            </div>
+            <h3 style={{ font: '500 28px/1 var(--font-display)', margin: '0 0 12px', letterSpacing: '-0.02em' }}>Dossier créé avec succès.</h3>
+            <p style={{ fontSize: 15, color: 'var(--ink-500)', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.5 }}>
+              Référence <strong style={{ color: 'var(--ink-900)' }}>ANB-2026-04815</strong>. Le client recevra un email + WhatsApp avec ses identifiants de suivi.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={() => nav('/partenaire/dossier')} className="btn btn-primary">Voir le dossier <Icon name="arrow" size={14} /></button>
+              <button onClick={() => { setStep(0); }} className="btn btn-ghost">Créer un autre dossier</button>
+            </div>
+          </div>
+        )}
+
+        {step < 3 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32, paddingTop: 24, borderTop: '1px solid var(--ink-200)' }}>
+            <button onClick={() => setStep(Math.max(0, step - 1))} className="btn btn-ghost" disabled={step === 0}><Icon name="arrow" size={14} style={{ transform: 'rotate(180deg)' }} /> Précédent</button>
+            <button onClick={() => setStep(Math.min(3, step + 1))} className="btn btn-primary">{step === 2 ? 'Créer le dossier' : 'Continuer'} <Icon name="arrow" size={14} /></button>
+          </div>
+        )}
+      </div>
+    </BackofficeLayout>
+  );
+};
+
+// ═════════════════════════════════════════════════════════════════
+// ADMIN — Partner detail (drill-down from Partenaires list)
+// ═════════════════════════════════════════════════════════════════
+const AdminPartnerDetail = () => {
+  const nav = useNav();
+  return (
+    <BackofficeLayout active="partners" role="Admin" title="ANB Corporate" sub="Cabinet actif · Abidjan · Théophile Anebo"
+      headerExtra={
+        <div style={{ padding: '12px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white', display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)' }}>
+            <span onClick={() => nav('/admin/partenaires')} style={{ cursor: 'pointer', color: 'var(--blue-600)' }}>Partenaires</span>
+            <Icon name="chev" size={11} />
+            <span>ANB Corporate</span>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-sm btn-ghost"><Icon name="mail" size={14} /> Contacter</button>
+            <button className="btn btn-sm btn-ghost" style={{ color: 'var(--brand-red)' }}><Icon name="pause" size={14} /> Suspendre</button>
+            <button className="btn btn-sm btn-primary">Modifier le contrat</button>
+          </div>
+        </div>
+      }
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24, alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Hero stats */}
+          <div className="card" style={{ padding: 28, background: 'var(--grad-hero)', color: 'white', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)' }} />
+            <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
+              {[
+                { v: '84',   l: 'Dossiers cumulés' },
+                { v: '12,4', l: 'CA total (M FCFA)' },
+                { v: '4,9',  l: 'Note clients' },
+                { v: '15%',  l: 'Commission' },
+              ].map((s, i) => (
+                <div key={i} style={{ borderLeft: i ? '1px solid rgba(255,255,255,.12)' : 'none', paddingLeft: i ? 24 : 0 }}>
+                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{s.l}</div>
+                  <div className="display-num" style={{ fontSize: 40 }}>{s.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Activity chart */}
+          <div className="card" style={{ padding: 24, background: 'white' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--ink-500)' }}>Activité — 12 dernières semaines</div>
+                <div className="display-num" style={{ fontSize: 30, marginTop: 6 }}>248 <span style={{ fontSize: 13, color: 'var(--ink-400)' }}>dossiers</span></div>
+              </div>
+              <span className="chip chip-mint">↑ Tendance positive</span>
+            </div>
+            <BarChart data={[14, 18, 22, 18, 24, 28, 26, 32, 38, 36, 42, 48]} height={140} />
+          </div>
+
+          {/* Team */}
+          <div className="card" style={{ background: 'white' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--ink-200)', font: '500 15px/1 var(--font-display)' }}>Équipe (5 membres)</div>
+            <div style={{ padding: '8px 20px' }}>
+              {[
+                { a: 'TA', n: 'Théophile Anebo',  r: 'Directeur Général',  e: 'theophile@anbcorporate.com' },
+                { a: 'AN', n: "Aboubacar N'Dri",  r: 'Comptable senior',   e: 'aboubacar@anbcorporate.com' },
+                { a: 'MB', n: 'Mariam Bamba',     r: 'Juriste',            e: 'mariam@anbcorporate.com' },
+                { a: 'KS', n: 'Konan Sylvestre',  r: 'Comptable junior',   e: 'konan@anbcorporate.com' },
+                { a: 'YT', n: 'Yao Tanoh',        r: 'Assistant juridique', e: 'yao@anbcorporate.com' },
+              ].map((m, i) => (
+                <div key={m.n} style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.6fr 1fr', padding: '12px 0', borderBottom: i < 4 ? '1px solid var(--ink-100)' : 'none', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="ava">{m.a}</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>{m.n}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-500)' }}>{m.r}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-600)' }}>{m.e}</div>
+                  <div style={{ textAlign: 'right' }}><span className="chip" style={{ fontSize: 11 }}>{i === 0 ? 'Admin' : 'Membre'}</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="card" style={{ padding: 24, background: 'white' }}>
+            <div className="ava" style={{ width: 64, height: 64, fontSize: 22, background: 'var(--ink-900)', color: 'white', margin: '0 auto 14px' }}>AC</div>
+            <div style={{ font: '500 17px/1.2 var(--font-display)', textAlign: 'center' }}>ANB Corporate</div>
+            <div style={{ fontSize: 12, color: 'var(--ink-500)', textAlign: 'center', marginTop: 4 }}>Membre depuis 2025</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+              <span className="chip chip-mint" style={{ fontSize: 11 }}><span className="chip-dot"></span> Actif · Premium</span>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: 20, background: 'white' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 14 }}>Coordonnées</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
+              {[
+                ['RCCM', 'CI-ABJ-03-2025-B13-00359'],
+                ['NCC', '2500120 F'],
+                ['Ville', 'Cocody, Angré 8e'],
+                ['Email', 'info@anbcorporate.com'],
+                ['Tél.', '+225 07 87 44 88 57'],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-400)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{k}</div>
+                  <div style={{ marginTop: 2, fontFamily: k === 'RCCM' || k === 'NCC' ? 'var(--font-mono)' : 'inherit', fontSize: k === 'RCCM' ? 12 : 13 }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: 20, background: 'var(--blue-50)', border: '1px solid var(--blue-100)' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--blue-700)', marginBottom: 10 }}>Prochain virement</div>
+            <div className="display-num" style={{ fontSize: 26, color: 'var(--blue-900)' }}>1,86 <span style={{ fontSize: 13 }}>M FCFA</span></div>
+            <div style={{ fontSize: 12, color: 'var(--blue-700)', marginTop: 4 }}>Programmé pour le 22 avril 2026</div>
+          </div>
+        </div>
+      </div>
+    </BackofficeLayout>
+  );
+};
+
+// ═════════════════════════════════════════════════════════════════
+// Notifications panel + User menu — drop-downs from TopBar
+// (Imported by TopBar via global window scope)
+// ═════════════════════════════════════════════════════════════════
+const NotificationDropdown = ({ open, onClose }) => {
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+  if (!open) return null;
+  const items = [
+    { i: 'wallet', t: 'Paiement reçu', sub: 'Mali Cosmétiques · 61 666 FCFA via Wave', when: 'il y a 12 min', unread: true },
+    { i: 'doc',    t: 'Document validé', sub: 'CNI · Kojo Mensah', when: 'il y a 1h', unread: true },
+    { i: 'plus',   t: 'Nouveau dossier', sub: 'Bamba Logistique vous a invité', when: 'il y a 3h', unread: true },
+    { i: 'star',   t: 'Avis 5 étoiles', sub: 'Eric Houphouët vous a noté', when: 'hier', unread: false },
+    { i: 'mail',   t: 'Email envoyé', sub: 'Devis SARL · Diop Conseil', when: 'hier', unread: false },
+  ];
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'transparent' }} />
+      <div style={{ position: 'absolute', top: 56, right: 12, width: 380, background: 'white', borderRadius: 14, boxShadow: '0 24px 60px rgba(15,26,46,.18), 0 4px 12px rgba(15,26,46,.08)', border: '1px solid var(--ink-200)', zIndex: 101, overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--ink-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ font: '500 15px/1 var(--font-display)' }}>Notifications</div>
+          <span style={{ fontSize: 11, color: 'var(--blue-600)', cursor: 'pointer' }}>Tout marquer lu</span>
+        </div>
+        <div style={{ maxHeight: 360, overflowY: 'auto' }}>
+          {items.map((n, i) => (
+            <div key={i} style={{ display: 'flex', gap: 12, padding: '14px 20px', borderBottom: i < items.length - 1 ? '1px solid var(--ink-100)' : 'none', cursor: 'pointer', position: 'relative', background: n.unread ? 'var(--blue-50)' : 'transparent' }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--ink-100)', color: 'var(--ink-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon name={n.i} size={15} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 2 }}>{n.t}</div>
+                <div style={{ fontSize: 12, color: 'var(--ink-500)', lineHeight: 1.4 }}>{n.sub}</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-400)', marginTop: 4 }}>{n.when}</div>
+              </div>
+              {n.unread && <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--brand-red)', marginTop: 6, flexShrink: 0 }} />}
+            </div>
+          ))}
+        </div>
+        <div style={{ padding: '12px 20px', borderTop: '1px solid var(--ink-200)', textAlign: 'center', background: 'var(--ink-50)' }}>
+          <span style={{ fontSize: 13, color: 'var(--blue-600)', cursor: 'pointer' }}>Voir tout l'historique</span>
+        </div>
+      </div>
+    </>
+  );
+};
+
 Object.assign(window, {
-  PartnerDashboard, PartnerDossier, PartnerClients, PartnerDocuments,
-  PartnerPaiements, PartnerStatistiques, PartnerParametres,
-  AdminDashboard, AdminPartenaires, AdminClients, AdminPaiements,
-  AdminCommissions, AdminStats, AdminConfig,
+  PartnerDashboard, PartnerDossier, PartnerClients, PartnerClientDetail,
+  PartnerDocuments, PartnerPaiements, PartnerStatistiques, PartnerParametres,
+  PartnerNewDossier,
+  AdminDashboard, AdminPartenaires, AdminPartnerDetail, AdminClients,
+  AdminPaiements, AdminCommissions, AdminStats, AdminConfig,
+  NotificationDropdown,
   BackofficeLayout, PARTNER_NAV, ADMIN_NAV,
 });
 // === mobile.jsx ===
@@ -6420,21 +6890,24 @@ function Router({ route, heroVariant = 'B' }) {
     case '/creer/paiement':   return <PageViewport bg="var(--ink-50)"><Parcours step={4} /></PageViewport>;
     case '/creer/suivi':      return <PageViewport bg="var(--ink-50)"><Parcours step={5} /></PageViewport>;
     case '/mobile':           return <PageViewport bg="var(--ink-50)"><MobilePreview /></PageViewport>;
-    case '/partenaire':            return <PageViewport bg="var(--ink-50)"><PartnerOnboarding /></PageViewport>;
-    case '/partenaire/dashboard':  return <PageViewport bg="var(--ink-50)"><PartnerDashboard /></PageViewport>;
-    case '/partenaire/dossier':    return <PageViewport bg="var(--ink-50)"><PartnerDossier /></PageViewport>;
-    case '/partenaire/clients':    return <PageViewport bg="var(--ink-50)"><PartnerClients /></PageViewport>;
-    case '/partenaire/documents':  return <PageViewport bg="var(--ink-50)"><PartnerDocuments /></PageViewport>;
-    case '/partenaire/paiements':  return <PageViewport bg="var(--ink-50)"><PartnerPaiements /></PageViewport>;
-    case '/partenaire/statistiques': return <PageViewport bg="var(--ink-50)"><PartnerStatistiques /></PageViewport>;
-    case '/partenaire/parametres': return <PageViewport bg="var(--ink-50)"><PartnerParametres /></PageViewport>;
-    case '/admin':                 return <PageViewport bg="var(--ink-50)"><AdminDashboard /></PageViewport>;
-    case '/admin/partenaires':     return <PageViewport bg="var(--ink-50)"><AdminPartenaires /></PageViewport>;
-    case '/admin/clients':         return <PageViewport bg="var(--ink-50)"><AdminClients /></PageViewport>;
-    case '/admin/paiements':       return <PageViewport bg="var(--ink-50)"><AdminPaiements /></PageViewport>;
-    case '/admin/commissions':     return <PageViewport bg="var(--ink-50)"><AdminCommissions /></PageViewport>;
-    case '/admin/statistiques':    return <PageViewport bg="var(--ink-50)"><AdminStats /></PageViewport>;
-    case '/admin/parametres':      return <PageViewport bg="var(--ink-50)"><AdminConfig /></PageViewport>;
+    case '/partenaire':                  return <PageViewport bg="var(--ink-50)"><PartnerOnboarding /></PageViewport>;
+    case '/partenaire/dashboard':        return <PageViewport bg="var(--ink-50)"><PartnerDashboard /></PageViewport>;
+    case '/partenaire/dossier':          return <PageViewport bg="var(--ink-50)"><PartnerDossier /></PageViewport>;
+    case '/partenaire/dossier/nouveau':  return <PageViewport bg="var(--ink-50)"><PartnerNewDossier /></PageViewport>;
+    case '/partenaire/clients':          return <PageViewport bg="var(--ink-50)"><PartnerClients /></PageViewport>;
+    case '/partenaire/clients/detail':   return <PageViewport bg="var(--ink-50)"><PartnerClientDetail /></PageViewport>;
+    case '/partenaire/documents':        return <PageViewport bg="var(--ink-50)"><PartnerDocuments /></PageViewport>;
+    case '/partenaire/paiements':        return <PageViewport bg="var(--ink-50)"><PartnerPaiements /></PageViewport>;
+    case '/partenaire/statistiques':     return <PageViewport bg="var(--ink-50)"><PartnerStatistiques /></PageViewport>;
+    case '/partenaire/parametres':       return <PageViewport bg="var(--ink-50)"><PartnerParametres /></PageViewport>;
+    case '/admin':                       return <PageViewport bg="var(--ink-50)"><AdminDashboard /></PageViewport>;
+    case '/admin/partenaires':           return <PageViewport bg="var(--ink-50)"><AdminPartenaires /></PageViewport>;
+    case '/admin/partenaires/detail':    return <PageViewport bg="var(--ink-50)"><AdminPartnerDetail /></PageViewport>;
+    case '/admin/clients':               return <PageViewport bg="var(--ink-50)"><AdminClients /></PageViewport>;
+    case '/admin/paiements':             return <PageViewport bg="var(--ink-50)"><AdminPaiements /></PageViewport>;
+    case '/admin/commissions':           return <PageViewport bg="var(--ink-50)"><AdminCommissions /></PageViewport>;
+    case '/admin/statistiques':          return <PageViewport bg="var(--ink-50)"><AdminStats /></PageViewport>;
+    case '/admin/parametres':            return <PageViewport bg="var(--ink-50)"><AdminConfig /></PageViewport>;
     case '/showcase/email':   return <PageViewport bg="var(--ink-100)"><ShowcaseEmail /></PageViewport>;
     case '/showcase/facture': return <PageViewport bg="var(--ink-100)"><ShowcaseInvoice /></PageViewport>;
     default:                  return <PageViewport bg="white"><NotFound path={route} /></PageViewport>;

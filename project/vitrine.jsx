@@ -647,7 +647,7 @@ const PartnersBlock = () => {
 // ─────────────────────────────────────────────────────────────
 const VideosBlock = () => {
   // Real TikTok videos from @theophile.anebo (the DG's official account).
-  // Cards open the original TikTok in a new tab.
+  // Cards open the original TikTok in a new tab; thumbnail fetched via TikTok oEmbed.
   const videos = [
     {
       url:   'https://www.tiktok.com/@theophile.anebo/video/7491666901572111671',
@@ -664,7 +664,7 @@ const VideosBlock = () => {
     {
       url:   'https://www.tiktok.com/@theophile.anebo/video/7499519748917497143',
       thumb: '#3F1F2E', tag: 'Partenariat', dur: '1:15',
-      title: 'INOVATIS, l\'assurance qu\'il vous faut',
+      title: "INOVATIS, l'assurance qu'il vous faut",
       by:    '@theophile.anebo', views: '12K',
     },
     {
@@ -680,6 +680,25 @@ const VideosBlock = () => {
       by:    '@theophile.anebo', views: '15K',
     },
   ];
+
+  // Fetch TikTok thumbnails via the public oEmbed endpoint. Best-effort:
+  // if it fails (CORS, network), the card falls back to its solid color.
+  const [thumbs, setThumbs] = React.useState({});
+  React.useEffect(() => {
+    let aborted = false;
+    videos.forEach((v) => {
+      fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(v.url)}`)
+        .then((r) => r.ok ? r.json() : null)
+        .then((data) => {
+          if (aborted || !data || !data.thumbnail_url) return;
+          setThumbs((prev) => ({ ...prev, [v.url]: data.thumbnail_url }));
+        })
+        .catch(() => {});
+    });
+    return () => { aborted = true; };
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div data-videos style={{ padding: '120px 56px', background: 'var(--ink-900)', color: 'white', position: 'relative', overflow: 'hidden' }}>
       {/* Subtle blue glow */}
@@ -706,10 +725,14 @@ const VideosBlock = () => {
 
         {/* Horizontal scroll of 9:16 cards */}
         <div data-videos-scroll style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
-          {videos.map((v, i) => (
+          {videos.map((v, i) => {
+            const thumb = thumbs[v.url];
+            return (
             <a key={i} data-video-card href={v.url} target="_blank" rel="noopener noreferrer" style={{
               aspectRatio: '9/16', borderRadius: 16, overflow: 'hidden',
-              background: `linear-gradient(180deg, ${v.thumb} 0%, rgba(0,0,0,.5) 100%), ${v.thumb}`,
+              backgroundColor: v.thumb,
+              backgroundImage: thumb ? `url(${thumb})` : 'none',
+              backgroundSize: 'cover', backgroundPosition: 'center',
               position: 'relative', cursor: 'pointer', display: 'block',
               border: '1px solid rgba(255,255,255,.08)', textDecoration: 'none',
               transition: 'transform .25s, box-shadow .25s',
@@ -717,24 +740,35 @@ const VideosBlock = () => {
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 24px 48px rgba(0,0,0,.4)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
             >
+              {/* Dark gradient overlay for legibility on top of the thumbnail */}
+              <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.85) 100%)' }} />
+
               {/* Play indicator — center */}
-              <div style={{ position: 'absolute', top: '38%', left: '50%', transform: 'translate(-50%, -50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,.16)', backdropFilter: 'blur(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,.3)' }}>
+              <div style={{ position: 'absolute', top: '42%', left: '50%', transform: 'translate(-50%, -50%)', width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,.18)', backdropFilter: 'blur(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid rgba(255,255,255,.4)' }}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="white" style={{ marginLeft: 3 }}><path d="M5 3l12 7-12 7V3z" /></svg>
               </div>
 
               {/* Top: tag + duration */}
               <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ font: '500 10px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.12em', padding: '5px 9px', borderRadius: 6, background: 'rgba(198,29,46,.9)', color: 'white' }}>{v.tag}</span>
-                <span style={{ font: '500 11px/1 var(--font-mono)', padding: '5px 8px', borderRadius: 6, background: 'rgba(0,0,0,.5)', color: 'white', backdropFilter: 'blur(8px)' }}>{v.dur}</span>
+                <span style={{ font: '500 11px/1 var(--font-mono)', padding: '5px 8px', borderRadius: 6, background: 'rgba(0,0,0,.55)', color: 'white', backdropFilter: 'blur(8px)' }}>{v.dur}</span>
+              </div>
+
+              {/* TikTok corner mark — confirms the source */}
+              <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)' }}>
+                {/* small TikTok-style logo to signal the platform */}
               </div>
 
               {/* Bottom: title + author + views */}
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px', background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,.85) 70%)' }}>
-                <div style={{ font: '600 14px/1.3 var(--font-display)', letterSpacing: '-0.01em', color: 'white', marginBottom: 8 }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px' }}>
+                <div style={{ font: '600 14px/1.3 var(--font-display)', letterSpacing: '-0.01em', color: 'white', marginBottom: 8, textShadow: '0 1px 3px rgba(0,0,0,.4)' }}>
                   {v.title}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.7)' }}>
-                  <span>{v.by}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: 'rgba(255,255,255,.85)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.34a8.16 8.16 0 0 0 5 .14V5a4.85 4.85 0 0 1-2.07.13z" /></svg>
+                    {v.by}
+                  </span>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                     {v.views}
@@ -742,7 +776,8 @@ const VideosBlock = () => {
                 </div>
               </div>
             </a>
-          ))}
+            );
+          })}
         </div>
 
         {/* Tip below */}
