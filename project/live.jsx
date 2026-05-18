@@ -244,6 +244,37 @@ function MobileHeader({ onOpenNav }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// WhatsApp FAB — floating action button, always visible
+// ─────────────────────────────────────────────────────────────
+function WhatsAppFAB() {
+  const [hovered, setHovered] = React.useState(false);
+  return (
+    <a
+      href="https://wa.me/2250700000000"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="live-whatsapp-fab"
+      title="Discuter sur WhatsApp — réponse en 5 min"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative' }}
+    >
+      <Icon name="whatsapp" size={26} color="white" />
+      {hovered && (
+        <span style={{
+          position: 'absolute', right: 66, bottom: 10,
+          whiteSpace: 'nowrap', pointerEvents: 'none',
+          background: 'var(--ink-900, #0A0E1A)', color: 'white',
+          padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+          boxShadow: '0 4px 16px rgba(0,0,0,.25)',
+          fontFamily: 'var(--font-body)',
+        }}>Réponse en moins de 5 min</span>
+      )}
+    </a>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
 // Sitemap overlay — accessible via Cmd+K / Ctrl+K (desktop)
 // ─────────────────────────────────────────────────────────────
 function Sitemap({ open, onClose }) {
@@ -488,6 +519,7 @@ function LiveApp() {
       <LiveToolbar onOpenMap={() => setMapOpen(true)} t={t} setTweak={setTweak} />
       <Sitemap open={mapOpen} onClose={() => setMapOpen(false)} />
       <MobileNav open={navOpen} onClose={() => setNavOpen(false)} route={route} t={t} setTweak={setTweak} />
+      <WhatsAppFAB />
 
       <TweaksPanel title="Tweaks · Rebrand">
         <TweakSection label="Marque & copy" />

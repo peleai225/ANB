@@ -49,6 +49,7 @@ const PageTarifs = () => {
 
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 80px' }}>
         <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 48px' }}>
           <div className="chip chip-blue" style={{ marginBottom: 20 }}>Tarifs · Mars 2026</div>
@@ -86,53 +87,84 @@ const PageTarifs = () => {
           Tous les prix incluent les frais de greffe, l'annonce légale, la TVA et l'accompagnement humain. Cabinet enregistré CI-ABJ-03-2025-B13-00359.
         </div>
       </div>
+      <CtaClosure />
+      <VitrineFooter />
     </div>
   );
 };
 
-// Page FAQ
+// Page FAQ — interactive accordion
 const PageFAQ = () => {
+  const nav = useNav();
+  const [openSet, setOpenSet] = React.useState(new Set([0]));
+  const toggle = (i) => setOpenSet((prev) => {
+    const next = new Set(prev);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    return next;
+  });
+
   const faqs = [
-    { q: 'Combien de temps pour créer mon entreprise ?', a: '72 heures en moyenne après réception du paiement et des documents complets. Certains dossiers (EI) peuvent être traités en 24h.' },
-    { q: 'Quels documents dois-je fournir ?', a: 'Une pièce d\'identité, un justificatif de domicile, et selon la forme : RIB pour le capital, statuts signés (générés par nous), CNI des associés.' },
-    { q: 'Est-ce que je peux payer en plusieurs fois ?', a: 'Oui. Tous nos plans sont payables en 3 fois sans frais via Wave, Orange Money ou MTN MoMo. Le premier versement déclenche le traitement.' },
-    { q: 'Que se passe-t-il si mon dossier est refusé ?', a: 'Nous vous remboursons intégralement les honoraires PeleAI. Les frais de greffe et d\'annonce légale ne sont pas remboursables (réglementation).' },
-    { q: 'Puis-je créer une entreprise depuis l\'étranger ?', a: 'Oui pour les ressortissants UEMOA résidant à l\'étranger. Le siège social doit être en zone UEMOA — nous proposons une domiciliation à Abidjan, Dakar ou Bamako.' },
-    { q: 'Mes données sont-elles sécurisées ?', a: 'Tout passe en HTTPS. Les documents sont stockés chiffrés. Nous sommes conformes RGPD et à la loi ivoirienne 2013-450 sur la protection des données.' },
+    { q: 'Combien de temps pour créer mon entreprise ?', a: '72 heures en moyenne après réception du paiement et des documents complets. Certains dossiers (Entreprise individuelle) sont traités en 24h. Nous vous tenons informé à chaque étape par SMS et WhatsApp.' },
+    { q: 'Quels documents dois-je fournir ?', a: 'Pour une SARL ou SAS : CNI ou passeport de chaque associé, justificatif de domicile de moins de 3 mois, et un virement de capital sur compte bloqué (BICICI, SGBCI). Les statuts sont générés automatiquement — vous n\'avez qu\'à les signer.' },
+    { q: 'Est-ce que je peux payer en plusieurs fois ?', a: 'Oui. Tous nos forfaits sont payables en 3× sans frais via Wave, Orange Money ou MTN MoMo. Le premier versement déclenche immédiatement le traitement de votre dossier.' },
+    { q: 'Puis-je créer une entreprise depuis l\'étranger (diaspora) ?', a: 'Oui, nous accompagnons les ressortissants UEMOA installés en France, Belgique, Canada ou aux États-Unis. Le siège social doit être en zone UEMOA — nous proposons notre adresse de domiciliation à Cocody, Abidjan.' },
+    { q: 'Que se passe-t-il si mon dossier est rejeté par le greffe ?', a: 'Nous traitons le problème en totalité et sans frais supplémentaires. Dans le rare cas d\'un refus définitif, les honoraires ANB sont remboursés intégralement. Les frais de greffe et d\'annonce légale sont régis par l\'administration et non remboursables.' },
+    { q: 'Quelle est la différence entre SARL, SAS, SASU et EI ?', a: 'L\'EI est la structure la plus simple (seul, sans capital minimum, mais patrimoine engagé). La SARL est idéale pour 2-5 associés avec capital minimum de 100 000 FCFA et responsabilité limitée. La SAS offre plus de flexibilité pour les investisseurs. La SASU est une SAS à associé unique. Notre quiz de 90 secondes vous oriente.' },
+    { q: 'Puis-je changer de forme juridique plus tard ?', a: 'Oui. La transformation d\'une EI en SARL ou d\'une SARL en SAS est possible. Elle implique des formalités (PV, publication, modification RCCM). Contactez-nous pour un devis — c\'est souvent moins coûteux que de créer une nouvelle société.' },
+    { q: 'Mes données personnelles sont-elles sécurisées ?', a: 'Toutes les communications sont chiffrées (TLS 1.3). Les documents sont stockés sur des serveurs hébergés en Europe avec chiffrement AES-256. Nous respectons le RGPD et la loi ivoirienne 2013-450 sur la protection des données personnelles.' },
   ];
+
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 100px', maxWidth: 1000, margin: '0 auto' }}>
-        <div className="chip chip-blue" style={{ marginBottom: 20 }}>FAQ</div>
+        <div className="chip chip-blue" style={{ marginBottom: 20 }}>FAQ · 8 questions</div>
         <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 56px', maxWidth: 700 }}>
           Vos questions, <span className="serif" style={{ color: 'var(--blue-600)' }}>nos réponses.</span>
         </h1>
 
         <div className="card" style={{ background: 'white' }}>
-          {faqs.map((f, i) => (
-            <div key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--ink-200)' : 'none' }}>
-              <div style={{ padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ font: '600 17px/1.4 var(--font-display)', letterSpacing: '-0.015em', marginBottom: i === 0 || i === 2 ? 12 : 0 }}>{f.q}</div>
-                  {(i === 0 || i === 2) && <div style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-600)' }}>{f.a}</div>}
-                </div>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: i === 0 || i === 2 ? 'var(--blue-600)' : 'var(--ink-100)', color: i === 0 || i === 2 ? 'white' : 'var(--ink-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon name={i === 0 || i === 2 ? 'close' : 'plus'} size={14} stroke={2.5} />
+          {faqs.map((f, i) => {
+            const isOpen = openSet.has(i);
+            return (
+              <div key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--ink-200)' : 'none' }}>
+                <div
+                  onClick={() => toggle(i)}
+                  style={{ padding: '22px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, cursor: 'pointer' }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ font: `${isOpen ? 600 : 500} 16px/1.4 var(--font-display)`, letterSpacing: '-0.015em', color: isOpen ? 'var(--blue-700)' : 'var(--ink-900)', marginBottom: isOpen ? 14 : 0 }}>
+                      {f.q}
+                    </div>
+                    {isOpen && (
+                      <div style={{ fontSize: 14, lineHeight: 1.65, color: 'var(--ink-600)', paddingRight: 16 }}>{f.a}</div>
+                    )}
+                  </div>
+                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: isOpen ? 'var(--blue-600)' : 'var(--ink-100)', color: isOpen ? 'white' : 'var(--ink-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2, transition: 'background .15s' }}>
+                    <Icon name={isOpen ? 'close' : 'plus'} size={14} stroke={2.5} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="card-soft card" style={{ padding: 32, marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div className="card-soft card" style={{ padding: 28, marginTop: 40, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
           <Icon name="whatsapp" size={32} color="#25D366" />
-          <div style={{ flex: 1 }}>
-            <div style={{ font: '600 18px/1 var(--font-display)' }}>Une autre question ?</div>
-            <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>Notre équipe répond sur WhatsApp en moins de 5 min.</div>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ font: '600 17px/1 var(--font-display)', marginBottom: 6 }}>Vous n'avez pas trouvé votre réponse ?</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-500)' }}>Notre équipe répond sur WhatsApp en moins de 5 min, 7j/7.</div>
           </div>
-          <button className="btn btn-primary">Écrire sur WhatsApp <Icon name="arrow" size={14} /></button>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" style={{ background: '#25D366' }}>
+              <Icon name="whatsapp" size={14} /> WhatsApp maintenant
+            </button>
+            <button onClick={() => nav('/contact')} className="btn btn-ghost">Formulaire <Icon name="arrow" size={14} /></button>
+          </div>
         </div>
       </div>
+      <CtaClosure />
+      <VitrineFooter />
     </div>
   );
 };

@@ -180,29 +180,31 @@ const PartnerDashboard = () => {
                 <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Exporter</button>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
-              <div>Client</div>
-              <div>Référence</div>
-              <div>Type</div>
-              <div>Montant</div>
-              <div>Statut</div>
-              <div>Date</div>
-              <div></div>
-            </div>
-            {dossiers.map((d) => (
-              <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div className="ava">{d.a}</div>
-                  <div style={{ fontWeight: 500 }}>{d.client}</div>
-                </div>
-                <div className="num" style={{ color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.ref}</div>
-                <div style={{ color: 'var(--ink-700)' }}>{d.t}</div>
-                <div className="num" style={{ fontWeight: 500 }}>{d.m.toLocaleString('fr-FR')} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
-                <div><StatusBadge s={d.s} /></div>
-                <div style={{ color: 'var(--ink-500)', fontSize: 12 }}>{d.d}</div>
-                <Icon name="chev" size={14} color="var(--ink-400)" />
+            <div data-bo-table>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
+                <div>Client</div>
+                <div>Référence</div>
+                <div>Type</div>
+                <div>Montant</div>
+                <div>Statut</div>
+                <div>Date</div>
+                <div></div>
               </div>
-            ))}
+              {dossiers.map((d) => (
+                <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="ava">{d.a}</div>
+                    <div style={{ fontWeight: 500 }}>{d.client}</div>
+                  </div>
+                  <div className="num" style={{ color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.ref}</div>
+                  <div style={{ color: 'var(--ink-700)' }}>{d.t}</div>
+                  <div className="num" style={{ fontWeight: 500 }}>{d.m.toLocaleString('fr-FR')} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
+                  <div><StatusBadge s={d.s} /></div>
+                  <div style={{ color: 'var(--ink-500)', fontSize: 12 }}>{d.d}</div>
+                  <Icon name="chev" size={14} color="var(--ink-400)" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -442,30 +444,32 @@ const AdminDashboard = () => {
               <div style={{ font: '500 15px/1 var(--font-display)' }}>Partenaires (24)</div>
               <button onClick={() => nav('/partenaire')} className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Ajouter un partenaire</button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
-              <div>Cabinet</div>
-              <div>Ville</div>
-              <div>Dossiers</div>
-              <div>CA (M FCFA)</div>
-              <div>Note</div>
-              <div>Statut</div>
-            </div>
-            {partners.map((p) => (
-              <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div className="ava" style={{ background: 'var(--ink-900)', color: 'white' }}>{p.n.split(' ')[0][0]}{p.n.split(' ').slice(-1)[0][0]}</div>
-                  <div style={{ fontWeight: 500 }}>{p.n}</div>
-                </div>
-                <div style={{ color: 'var(--ink-700)' }}>{p.city}</div>
-                <div className="num" style={{ fontWeight: 500 }}>{p.d}</div>
-                <div className="num">{p.ca.toLocaleString('fr-FR')}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Icon name="star" size={12} color="#F59E0B" />
-                  <span className="num">{p.sat.toLocaleString('fr-FR')}</span>
-                </div>
-                <div>{p.status === 'actif' ? <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span> : <span className="chip chip-amber"><span className="chip-dot"></span> Vérification</span>}</div>
+            <div data-bo-table>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
+                <div>Cabinet</div>
+                <div>Ville</div>
+                <div>Dossiers</div>
+                <div>CA (M FCFA)</div>
+                <div>Note</div>
+                <div>Statut</div>
               </div>
-            ))}
+              {partners.map((p) => (
+                <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="ava" style={{ background: 'var(--ink-900)', color: 'white' }}>{p.n.split(' ')[0][0]}{p.n.split(' ').slice(-1)[0][0]}</div>
+                    <div style={{ fontWeight: 500 }}>{p.n}</div>
+                  </div>
+                  <div style={{ color: 'var(--ink-700)' }}>{p.city}</div>
+                  <div className="num" style={{ fontWeight: 500 }}>{p.d}</div>
+                  <div className="num">{p.ca.toLocaleString('fr-FR')}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Icon name="star" size={12} color="#F59E0B" />
+                    <span className="num">{p.sat.toLocaleString('fr-FR')}</span>
+                  </div>
+                  <div>{p.status === 'actif' ? <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span> : <span className="chip chip-amber"><span className="chip-dot"></span> Vérification</span>}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

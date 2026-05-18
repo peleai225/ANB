@@ -258,8 +258,44 @@ const Testimonials = () => {
   );
 };
 
+const CtaClosure = () => {
+  const copy = useCopy();
+  const nav = useNav();
+  return (
+    <div data-cta-closure style={{ padding: '80px 56px', background: 'var(--grad-hero)', color: 'white', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto' }}>
+        <div className="chip" style={{ background: 'rgba(255,255,255,.12)', color: 'rgba(255,255,255,.9)', backdropFilter: 'blur(10px)', marginBottom: 24, display: 'inline-flex' }}>
+          <span className="chip-dot" style={{ color: '#34D399' }}></span> 1 200 entreprises créées · délai moyen 72h
+        </div>
+        <h2 style={{ font: '500 56px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 20px', color: 'white' }}>
+          Votre entreprise,{' '}
+          <span className="serif" style={{ color: '#93C5FD' }}>en 72 heures.</span>
+        </h2>
+        <p style={{ fontSize: 18, color: 'rgba(255,255,255,.75)', margin: '0 0 36px', lineHeight: 1.5 }}>
+          À partir de 95 000 FCFA. Paiement Wave · Orange Money · MTN. Accompagnement humain inclus.
+        </p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => nav('/quiz')} className="btn btn-lg" style={{ background: 'white', color: 'var(--ink-900)', fontWeight: 600 }}>
+            {copy.ctaLabel} <Icon name="arrow" size={16} />
+          </button>
+          <button onClick={() => nav('/contact')} className="btn btn-lg" style={{ background: '#25D366', color: 'white' }}>
+            <Icon name="whatsapp" size={16} /> Parler à un expert
+          </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 36, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.12)', fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
+          {['🔒 Paiement sécurisé', '📋 RCCM CI-ABJ-03-2025-B13-00359', '⚡ Réponse en 5 min sur WhatsApp'].map((t, i) => (
+            <span key={i}>{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VitrineFooter = () => {
   const copy = useCopy();
+  const nav = useNav();
   return (
   <div style={{ background: 'var(--ink-900)', color: 'white', padding: '60px 56px 32px' }}>
     <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 40 }}>
@@ -288,9 +324,14 @@ const VitrineFooter = () => {
         </div>
       ))}
     </div>
-    <div style={{ maxWidth: 1280, margin: '40px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.1)', display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
+    <div style={{ maxWidth: 1280, margin: '40px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
       <span>© 2026 {copy.brandName}. Tous droits réservés.</span>
-      <span>CGU · Confidentialité · Mentions légales</span>
+      <div style={{ display: 'flex', gap: 20 }}>
+        <span style={{ cursor: 'pointer' }} onClick={() => nav('/faq')}>CGU</span>
+        <span>Confidentialité</span>
+        <span>Mentions légales</span>
+        <span onClick={() => nav('/contact')} style={{ cursor: 'pointer', color: 'rgba(255,255,255,.6)' }}>Contact</span>
+      </div>
     </div>
   </div>
   );
@@ -350,8 +391,9 @@ const Vitrine = ({ variant = 'A' }) => (
     <HowItWorks />
     <Services />
     <Testimonials />
+    <CtaClosure />
     <VitrineFooter />
   </div>
 );
 
-Object.assign(window, { Vitrine });
+Object.assign(window, { Vitrine, VitrineNav, VitrineFooter, CtaClosure });

@@ -98,6 +98,7 @@ const PageContact = () => {
   const [sent, setSent] = React.useState(false);
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ marginBottom: 48 }}>
           <div className="chip chip-blue" style={{ marginBottom: 20 }}>Contact</div>
@@ -214,6 +215,7 @@ const PageContact = () => {
           </div>
         </div>
       </div>
+      <VitrineFooter />
     </div>
   );
 };

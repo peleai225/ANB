@@ -247,6 +247,34 @@ body[data-theme="dark"] .pas .hr { background: var(--ink-200); }
    keeps fixed widths for design review.
    ───────────────────────────────────────────────────────────── */
 
+/* ─── WhatsApp floating action button ─── */
+.live-whatsapp-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2001;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25D366;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37,211,102,.45), 0 2px 8px rgba(37,211,102,.3);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.live-whatsapp-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(37,211,102,.6), 0 4px 12px rgba(37,211,102,.35);
+}
+@media (max-width: 768px) {
+  .live-whatsapp-fab { bottom: 16px; right: 16px; width: 52px; height: 52px; }
+}
+
 body.live-mode { overflow-x: hidden !important; overflow-y: auto !important; }
 body.live-mode .pas {
   max-width: 100vw !important;
@@ -429,9 +457,7 @@ body.live-mode .pas[style*="height: 900"] {
   body.live-mode .pas .display-num { font-size: clamp(22px, 7vw, 44px) !important; }
   body.live-mode .pas h1 { font-size: clamp(24px, 7vw, 40px) !important; }
 
-  /* Backoffice tables — horizontal scroll the parent card */
-  body.live-mode .pas [data-bo-table] { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  body.live-mode .pas [data-bo-table] > div { min-width: 720px; }
+  /* Backoffice tables — handled globally below */
 
   /* Forms gap reduce */
   body.live-mode .pas [style*="gap: 32"] { gap: 16px !important; }
@@ -462,6 +488,55 @@ body.live-mode .pas[style*="height: 900"] {
   body.live-mode .pas [style*="font-size: 19"] { font-size: 15px !important; }
   body.live-mode .pas [style*="font-size: 20"] { font-size: 15px !important; }
   body.live-mode .pas [style*="font-size: 18"] { font-size: 14px !important; }
+}
+
+/* ── CtaClosure responsive (data-cta-closure) ── */
+@media (max-width: 1024px) {
+  body.live-mode .pas [data-cta-closure] { padding: 56px 24px !important; }
+  body.live-mode .pas [data-cta-closure] h2 { font-size: clamp(28px, 5vw, 44px) !important; }
+}
+@media (max-width: 768px) {
+  body.live-mode .pas [data-cta-closure] { padding: 48px 16px !important; }
+  body.live-mode .pas [data-cta-closure] h2 { font-size: clamp(26px, 7vw, 38px) !important; }
+  body.live-mode .pas [data-cta-closure] [style*="display: flex"][style*="gap: 24"] { flex-direction: column !important; align-items: center !important; }
+  body.live-mode .pas [data-cta-closure] [style*="justify-content: center"][style*="gap: 24"] { flex-direction: column !important; gap: 8px !important; }
+}
+
+/* ── Backoffice tables — horizontal scroll on mobile ── */
+body.live-mode .pas [data-bo-table] { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+body.live-mode .pas [data-bo-table] > div { min-width: 640px; }
+
+/* ── Email/Invoice mockups — better mobile scaling ── */
+@media (max-width: 768px) {
+  /* Override the aggressive scale hack — use a gentler one with a proper container */
+  body.live-mode .pas [style*="width: 900"],
+  body.live-mode .pas [style*="width: 794"] {
+    transform: scale(0.55);
+    transform-origin: top left;
+    margin-bottom: -45% !important;
+    margin-right: -45% !important;
+  }
+}
+@media (max-width: 480px) {
+  body.live-mode .pas [style*="width: 900"],
+  body.live-mode .pas [style*="width: 794"] {
+    transform: scale(0.38);
+    transform-origin: top left;
+    margin-bottom: -62% !important;
+    margin-right: -62% !important;
+  }
+}
+
+/* ── VitrineNav responsive — hide secondary items on tablet ── */
+@media (max-width: 1024px) {
+  body.live-mode .pas [data-vitrine-menu] { gap: 16px !important; }
+  body.live-mode .pas [data-vitrine-menu] span:nth-child(4),
+  body.live-mode .pas [data-vitrine-menu] span:nth-child(5) { display: none !important; }
+}
+
+/* ── Ensure sticky backoffice cards don't break single-col ── */
+@media (max-width: 1024px) {
+  body.live-mode .pas [style*="position: sticky"] { position: static !important; }
 }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
@@ -2258,8 +2333,44 @@ const Testimonials = () => {
   );
 };
 
+const CtaClosure = () => {
+  const copy = useCopy();
+  const nav = useNav();
+  return (
+    <div data-cta-closure style={{ padding: '80px 56px', background: 'var(--grad-hero)', color: 'white', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'var(--grad-glow)', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto' }}>
+        <div className="chip" style={{ background: 'rgba(255,255,255,.12)', color: 'rgba(255,255,255,.9)', backdropFilter: 'blur(10px)', marginBottom: 24, display: 'inline-flex' }}>
+          <span className="chip-dot" style={{ color: '#34D399' }}></span> 1 200 entreprises créées · délai moyen 72h
+        </div>
+        <h2 style={{ font: '500 56px/1.05 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 20px', color: 'white' }}>
+          Votre entreprise,{' '}
+          <span className="serif" style={{ color: '#93C5FD' }}>en 72 heures.</span>
+        </h2>
+        <p style={{ fontSize: 18, color: 'rgba(255,255,255,.75)', margin: '0 0 36px', lineHeight: 1.5 }}>
+          À partir de 95 000 FCFA. Paiement Wave · Orange Money · MTN. Accompagnement humain inclus.
+        </p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => nav('/quiz')} className="btn btn-lg" style={{ background: 'white', color: 'var(--ink-900)', fontWeight: 600 }}>
+            {copy.ctaLabel} <Icon name="arrow" size={16} />
+          </button>
+          <button onClick={() => nav('/contact')} className="btn btn-lg" style={{ background: '#25D366', color: 'white' }}>
+            <Icon name="whatsapp" size={16} /> Parler à un expert
+          </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 36, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.12)', fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
+          {['🔒 Paiement sécurisé', '📋 RCCM CI-ABJ-03-2025-B13-00359', '⚡ Réponse en 5 min sur WhatsApp'].map((t, i) => (
+            <span key={i}>{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VitrineFooter = () => {
   const copy = useCopy();
+  const nav = useNav();
   return (
   <div style={{ background: 'var(--ink-900)', color: 'white', padding: '60px 56px 32px' }}>
     <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 40 }}>
@@ -2288,9 +2399,14 @@ const VitrineFooter = () => {
         </div>
       ))}
     </div>
-    <div style={{ maxWidth: 1280, margin: '40px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.1)', display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
+    <div style={{ maxWidth: 1280, margin: '40px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
       <span>© 2026 {copy.brandName}. Tous droits réservés.</span>
-      <span>CGU · Confidentialité · Mentions légales</span>
+      <div style={{ display: 'flex', gap: 20 }}>
+        <span style={{ cursor: 'pointer' }} onClick={() => nav('/faq')}>CGU</span>
+        <span>Confidentialité</span>
+        <span>Mentions légales</span>
+        <span onClick={() => nav('/contact')} style={{ cursor: 'pointer', color: 'rgba(255,255,255,.6)' }}>Contact</span>
+      </div>
     </div>
   </div>
   );
@@ -2350,11 +2466,12 @@ const Vitrine = ({ variant = 'A' }) => (
     <HowItWorks />
     <Services />
     <Testimonials />
+    <CtaClosure />
     <VitrineFooter />
   </div>
 );
 
-Object.assign(window, { Vitrine });
+Object.assign(window, { Vitrine, VitrineNav, VitrineFooter, CtaClosure });
 // === parcours.jsx ===
 /* global React, Icon, Logo, StepDot */
 // Parcours client desktop — choix entreprise → simulation → formulaire → paiement → suivi
@@ -2920,29 +3037,31 @@ const PartnerDashboard = () => {
                 <button className="btn btn-sm btn-ghost"><Icon name="download" size={14} /> Exporter</button>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
-              <div>Client</div>
-              <div>Référence</div>
-              <div>Type</div>
-              <div>Montant</div>
-              <div>Statut</div>
-              <div>Date</div>
-              <div></div>
-            </div>
-            {dossiers.map((d) => (
-              <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div className="ava">{d.a}</div>
-                  <div style={{ fontWeight: 500 }}>{d.client}</div>
-                </div>
-                <div className="num" style={{ color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.ref}</div>
-                <div style={{ color: 'var(--ink-700)' }}>{d.t}</div>
-                <div className="num" style={{ fontWeight: 500 }}>{d.m.toLocaleString('fr-FR')} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
-                <div><StatusBadge s={d.s} /></div>
-                <div style={{ color: 'var(--ink-500)', fontSize: 12 }}>{d.d}</div>
-                <Icon name="chev" size={14} color="var(--ink-400)" />
+            <div data-bo-table>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
+                <div>Client</div>
+                <div>Référence</div>
+                <div>Type</div>
+                <div>Montant</div>
+                <div>Statut</div>
+                <div>Date</div>
+                <div></div>
               </div>
-            ))}
+              {dossiers.map((d) => (
+                <div key={d.ref} onClick={() => nav('/partenaire/dossier')} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 1fr 0.8fr 30px', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="ava">{d.a}</div>
+                    <div style={{ fontWeight: 500 }}>{d.client}</div>
+                  </div>
+                  <div className="num" style={{ color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.ref}</div>
+                  <div style={{ color: 'var(--ink-700)' }}>{d.t}</div>
+                  <div className="num" style={{ fontWeight: 500 }}>{d.m.toLocaleString('fr-FR')} <span style={{ color: 'var(--ink-400)', fontSize: 11 }}>FCFA</span></div>
+                  <div><StatusBadge s={d.s} /></div>
+                  <div style={{ color: 'var(--ink-500)', fontSize: 12 }}>{d.d}</div>
+                  <Icon name="chev" size={14} color="var(--ink-400)" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -3182,30 +3301,32 @@ const AdminDashboard = () => {
               <div style={{ font: '500 15px/1 var(--font-display)' }}>Partenaires (24)</div>
               <button onClick={() => nav('/partenaire')} className="btn btn-sm btn-primary"><Icon name="plus" size={14} /> Ajouter un partenaire</button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
-              <div>Cabinet</div>
-              <div>Ville</div>
-              <div>Dossiers</div>
-              <div>CA (M FCFA)</div>
-              <div>Note</div>
-              <div>Statut</div>
-            </div>
-            {partners.map((p) => (
-              <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div className="ava" style={{ background: 'var(--ink-900)', color: 'white' }}>{p.n.split(' ')[0][0]}{p.n.split(' ').slice(-1)[0][0]}</div>
-                  <div style={{ fontWeight: 500 }}>{p.n}</div>
-                </div>
-                <div style={{ color: 'var(--ink-700)' }}>{p.city}</div>
-                <div className="num" style={{ fontWeight: 500 }}>{p.d}</div>
-                <div className="num">{p.ca.toLocaleString('fr-FR')}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Icon name="star" size={12} color="#F59E0B" />
-                  <span className="num">{p.sat.toLocaleString('fr-FR')}</span>
-                </div>
-                <div>{p.status === 'actif' ? <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span> : <span className="chip chip-amber"><span className="chip-dot"></span> Vérification</span>}</div>
+            <div data-bo-table>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '12px 20px', fontSize: 11, color: 'var(--ink-500)', textTransform: 'uppercase', letterSpacing: '0.08em', borderBottom: '1px solid var(--ink-200)', fontFamily: 'var(--font-mono)' }}>
+                <div>Cabinet</div>
+                <div>Ville</div>
+                <div>Dossiers</div>
+                <div>CA (M FCFA)</div>
+                <div>Note</div>
+                <div>Statut</div>
               </div>
-            ))}
+              {partners.map((p) => (
+                <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1fr 0.8fr 1fr', padding: '14px 20px', borderBottom: '1px solid var(--ink-100)', alignItems: 'center', fontSize: 13 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="ava" style={{ background: 'var(--ink-900)', color: 'white' }}>{p.n.split(' ')[0][0]}{p.n.split(' ').slice(-1)[0][0]}</div>
+                    <div style={{ fontWeight: 500 }}>{p.n}</div>
+                  </div>
+                  <div style={{ color: 'var(--ink-700)' }}>{p.city}</div>
+                  <div className="num" style={{ fontWeight: 500 }}>{p.d}</div>
+                  <div className="num">{p.ca.toLocaleString('fr-FR')}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Icon name="star" size={12} color="#F59E0B" />
+                    <span className="num">{p.sat.toLocaleString('fr-FR')}</span>
+                  </div>
+                  <div>{p.status === 'actif' ? <span className="chip chip-mint"><span className="chip-dot"></span> Actif</span> : <span className="chip chip-amber"><span className="chip-dot"></span> Vérification</span>}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -3468,6 +3589,7 @@ const PageTarifs = () => {
 
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 80px' }}>
         <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 48px' }}>
           <div className="chip chip-blue" style={{ marginBottom: 20 }}>Tarifs · Mars 2026</div>
@@ -3505,53 +3627,84 @@ const PageTarifs = () => {
           Tous les prix incluent les frais de greffe, l'annonce légale, la TVA et l'accompagnement humain. Cabinet enregistré CI-ABJ-03-2025-B13-00359.
         </div>
       </div>
+      <CtaClosure />
+      <VitrineFooter />
     </div>
   );
 };
 
-// Page FAQ
+// Page FAQ — interactive accordion
 const PageFAQ = () => {
+  const nav = useNav();
+  const [openSet, setOpenSet] = React.useState(new Set([0]));
+  const toggle = (i) => setOpenSet((prev) => {
+    const next = new Set(prev);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    return next;
+  });
+
   const faqs = [
-    { q: 'Combien de temps pour créer mon entreprise ?', a: '72 heures en moyenne après réception du paiement et des documents complets. Certains dossiers (EI) peuvent être traités en 24h.' },
-    { q: 'Quels documents dois-je fournir ?', a: 'Une pièce d\'identité, un justificatif de domicile, et selon la forme : RIB pour le capital, statuts signés (générés par nous), CNI des associés.' },
-    { q: 'Est-ce que je peux payer en plusieurs fois ?', a: 'Oui. Tous nos plans sont payables en 3 fois sans frais via Wave, Orange Money ou MTN MoMo. Le premier versement déclenche le traitement.' },
-    { q: 'Que se passe-t-il si mon dossier est refusé ?', a: 'Nous vous remboursons intégralement les honoraires PeleAI. Les frais de greffe et d\'annonce légale ne sont pas remboursables (réglementation).' },
-    { q: 'Puis-je créer une entreprise depuis l\'étranger ?', a: 'Oui pour les ressortissants UEMOA résidant à l\'étranger. Le siège social doit être en zone UEMOA — nous proposons une domiciliation à Abidjan, Dakar ou Bamako.' },
-    { q: 'Mes données sont-elles sécurisées ?', a: 'Tout passe en HTTPS. Les documents sont stockés chiffrés. Nous sommes conformes RGPD et à la loi ivoirienne 2013-450 sur la protection des données.' },
+    { q: 'Combien de temps pour créer mon entreprise ?', a: '72 heures en moyenne après réception du paiement et des documents complets. Certains dossiers (Entreprise individuelle) sont traités en 24h. Nous vous tenons informé à chaque étape par SMS et WhatsApp.' },
+    { q: 'Quels documents dois-je fournir ?', a: 'Pour une SARL ou SAS : CNI ou passeport de chaque associé, justificatif de domicile de moins de 3 mois, et un virement de capital sur compte bloqué (BICICI, SGBCI). Les statuts sont générés automatiquement — vous n\'avez qu\'à les signer.' },
+    { q: 'Est-ce que je peux payer en plusieurs fois ?', a: 'Oui. Tous nos forfaits sont payables en 3× sans frais via Wave, Orange Money ou MTN MoMo. Le premier versement déclenche immédiatement le traitement de votre dossier.' },
+    { q: 'Puis-je créer une entreprise depuis l\'étranger (diaspora) ?', a: 'Oui, nous accompagnons les ressortissants UEMOA installés en France, Belgique, Canada ou aux États-Unis. Le siège social doit être en zone UEMOA — nous proposons notre adresse de domiciliation à Cocody, Abidjan.' },
+    { q: 'Que se passe-t-il si mon dossier est rejeté par le greffe ?', a: 'Nous traitons le problème en totalité et sans frais supplémentaires. Dans le rare cas d\'un refus définitif, les honoraires ANB sont remboursés intégralement. Les frais de greffe et d\'annonce légale sont régis par l\'administration et non remboursables.' },
+    { q: 'Quelle est la différence entre SARL, SAS, SASU et EI ?', a: 'L\'EI est la structure la plus simple (seul, sans capital minimum, mais patrimoine engagé). La SARL est idéale pour 2-5 associés avec capital minimum de 100 000 FCFA et responsabilité limitée. La SAS offre plus de flexibilité pour les investisseurs. La SASU est une SAS à associé unique. Notre quiz de 90 secondes vous oriente.' },
+    { q: 'Puis-je changer de forme juridique plus tard ?', a: 'Oui. La transformation d\'une EI en SARL ou d\'une SARL en SAS est possible. Elle implique des formalités (PV, publication, modification RCCM). Contactez-nous pour un devis — c\'est souvent moins coûteux que de créer une nouvelle société.' },
+    { q: 'Mes données personnelles sont-elles sécurisées ?', a: 'Toutes les communications sont chiffrées (TLS 1.3). Les documents sont stockés sur des serveurs hébergés en Europe avec chiffrement AES-256. Nous respectons le RGPD et la loi ivoirienne 2013-450 sur la protection des données personnelles.' },
   ];
+
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 100px', maxWidth: 1000, margin: '0 auto' }}>
-        <div className="chip chip-blue" style={{ marginBottom: 20 }}>FAQ</div>
+        <div className="chip chip-blue" style={{ marginBottom: 20 }}>FAQ · 8 questions</div>
         <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.04em', margin: '0 0 56px', maxWidth: 700 }}>
           Vos questions, <span className="serif" style={{ color: 'var(--blue-600)' }}>nos réponses.</span>
         </h1>
 
         <div className="card" style={{ background: 'white' }}>
-          {faqs.map((f, i) => (
-            <div key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--ink-200)' : 'none' }}>
-              <div style={{ padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ font: '600 17px/1.4 var(--font-display)', letterSpacing: '-0.015em', marginBottom: i === 0 || i === 2 ? 12 : 0 }}>{f.q}</div>
-                  {(i === 0 || i === 2) && <div style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--ink-600)' }}>{f.a}</div>}
-                </div>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: i === 0 || i === 2 ? 'var(--blue-600)' : 'var(--ink-100)', color: i === 0 || i === 2 ? 'white' : 'var(--ink-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon name={i === 0 || i === 2 ? 'close' : 'plus'} size={14} stroke={2.5} />
+          {faqs.map((f, i) => {
+            const isOpen = openSet.has(i);
+            return (
+              <div key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--ink-200)' : 'none' }}>
+                <div
+                  onClick={() => toggle(i)}
+                  style={{ padding: '22px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, cursor: 'pointer' }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ font: `${isOpen ? 600 : 500} 16px/1.4 var(--font-display)`, letterSpacing: '-0.015em', color: isOpen ? 'var(--blue-700)' : 'var(--ink-900)', marginBottom: isOpen ? 14 : 0 }}>
+                      {f.q}
+                    </div>
+                    {isOpen && (
+                      <div style={{ fontSize: 14, lineHeight: 1.65, color: 'var(--ink-600)', paddingRight: 16 }}>{f.a}</div>
+                    )}
+                  </div>
+                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: isOpen ? 'var(--blue-600)' : 'var(--ink-100)', color: isOpen ? 'white' : 'var(--ink-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2, transition: 'background .15s' }}>
+                    <Icon name={isOpen ? 'close' : 'plus'} size={14} stroke={2.5} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="card-soft card" style={{ padding: 32, marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div className="card-soft card" style={{ padding: 28, marginTop: 40, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
           <Icon name="whatsapp" size={32} color="#25D366" />
-          <div style={{ flex: 1 }}>
-            <div style={{ font: '600 18px/1 var(--font-display)' }}>Une autre question ?</div>
-            <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 4 }}>Notre équipe répond sur WhatsApp en moins de 5 min.</div>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ font: '600 17px/1 var(--font-display)', marginBottom: 6 }}>Vous n'avez pas trouvé votre réponse ?</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-500)' }}>Notre équipe répond sur WhatsApp en moins de 5 min, 7j/7.</div>
           </div>
-          <button className="btn btn-primary">Écrire sur WhatsApp <Icon name="arrow" size={14} /></button>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" style={{ background: '#25D366' }}>
+              <Icon name="whatsapp" size={14} /> WhatsApp maintenant
+            </button>
+            <button onClick={() => nav('/contact')} className="btn btn-ghost">Formulaire <Icon name="arrow" size={14} /></button>
+          </div>
         </div>
       </div>
+      <CtaClosure />
+      <VitrineFooter />
     </div>
   );
 };
@@ -3807,6 +3960,7 @@ const PageContact = () => {
   const [sent, setSent] = React.useState(false);
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
+      <VitrineNav />
       <div style={{ padding: '60px 56px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ marginBottom: 48 }}>
           <div className="chip chip-blue" style={{ marginBottom: 20 }}>Contact</div>
@@ -3923,6 +4077,7 @@ const PageContact = () => {
           </div>
         </div>
       </div>
+      <VitrineFooter />
     </div>
   );
 };
