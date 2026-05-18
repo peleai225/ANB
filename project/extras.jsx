@@ -1,59 +1,88 @@
 /* global React, Icon, Logo */
 // Pages vitrine additionnelles + écrans manquants
 
-// Page Tarifs
+// Page Tarifs — 2 sections : création one-shot + accompagnement mensuel
 const PageTarifs = () => {
-  const plans = [
-    { n: 'Essentiel', p: '95 000', d: 'Pour les indépendants', best: false, f: ['Entreprise individuelle', 'Statuts générés auto', 'Dépôt au greffe', 'Support email'] },
-    { n: 'Société', p: '185 000', d: 'SARL / SASU / EURL', best: true, f: ['Tout Essentiel +', 'Rédaction des statuts', 'Annonce légale incluse', 'Support WhatsApp prioritaire', 'Domiciliation 3 mois'] },
-    { n: 'Croissance', p: '345 000', d: 'SAS · multi-associés', best: false, f: ['Tout Société +', 'Pacte d\'associés', 'Conseil juridique 1h', 'Domiciliation 12 mois', 'Comptabilité 3 mois'] },
+  const creation = [
+    { n: 'Essentiel', p: '95 000', d: 'Entreprise individuelle (EI)', best: false, f: ['Immatriculation RCCM', 'Statuts générés automatiquement', 'Dépôt au greffe inclus', 'Rattachement Impôts & CNPS', 'Support email'] },
+    { n: 'Société', p: '185 000', d: 'SARL · SASU · EURL', best: true, f: ['Tout Essentiel +', 'Rédaction des statuts', 'Annonce légale incluse', 'Support WhatsApp prioritaire', 'Domiciliation 3 mois Cocody', '1 mois comptable offert'] },
+    { n: 'Croissance', p: '345 000', d: 'SAS · multi-associés', best: false, f: ['Tout Société +', 'Pacte d\'associés', 'Conseil juridique 1h', 'Domiciliation 12 mois', '3 mois comptable offerts', 'Représentation commerciale'] },
   ];
+  const mensuel = [
+    { n: 'Starter', p: '40 000', d: 'Très faible volume · 1-3 employés', best: false, f: ['Tenue comptable simplifiée', 'Déclarations TVA & TEE', 'Bulletins de paie (jusqu\'à 3)', 'Support email'] },
+    { n: 'Eco', p: '70 000', d: 'Faible volume · 1-3 employés', best: false, f: ['Tout Starter +', 'États financiers annuels', 'Déclarations CNPS', 'Conseil fiscal mensuel'] },
+    { n: 'Business', p: '100 000', d: 'Grand volume · 3-10 employés', best: true, f: ['Tout Eco +', 'Tableaux de bord mensuels', 'Suivi trésorerie', 'Bulletins de paie (jusqu\'à 10)', 'Support WhatsApp prioritaire'] },
+    { n: 'Premium', p: '185 000', d: 'Grand volume · 3-20 employés', best: false, f: ['Tout Business +', 'Contentieux & juridique inclus', 'Assistance à l\'agrément', 'Représentation commerciale', 'Comptable dédié'] },
+  ];
+
+  const PlanCard = ({ pl, perMois }) => (
+    <div className="card" style={{ padding: 28, position: 'relative', background: pl.best ? 'var(--ink-900)' : 'white', color: pl.best ? 'white' : 'var(--ink-900)', border: pl.best ? 'none' : '1px solid var(--ink-200)', borderRadius: 20 }}>
+      {pl.best && (
+        <div style={{ position: 'absolute', top: -10, left: 20, background: 'var(--blue-600)', color: 'white', font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '5px 10px', borderRadius: 6 }}>
+          Le plus choisi
+        </div>
+      )}
+      <div style={{ font: '600 17px/1 var(--font-display)', marginBottom: 4 }}>{pl.n}</div>
+      <div style={{ fontSize: 12, color: pl.best ? 'rgba(255,255,255,.6)' : 'var(--ink-500)', marginBottom: 20 }}>{pl.d}</div>
+      <div className="display-num" style={{ fontSize: 46 }}>
+        {pl.p}<span style={{ fontSize: 16, color: pl.best ? 'rgba(255,255,255,.5)' : 'var(--ink-400)', marginLeft: 4 }}>FCFA{perMois && '/mois'}</span>
+      </div>
+      <div style={{ fontSize: 12, color: pl.best ? 'rgba(255,255,255,.5)' : 'var(--ink-500)', marginTop: 4 }}>
+        {perMois ? 'Sans engagement · résiliable à tout moment' : 'Ou 3× sans frais Mobile Money'}
+      </div>
+
+      <button className="btn" style={{ width: '100%', marginTop: 20, background: pl.best ? 'white' : 'var(--ink-900)', color: pl.best ? 'var(--ink-900)' : 'white' }}>
+        {perMois ? 'Souscrire' : 'Commencer'} <Icon name="arrow" size={14} />
+      </button>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 22, paddingTop: 20, borderTop: pl.best ? '1px solid rgba(255,255,255,.12)' : '1px solid var(--ink-200)' }}>
+        {pl.f.map((x, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 12.5, lineHeight: 1.4 }}>
+            <Icon name="check" size={13} stroke={2.5} color={pl.best ? '#86EFAC' : 'var(--blue-600)'} />
+            <span style={{ color: pl.best ? 'rgba(255,255,255,.85)' : 'var(--ink-700)' }}>{x}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="pas" style={{ width: 1440, background: 'var(--paper)' }}>
-      <div style={{ padding: '60px 56px 100px' }}>
-        <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 56px' }}>
+      <div style={{ padding: '60px 56px 80px' }}>
+        <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 48px' }}>
           <div className="chip chip-blue" style={{ marginBottom: 20 }}>Tarifs · Mars 2026</div>
-          <h1 style={{ font: '500 72px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0 }}>
+          <h1 style={{ font: '500 64px/1 var(--font-display)', letterSpacing: '-0.045em', margin: 0 }}>
             Un prix. <span className="serif" style={{ color: 'var(--blue-600)' }}>Tout inclus.</span>
           </h1>
-          <p style={{ fontSize: 18, color: 'var(--ink-500)', marginTop: 20 }}>
-            Pas de frais cachés. Pas de surprise. Payable en 3× sans frais.
+          <p style={{ fontSize: 17, color: 'var(--ink-500)', marginTop: 16 }}>
+            Pas de frais cachés. Paiement en 3× sans frais via Wave, Orange Money, MTN MoMo.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 1100, margin: '0 auto' }}>
-          {plans.map((pl) => (
-            <div key={pl.n} className="card" style={{ padding: 32, position: 'relative', background: pl.best ? 'var(--ink-900)' : 'white', color: pl.best ? 'white' : 'var(--ink-900)', border: pl.best ? 'none' : '1px solid var(--ink-200)', borderRadius: 20 }}>
-              {pl.best && (
-                <div style={{ position: 'absolute', top: -10, left: 24, background: 'var(--blue-600)', color: 'white', font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '5px 10px', borderRadius: 6 }}>
-                  Le plus choisi
-                </div>
-              )}
-              <div style={{ font: '600 18px/1 var(--font-display)', marginBottom: 6 }}>{pl.n}</div>
-              <div style={{ fontSize: 13, color: pl.best ? 'rgba(255,255,255,.6)' : 'var(--ink-500)', marginBottom: 24 }}>{pl.d}</div>
-              <div className="display-num" style={{ fontSize: 56 }}>
-                {pl.p}<span style={{ fontSize: 18, color: pl.best ? 'rgba(255,255,255,.5)' : 'var(--ink-400)', marginLeft: 4 }}>FCFA</span>
-              </div>
-              <div style={{ fontSize: 12, color: pl.best ? 'rgba(255,255,255,.5)' : 'var(--ink-500)', marginTop: 6 }}>Ou 3× sans frais</div>
-
-              <button className="btn btn-lg" style={{ width: '100%', marginTop: 24, background: pl.best ? 'white' : 'var(--ink-900)', color: pl.best ? 'var(--ink-900)' : 'white' }}>
-                Commencer <Icon name="arrow" size={16} />
-              </button>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 28, paddingTop: 24, borderTop: pl.best ? '1px solid rgba(255,255,255,.12)' : '1px solid var(--ink-200)' }}>
-                {pl.f.map((x, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
-                    <Icon name="check" size={14} stroke={2.5} color={pl.best ? '#86EFAC' : 'var(--blue-600)'} />
-                    <span style={{ color: pl.best ? 'rgba(255,255,255,.85)' : 'var(--ink-700)' }}>{x}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+        {/* Section 1 : Création one-shot */}
+        <div style={{ maxWidth: 1180, margin: '0 auto 56px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20, paddingBottom: 12, borderBottom: '1px solid var(--ink-200)' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--blue-600)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>01</div>
+            <h2 style={{ font: '500 28px/1 var(--font-display)', letterSpacing: '-0.025em', margin: 0 }}>Création de votre entreprise <span style={{ color: 'var(--ink-400)', fontSize: 16, fontWeight: 400 }}>· paiement unique</span></h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {creation.map((pl) => <PlanCard key={pl.n} pl={pl} perMois={false} />)}
+          </div>
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 56, fontSize: 14, color: 'var(--ink-500)' }}>
-          Tous les prix incluent les frais de greffe, l'annonce légale et la TVA. Paiement en 1× ou 3× via Wave, Orange Money, MTN MoMo.
+        {/* Section 2 : Accompagnement mensuel */}
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 20, paddingBottom: 12, borderBottom: '1px solid var(--ink-200)' }}>
+            <div style={{ font: '500 11px/1 var(--font-mono)', color: 'var(--blue-600)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>02</div>
+            <h2 style={{ font: '500 28px/1 var(--font-display)', letterSpacing: '-0.025em', margin: 0 }}>Accompagnement comptable <span style={{ color: 'var(--ink-400)', fontSize: 16, fontWeight: 400 }}>· mensuel</span></h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+            {mensuel.map((pl) => <PlanCard key={pl.n} pl={pl} perMois />)}
+          </div>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: 48, fontSize: 13, color: 'var(--ink-500)', maxWidth: 700, margin: '48px auto 0' }}>
+          Tous les prix incluent les frais de greffe, l'annonce légale, la TVA et l'accompagnement humain. Cabinet enregistré CI-ABJ-03-2025-B13-00359.
         </div>
       </div>
     </div>

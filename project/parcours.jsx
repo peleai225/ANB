@@ -93,7 +93,7 @@ const ScreenSimulation = () => {
               { l: 'Pays d\'immatriculation', v: 'Côte d\'Ivoire' },
               { l: 'Capital social', v: '500 000 FCFA' },
               { l: 'Nombre d\'associés', v: '2' },
-              { l: 'Domiciliation', v: 'Adresse PeleAI · Cocody' },
+              { l: 'Domiciliation', v: 'Adresse ANB · Cocody' },
             ].map((f) => (
               <div key={f.l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--ink-200)' }}>
                 <span style={{ fontSize: 13, color: 'var(--ink-500)' }}>{f.l}</span>
@@ -178,7 +178,7 @@ const ScreenForm = () => (
           <div style={{ gridColumn: '1 / -1' }}>
             <label className="label">Siège social</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 8 }}>
-              <button className="btn btn-sm btn-primary" style={{ height: 44, borderRadius: 10 }}>📍 Domiciliation PeleAI</button>
+              <button className="btn btn-sm btn-primary" style={{ height: 44, borderRadius: 10 }}>📍 Domiciliation ANB</button>
               <input className="input" defaultValue="Rue des Jardins, Cocody, Abidjan" />
             </div>
           </div>
@@ -296,7 +296,7 @@ const ScreenSuivi = () => {
             <h1 style={{ font: '500 40px/1 var(--font-display)', letterSpacing: '-0.03em', margin: 0 }}>
               Mali <span className="serif" style={{ color: 'var(--blue-600)' }}>Cosmétiques</span>
             </h1>
-            <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 8 }}>SARL · Réf. PAS-2026-04812 · Créé il y a 2 jours</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 8 }}>SARL · Réf. ANB-2026-04812 · Créé il y a 2 jours</div>
           </div>
           <div className="card" style={{ padding: '14px 20px', background: 'white' }}>
             <div style={{ fontSize: 11, color: 'var(--ink-400)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Livraison estimée</div>

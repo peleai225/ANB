@@ -152,7 +152,7 @@ const MobileSuivi = () => {
         <h1 style={{ font: '500 28px/1 var(--font-display)', letterSpacing: '-0.03em', margin: 0 }}>
           Mali <span className="serif" style={{ color: 'var(--blue-600)' }}>Cosmétiques</span>
         </h1>
-        <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6 }}>SARL · PAS-2026-04812</div>
+        <div style={{ fontSize: 12, color: 'var(--ink-500)', marginTop: 6 }}>SARL · ANB-2026-04812</div>
 
         <div className="card" style={{ padding: 16, marginTop: 16, background: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>

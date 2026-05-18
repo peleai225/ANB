@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PeleAI Speed — Plateforme création d'entreprise</title>
+<title>ANB Corporate — Plateforme création d'entreprise</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -25,6 +25,7 @@
 <script type="text/babel" src="backoffice.jsx"></script>
 <script type="text/babel" src="mobile.jsx"></script>
 <script type="text/babel" src="extras.jsx"></script>
+<script type="text/babel" src="additional.jsx"></script>
 
 <script type="text/babel">
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -44,12 +45,17 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "radiusScale": 1,
   "gradientIntensity": 1,
   "showGrain": true,
-  "ctaLabel": "Démarrer mon entreprise",
+  "ctaLabel": "Créer mon entreprise",
   "ctaStyle": "primary",
   "buttonShape": "pill",
-  "heroBadge": "Fait pour la Côte d'Ivoire 🇨🇮",
-  "brandName": "PeleAI Speed",
-  "headline": "Créez votre entreprise en"
+  "heroBadge": "Cabinet certifié · Cocody, Abidjan 🇨🇮",
+  "brandName": "ANB Corporate",
+  "headline": "Créez votre entreprise en",
+  "cabinetName": "ANB Corporate",
+  "cabinetCity": "Cocody, Abidjan",
+  "cabinetEmail": "contact@anbcorporate.com",
+  "cabinetPhone": "+225 27 22 00 00 00",
+  "darkMode": false
 }/*EDITMODE-END*/;
 
 // Helpers couleur — convertir hex en rgb pour les ombres / overlays
@@ -106,8 +112,14 @@ function App() {
     // Ombre bleue dynamique
     const rgb = hexToRgb(t.primaryColor);
     r.setProperty('--shadow-blue', `0 12px 32px rgba(${rgb},.28), 0 4px 12px rgba(${rgb},.18)`);
-    // Canvas color (fond grand)
-    document.body.style.background = t.canvasColor;
+    // Dark mode integral
+    if (t.darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.body.style.background = '#0A0E1A';
+    } else {
+      document.body.removeAttribute('data-theme');
+      document.body.style.background = t.canvasColor;
+    }
   }, [t]);
 
   // Expose le contenu modifiable aux composants enfants via context-like global
@@ -119,28 +131,35 @@ function App() {
       headline: t.headline,
       buttonShape: t.buttonShape,
       ctaStyle: t.ctaStyle,
+      cabinetName: t.cabinetName,
+      cabinetCity: t.cabinetCity,
+      cabinetEmail: t.cabinetEmail,
+      cabinetPhone: t.cabinetPhone,
     };
     window.dispatchEvent(new CustomEvent('pas-copy-update'));
-  }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle]);
+  }, [t.ctaLabel, t.heroBadge, t.brandName, t.headline, t.buttonShape, t.ctaStyle, t.cabinetName, t.cabinetCity, t.cabinetEmail, t.cabinetPhone]);
 
   return (
     <>
       <DesignCanvas>
         <DCSection id="vitrine" title="01 · Site vitrine" subtitle="Page d'accueil — 2 directions hero">
-          <DCArtboard id="hero-a" label="A · Bold gradient + simulateur" width={1440} height={2400}>
+          <DCArtboard id="hero-a" label="A · Bold gradient + simulateur" width={1440} height={2950}>
             <Vitrine variant={t.heroVariant === 'B' ? 'B' : 'A'} />
           </DCArtboard>
-          <DCArtboard id="hero-b" label="B · Éditorial minimal serif" width={1440} height={2400}>
+          <DCArtboard id="hero-b" label="B · Éditorial minimal serif" width={1440} height={2950}>
             <Vitrine variant={t.heroVariant === 'A' ? 'B' : 'A'} />
           </DCArtboard>
         </DCSection>
 
-        <DCSection id="vitrine-pages" title="01b · Pages vitrine" subtitle="Tarifs · FAQ">
-          <DCArtboard id="tarifs" label="Tarifs" width={1440} height={920}>
+        <DCSection id="vitrine-pages" title="01b · Pages vitrine" subtitle="Tarifs · FAQ · Contact">
+          <DCArtboard id="tarifs" label="Tarifs (création + mensuel)" width={1440} height={1500}>
             <PageTarifs />
           </DCArtboard>
           <DCArtboard id="faq" label="FAQ" width={1440} height={1100}>
             <PageFAQ />
+          </DCArtboard>
+          <DCArtboard id="contact" label="Contact + carte Abidjan" width={1440} height={1000}>
+            <PageContact />
           </DCArtboard>
         </DCSection>
 
@@ -197,14 +216,35 @@ function App() {
             <AdminDashboard />
           </DCArtboard>
         </DCSection>
+
+        <DCSection id="onboarding" title="06 · Onboarding partenaire" subtitle="Pour les cabinets qui rejoignent la plateforme">
+          <DCArtboard id="ob1" label="Étape 2 · Équipe & capacité" width={1280} height={1000}>
+            <PartnerOnboarding />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="comms" title="07 · Communications & documents" subtitle="Email transactionnel · Facture imprimable">
+          <DCArtboard id="email" label="Email — RCCM prêt" width={900} height={1280}>
+            <EmailMockup />
+          </DCArtboard>
+          <DCArtboard id="invoice" label="Facture A4 (imprimable)" width={794} height={1123}>
+            <InvoicePDF />
+          </DCArtboard>
+        </DCSection>
       </DesignCanvas>
 
-      <TweaksPanel title="Tweaks">
+      <TweaksPanel title="Tweaks · Rebrand">
         <TweakSection label="Marque & copy" />
         <TweakText label="Nom de marque" value={t.brandName} onChange={(v) => setTweak('brandName', v)} />
         <TweakText label="Titre hero" value={t.headline} onChange={(v) => setTweak('headline', v)} />
         <TweakText label="Badge hero" value={t.heroBadge} onChange={(v) => setTweak('heroBadge', v)} />
         <TweakText label="Texte CTA" value={t.ctaLabel} onChange={(v) => setTweak('ctaLabel', v)} />
+
+        <TweakSection label="Cabinet (backoffice)" />
+        <TweakText label="Nom cabinet" value={t.cabinetName} onChange={(v) => setTweak('cabinetName', v)} />
+        <TweakText label="Ville" value={t.cabinetCity} onChange={(v) => setTweak('cabinetCity', v)} />
+        <TweakText label="Email contact" value={t.cabinetEmail} onChange={(v) => setTweak('cabinetEmail', v)} />
+        <TweakText label="Téléphone" value={t.cabinetPhone} onChange={(v) => setTweak('cabinetPhone', v)} />
 
         <TweakSection label="Typographie" />
         <TweakSelect label="Display" value={t.fontDisplay}
@@ -244,6 +284,9 @@ function App() {
           options={[{value: 'A', label: 'Bold'}, {value: 'B', label: 'Éditorial'}]}
           onChange={(v) => setTweak('heroVariant', v)} />
         <TweakToggle label="Texture grain" value={t.showGrain} onChange={(v) => setTweak('showGrain', v)} />
+
+        <TweakSection label="Thème" />
+        <TweakToggle label="Mode sombre intégral" value={t.darkMode} onChange={(v) => setTweak('darkMode', v)} />
       </TweaksPanel>
     </>
   );

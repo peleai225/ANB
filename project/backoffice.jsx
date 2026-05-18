@@ -1,7 +1,28 @@
 /* global React, Icon, Logo */
 // Backoffice partenaire + admin
 
-const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => (
+// Hook copy partagé avec vitrine — pour cabinet info
+const useCabinet = () => {
+  const [c, setC] = React.useState(window.__pas_copy || {});
+  React.useEffect(() => {
+    const h = () => setC({ ...window.__pas_copy });
+    window.addEventListener('pas-copy-update', h);
+    return () => window.removeEventListener('pas-copy-update', h);
+  }, []);
+  const name = c.cabinetName || 'ANB Corporate';
+  const initials = name.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase() || 'AB';
+  return {
+    name,
+    city: c.cabinetCity || 'Cocody, Abidjan',
+    email: c.cabinetEmail || 'contact@anbcorporate.com',
+    phone: c.cabinetPhone || '+225 27 22 00 00 00',
+    initials,
+  };
+};
+
+const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => {
+  const cab = useCabinet();
+  return (
   <div style={{ width: 220, background: 'var(--ink-900)', color: 'white', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
     <div style={{ padding: '4px 8px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', marginBottom: 12 }}>
       <Logo light size={24} />
@@ -22,14 +43,15 @@ const SideNav = ({ active = 'dossiers', items, role = 'Partenaire' }) => (
       </div>
     ))}
     <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
-      <div className="ava" style={{ background: 'var(--blue-600)', color: 'white' }}>SK</div>
-      <div style={{ fontSize: 12 }}>
-        <div style={{ color: 'white', fontWeight: 500 }}>Cabinet Konaté</div>
-        <div style={{ color: 'rgba(255,255,255,.5)', fontSize: 11 }}>Abidjan</div>
+      <div className="ava" style={{ background: 'var(--blue-600)', color: 'white' }}>{cab.initials}</div>
+      <div style={{ fontSize: 12, minWidth: 0, flex: 1 }}>
+        <div style={{ color: 'white', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.name}</div>
+        <div style={{ color: 'rgba(255,255,255,.5)', fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cab.city}</div>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const TopBar = ({ title, sub }) => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
@@ -90,12 +112,12 @@ const StatusBadge = ({ s }) => {
 // ── Backoffice partenaire — Dashboard ──
 const PartnerDashboard = () => {
   const dossiers = [
-    { ref: 'PAS-2026-04812', client: 'Mali Cosmétiques', t: 'SARL', m: 185000, s: 'cours', d: 'il y a 2j', a: 'AD' },
-    { ref: 'PAS-2026-04809', client: 'Kojo Tech', t: 'SAS', m: 245000, s: 'greffe', d: 'il y a 3j', a: 'KM' },
-    { ref: 'PAS-2026-04795', client: 'Sow Restaurant', t: 'EI', m: 95000, s: 'livre', d: 'il y a 5j', a: 'FS' },
-    { ref: 'PAS-2026-04788', client: 'Bamba Logistique', t: 'SARL', m: 185000, s: 'nouveau', d: 'il y a 6j', a: 'BL' },
-    { ref: 'PAS-2026-04781', client: 'Diop Conseil', t: 'SASU', m: 195000, s: 'bloque', d: 'il y a 8j', a: 'DC' },
-    { ref: 'PAS-2026-04772', client: 'Touré BTP', t: 'SARL', m: 185000, s: 'livre', d: 'il y a 12j', a: 'TB' },
+    { ref: 'ANB-2026-04812', client: 'Mali Cosmétiques', t: 'SARL', m: 185000, s: 'cours', d: 'il y a 2j', a: 'AD' },
+    { ref: 'ANB-2026-04809', client: 'Kojo Tech', t: 'SAS', m: 245000, s: 'greffe', d: 'il y a 3j', a: 'KM' },
+    { ref: 'ANB-2026-04795', client: 'Sow Restaurant', t: 'EI', m: 95000, s: 'livre', d: 'il y a 5j', a: 'FS' },
+    { ref: 'ANB-2026-04788', client: 'Bamba Logistique', t: 'SARL', m: 185000, s: 'nouveau', d: 'il y a 6j', a: 'BL' },
+    { ref: 'ANB-2026-04781', client: 'Diop Conseil', t: 'SASU', m: 195000, s: 'bloque', d: 'il y a 8j', a: 'DC' },
+    { ref: 'ANB-2026-04772', client: 'Touré BTP', t: 'SARL', m: 185000, s: 'livre', d: 'il y a 12j', a: 'TB' },
   ];
 
   const navItems = [
@@ -195,7 +217,7 @@ const PartnerDossier = () => {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ padding: '20px 32px', borderBottom: '1px solid var(--ink-200)', background: 'white' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-500)', marginBottom: 12 }}>
-            <span>Dossiers</span> <Icon name="chev" size={11} /> <span>PAS-2026-04812</span>
+            <span>Dossiers</span> <Icon name="chev" size={11} /> <span>ANB-2026-04812</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <div>
@@ -264,7 +286,7 @@ const PartnerDossier = () => {
               <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ink-400)', marginBottom: 16 }}>Activité</div>
               {[
                 { who: 'Système', what: 'Statut mis à jour : Au greffe', when: 'il y a 2h', i: 'refresh' },
-                { who: 'Sékou Konaté', what: 'Documents validés', when: 'il y a 1j', i: 'check' },
+                { who: 'Aboubacar N\'Dri', what: 'Documents validés', when: 'il y a 1j', i: 'check' },
                 { who: 'Aïssata Diallo', what: 'Paiement Wave reçu — 61 666 FCFA', when: 'il y a 2j', i: 'wallet' },
                 { who: 'Aïssata Diallo', what: 'Dossier soumis', when: 'il y a 2j', i: 'plus' },
               ].map((a, i) => (
@@ -334,7 +356,7 @@ const AdminDashboard = () => {
   ];
 
   const partners = [
-    { n: 'Cabinet Konaté', city: 'Abidjan', d: 84, ca: 12.4, sat: 4.9, status: 'actif' },
+    { n: 'ANB Corporate', city: 'Abidjan', d: 84, ca: 12.4, sat: 4.9, status: 'actif' },
     { n: 'Diop & Associés', city: 'Dakar', d: 67, ca: 9.8, sat: 4.8, status: 'actif' },
     { n: 'Touré Conseil', city: 'Bamako', d: 42, ca: 6.2, sat: 4.7, status: 'actif' },
     { n: 'Sankara Legal', city: 'Ouaga', d: 28, ca: 4.1, sat: 4.6, status: 'actif' },

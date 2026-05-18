@@ -11,9 +11,13 @@ const useCopy = () => {
   }, []);
   return {
     ctaLabel: c.ctaLabel || 'Créer mon entreprise',
-    heroBadge: c.heroBadge || "Disponible dans 8 pays UEMOA",
-    brandName: c.brandName || 'PeleAI Speed',
-    headline: c.headline || 'Votre entreprise,',
+    heroBadge: c.heroBadge || "Cabinet certifié · Cocody, Abidjan 🇨🇮",
+    brandName: c.brandName || 'ANB Corporate',
+    headline: c.headline || 'Créez votre entreprise en',
+    cabinetName: c.cabinetName || 'ANB Corporate',
+    cabinetCity: c.cabinetCity || 'Cocody, Abidjan',
+    cabinetEmail: c.cabinetEmail || 'contact@anbcorporate.com',
+    cabinetPhone: c.cabinetPhone || '+225 27 22 00 00 00',
   };
 };
 
@@ -54,7 +58,7 @@ const HeroA = () => {
           <span className="serif" style={{ fontWeight: 400, fontStyle: 'italic', color: '#93C5FD' }}>créée en 72h.</span>
         </h1>
         <p style={{ fontSize: 19, lineHeight: 1.5, color: 'rgba(255,255,255,.75)', maxWidth: 520, margin: '24px 0 36px' }}>
-          De la SARL à la SAS, immatriculez votre société depuis votre téléphone. Paiement Mobile Money, suivi en temps réel, accompagnement humain.
+          De la SARL à la SAS, immatriculez votre société depuis votre téléphone. Paiement Mobile Money, suivi temps réel, accompagnement comptable inclus 3 mois.
         </p>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <button className="btn btn-lg" style={{ background: 'white', color: 'var(--ink-900)' }}>
@@ -66,7 +70,7 @@ const HeroA = () => {
         </div>
         <div style={{ display: 'flex', gap: 32, marginTop: 48, paddingTop: 28, borderTop: '1px solid rgba(255,255,255,.12)' }}>
           {[
-            { v: '4 280', l: 'entreprises créées' },
+            { v: '1 200', l: 'entreprises créées' },
             { v: '72h', l: 'délai moyen' },
             { v: '4,9', l: 'note clients', suf: '/5' },
           ].map((s, i) => (
@@ -131,7 +135,7 @@ const HeroB = () => {
           Pas la paperasse.
         </h1>
         <p style={{ fontSize: 20, lineHeight: 1.5, color: 'var(--ink-500)', maxWidth: 620, margin: '32px auto 36px' }}>
-          La plateforme de création d'entreprise pensée pour l'Afrique de l'Ouest. SARL, SAS, EI — à partir de 95 000 FCFA, en 72h.
+          Cabinet d'expertise comptable & juridique à Abidjan. Création de société, formalités RCCM, accompagnement OHADA — à partir de 95 000 FCFA, en 72h.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           <button className="btn btn-lg btn-primary">{copy.ctaLabel} <Icon name="arrow" size={16} /></button>
@@ -142,9 +146,9 @@ const HeroB = () => {
       {/* Big number band */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)', padding: '40px 0' }}>
         {[
-          { v: '4 280', l: 'entreprises créées depuis 2024' },
+          { v: '1 200', l: 'entreprises créées depuis 2020' },
           { v: '72h', l: 'délai moyen de traitement' },
-          { v: '8', l: 'pays UEMOA couverts', suf: '' },
+          { v: '5+', l: 'années d\'expérience', suf: 'ans' },
           { v: '4,9', l: 'satisfaction client', suf: '/5' },
         ].map((s, i) => (
           <div key={i} style={{ borderLeft: i ? '1px solid var(--ink-200)' : 'none', padding: '0 28px' }}>
@@ -204,9 +208,9 @@ const HowItWorks = () => {
 
 const Testimonials = () => {
   const t = [
-    { n: 'Aïssata Diallo', r: 'Fondatrice, Mali Cosmétiques', q: 'J\'ai créé ma SARL pendant ma pause déjeuner. 3 jours plus tard, j\'avais mon Kbis.', a: 'AD' },
-    { n: 'Kwame Mensah', r: 'CEO, Kojo Tech', q: 'Le simulateur m\'a évité 200 000 FCFA de frais cachés que j\'avais ailleurs.', a: 'KM' },
-    { n: 'Fatou Sow', r: 'Restauratrice, Dakar', q: 'Aucune connaissance juridique. Tout a été expliqué, en français simple.', a: 'FS' },
+    { n: 'Eric Houphouët', r: 'CEO, E.H.M GROUP', q: 'ANB Corporate a immatriculé ma SARL en 3 jours. L\'accompagnement comptable mensuel est devenu indispensable.', a: 'EH' },
+    { n: 'Dr. Bio Konaté', r: 'Fondateur, Expert BIO', q: 'Du dépôt RCCM à la CNPS, tout a été géré pour moi. Zéro déplacement, ils m\'ont fait gagner des semaines.', a: 'BK' },
+    { n: 'Mme Aya Touré', r: 'Trésorière, Union Sportive d\'Abidjan', q: 'Cabinet sérieux, suivi temps réel sur la plateforme. On voit exactement où en est notre dossier.', a: 'AT' },
   ];
   return (
     <div style={{ padding: '100px 56px', background: 'var(--ink-50)' }}>
@@ -214,7 +218,7 @@ const Testimonials = () => {
         <div style={{ marginBottom: 48 }}>
           <div className="chip" style={{ marginBottom: 16 }}>Témoignages</div>
           <h2 style={{ font: '500 56px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
-            4 280 entrepreneurs <span className="serif" style={{ color: 'var(--blue-600)' }}>nous ont fait confiance.</span>
+            1 200 entrepreneurs <span className="serif" style={{ color: 'var(--blue-600)' }}>nous ont fait confiance.</span>
           </h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
@@ -241,19 +245,27 @@ const Testimonials = () => {
   );
 };
 
-const VitrineFooter = () => (
+const VitrineFooter = () => {
+  const copy = useCopy();
+  return (
   <div style={{ background: 'var(--ink-900)', color: 'white', padding: '60px 56px 32px' }}>
     <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 40 }}>
       <div>
         <Logo light />
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 16, lineHeight: 1.5, maxWidth: 280 }}>
-          La plateforme la plus simple pour créer son entreprise en Afrique de l'Ouest.
+          Cabinet d'expertise comptable et juridique. La plateforme la plus simple pour créer son entreprise en Côte d'Ivoire.
         </p>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,.45)', marginTop: 16, lineHeight: 1.6 }}>
+          {copy.cabinetCity}<br />
+          Angré 7e/8e tranche<br />
+          RCCM CI-ABJ-03-2025-B13-00359<br />
+          NCC 2500120 F
+        </div>
       </div>
       {[
-        { t: 'Produit', l: ['Services', 'Tarifs', 'Comment ça marche', 'Partenaires'] },
-        { t: 'Pays', l: ["Côte d'Ivoire", 'Sénégal', 'Mali', 'Burkina Faso'] },
-        { t: 'Société', l: ['À propos', 'Blog', 'Contact', 'WhatsApp'] },
+        { t: 'Services', l: ['Création d\'entreprise', 'Assistance comptable', 'Assistance juridique', 'Formation & conseil'] },
+        { t: 'Couverture', l: ["Côte d'Ivoire", 'Espace OHADA', 'Diaspora UEMOA', 'Anglophone CEDEAO'] },
+        { t: 'Cabinet', l: ['À propos d\'ANB', 'Tarifs', 'Blog ressources', 'Contact WhatsApp'] },
       ].map((c, i) => (
         <div key={i}>
           <div style={{ font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,.5)', marginBottom: 16 }}>{c.t}</div>
@@ -264,16 +276,65 @@ const VitrineFooter = () => (
       ))}
     </div>
     <div style={{ maxWidth: 1280, margin: '40px auto 0', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.1)', display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
-      <span>© 2026 PeleAI Speed. Tous droits réservés.</span>
+      <span>© 2026 {copy.brandName}. Tous droits réservés.</span>
       <span>CGU · Confidentialité · Mentions légales</span>
     </div>
   </div>
-);
+  );
+};
+
+// Section Services — 7 expertises ANB Corporate
+const Services = () => {
+  const services = [
+    { i: 'pkg', t: 'Création d\'entreprise', d: 'Formalités RCCM, rattachement Impôts, CNPS, génération automatique des statuts.', tag: 'Notre cœur de métier' },
+    { i: 'chart', t: 'Comptabilité & fiscalité', d: 'Tenue des comptes, états financiers, déclarations TVA et IS, conformité OHADA.' },
+    { i: 'shield', t: 'Assistance juridique', d: 'Rédaction de contrats, gestion du contentieux, mise en conformité légale.' },
+    { i: 'money', t: 'Intermédiation financière', d: 'Mise en relation bancaire, montage de dossiers de crédit et de garanties.' },
+    { i: 'users', t: 'Représentation commerciale', d: 'Prospection, négociation, développement de réseau pour entrer sur le marché.' },
+    { i: 'sparkle', t: 'Formation', d: 'Gestion, comptabilité, fiscalité, management — sessions sur mesure équipes et dirigeants.' },
+    { i: 'check', t: 'Assistance à l\'agrément', d: 'Préparation des dossiers techniques et suivi administratif jusqu\'à l\'obtention.' },
+  ];
+  return (
+    <div style={{ padding: '100px 56px', background: 'var(--ink-50)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48 }}>
+          <div style={{ maxWidth: 720 }}>
+            <div className="chip chip-blue" style={{ marginBottom: 16 }}>7 expertises sous le même toit</div>
+            <h2 style={{ font: '500 56px/1 var(--font-display)', letterSpacing: '-0.04em', margin: 0 }}>
+              Au-delà de la création, <span className="serif" style={{ color: 'var(--blue-600)' }}>un cabinet complet.</span>
+            </h2>
+            <p style={{ fontSize: 17, color: 'var(--ink-500)', marginTop: 16, lineHeight: 1.5 }}>
+              Une fois votre société immatriculée, ANB Corporate continue à vos côtés : comptabilité, juridique, financement, formation. Tout est centralisé sur votre espace.
+            </p>
+          </div>
+          <button className="btn btn-ghost">Voir tous les services <Icon name="arrow" size={14} /></button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          {services.map((s, i) => (
+            <div key={i} className="card" style={{ padding: 20, background: 'white', position: 'relative', minHeight: 200 }}>
+              {s.tag && (
+                <div style={{ position: 'absolute', top: -10, left: 16, background: 'var(--blue-600)', color: 'white', font: '500 11px/1 var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 4 }}>
+                  {s.tag}
+                </div>
+              )}
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--blue-50)', color: 'var(--blue-700)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                <Icon name={s.i} size={18} />
+              </div>
+              <div style={{ font: '600 16px/1.25 var(--font-display)', letterSpacing: '-0.02em', marginBottom: 8 }}>{s.t}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-500)', lineHeight: 1.5 }}>{s.d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Vitrine = ({ variant = 'A' }) => (
   <div className="pas" style={{ width: 1440, background: 'white' }}>
     {variant === 'A' ? <HeroA /> : <HeroB />}
     <HowItWorks />
+    <Services />
     <Testimonials />
     <VitrineFooter />
   </div>
